@@ -45,6 +45,38 @@ html, body
 
 }
 
+#vecTools
+{
+    text-align: center;
+    background: rgb(87, 185, 88);
+}
+
+.vecToolsButton
+{
+    vertical-align: sub;
+    border: 0;
+    margin: 2% 1%;
+    padding: 1%;
+    display: inline-block;
+    width:  46%;
+    height: 34px;
+    background: #333;
+    color: white;
+    font-size: 95%;
+    border-radius: 8px;
+}
+
+.vecToolsButton:hover
+{
+    cursor: pointer;
+    background: #777;
+}
+
+.vecToolsButton > span
+{
+    vertical-align: sub;
+}
+
 #tools-collapse
 {
 

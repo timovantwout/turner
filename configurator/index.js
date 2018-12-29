@@ -11,6 +11,22 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
+    this.getZIPButtonClicked = function()
+    {
+        var zip = new JSZip();
+
+        //TODO: add the real viewer content,
+        //      including the current modifications from this configurator
+        zip.file("Hello.txt", "Hello World\n");
+        
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            saveAs(content, "turner-viewer.zip");
+        });
+    }
+    
+    //---------------------------------------------------------------------------------------------------------
+    
     this.addPluginArea = function(pluginName)
     {
         var toolSelectionElem = document.getElementById("toolSelection");
