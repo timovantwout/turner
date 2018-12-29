@@ -4,7 +4,7 @@
 # Turner
 A responsive and easy-to-use 3D item viewer for the modern Web.
 
-This is how oen can embed it, with default settings:
+This is how one can embed it, with default settings:
 <div>
   <iframe width="400" height="400" src="https://dgg3d.github.io/turner/viewer/"></iframe>
 </div>
