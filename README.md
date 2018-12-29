@@ -1,18 +1,17 @@
-# Turner
-A responsive and easy-to-use 3D item viewer for the modern Web.
-
-
 *DRAFT STAGE: This entire README page and the project name are both WIP.*
 
 
-This is how it can look like when embedded, with default settings:
+# Turner
+A responsive and easy-to-use 3D item viewer for the modern Web.
+
+This is how one can embed it, with default settings:
 <div>
-  <iframe width="400px" height="400px" src="https://dgg3d.github.io/turner/viewer/"></iframe>
+  <iframe width="400" height="400" src="https://dgg3d.github.io/turner/viewer/"></iframe>
 </div>
 
-You can find the source code for the viewer [here](viewer/).
-
-Check out the *Virtual Experience Configurator* [here](configurator/)!
+## Live Demos
+* Check out the Virtual Experience Configurator [here](https://dgg3d.github.io/turner/configurator/)
+* You can find the plain viewer [here](https://dgg3d.github.io/turner/viewer/)
 
 
 # What is Turner?
