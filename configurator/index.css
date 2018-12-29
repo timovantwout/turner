@@ -1,0 +1,217 @@
+html, body
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: sans-serif;
+    user-select: none;
+}
+
+.main-container
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width:  100%;
+    height: 100%;
+    display: flex;
+}
+
+.layout-stack
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width:  100%;
+    height: 100%;
+}
+
+.tools-container
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: white;
+    min-width: 260px;
+    -webkit-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.5);
+    -moz-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.5);
+    box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.5);
+}
+
+#tools
+{
+
+}
+
+#tools-collapse
+{
+
+}
+
+#toolSelection
+{
+    border: 0;
+    margin: 0;
+    padding: 0 4px;
+    height: 68px;
+    background: #333;
+}
+
+.toolSelectionButton
+{
+    border: 0;
+    margin: 4px 0 0;
+    padding: 0;
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: #bbb;
+    -webkit-box-shadow: inset 0px -10px 20px -8px rgba(136,136,136,1);
+    -moz-box-shadow: inset 0px -10px 20px -8px rgba(136,136,136,1);
+    box-shadow: inset 0px -10px 20px -8px rgba(136,136,136,1);
+}
+
+.activeToolButton
+{
+    background: white;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.viewer-container
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: yellow;
+    flex: 1;
+    min-width:  300px;
+    min-height: 300px;
+    overflow: hidden; /* TODO: still some weird spacing at the bottom */
+}
+
+#viewer
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/************** Generic UI elements **************/
+
+.uiSpacingElemContainer
+{
+    margin-bottom: 16px;
+}
+
+.uiHeadingElemContainer
+{
+    padding: 0px;
+}
+
+.uiElemContainer
+{
+    padding: 12px;
+    border-bottom: 1px solid #bbb;
+}
+
+.section-heading-text
+{
+    padding: 8px;
+    width: 100%;
+    display: inline-block;
+    color: white;
+    background: #333;
+}
+
+.label-text, .explanation-text, .help-button
+{
+    color: #333;
+    padding: 0 4px 0 0;
+}
+
+.explanation-text
+{
+    font-size: 90%;
+    font-style: italic;
+}
+
+.help-button
+{
+    width:  18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: text-top;
+    background-image: url('images/baseline-help-24px.svg');
+    background-size: 18px;
+}
+
+.switch
+{
+    position: relative;
+    float: right;
+    display: inline-block;
+    width:  46px;
+    height: 25px;
+}
+
+.switch input
+{ 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider
+{
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #bbb;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before
+{
+    position: absolute;
+    content: "";
+    height: 18px;
+    width:  20px;
+    left:   4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider
+{
+    background-color: rgb(87, 185, 88);
+}
+
+input:checked + .slider:before
+{
+    -webkit-transform: translateX(17px);
+    -ms-transform: translateX(17px);
+    transform: translateX(17px);
+}
+
+.slider.round
+{
+    border-radius: 24px;
+}
+
+.slider.round:before
+{
+    border-radius: 50%;
+}
+

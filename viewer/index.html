@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>RAPIDCOMPACT CLI 3D Viewer</title>
+
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+        
+        #branding-field
+        {
+            position: absolute;    
+            right: 8px;
+            margin: 0;
+            width:  106px;            
+            z-index: 2000;
+            opacity: 0.9;                       
+        }
+        
+       #branding-field
+        {        
+            top:   8px;
+            height: 72px;
+            background: url('data:image/png;base64,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');
+        }
+        
+        #webgl-not-supported-message
+        {            
+            position: fixed;
+            left: calc(50% - 165px);
+            font-size: 12pt;
+            font-family: sans-serif;
+            font-weight: bold;
+            background: white;            
+            width: 330px;
+            padding: 4px;
+            margin-top: 16px;
+            -webkit-box-shadow: 6px 6px 5px 0px rgba(0,0,0,0.75);
+            -moz-box-shadow: 6px 6px 5px 0px rgba(0,0,0,0.75);
+            box-shadow: 6px 6px 5px 0px rgba(0,0,0,0.75);
+        }
+    </style>
+
+    <!--script src="scripts/dat.gui.min.js"></script-->
+    <script src="scripts/pep.min.js"></script>    
+    <script src="scripts/babylon.js"></script>
+    <script src="scripts/viewer.js"></script>
+</head>
+<body>
+    <!-- fallback message for devices without WebGL support -->
+    <div id="webgl-not-supported-message" style="display:none;">
+        3D view not available (no WebGL support).<br><br>
+        To view 3D content, please update your browser or system, or use a different device.
+    </div>
+
+    <a id="branding-field" href="https://darmstadt-graphics.com/rapidcompact/" target="_blank"></a>
+    
+    <canvas id="renderCanvas" touch-action="none"></canvas>
+
+    <script>
+        try
+        {
+            var canvas = document.getElementById("renderCanvas");
+            var engine = null;
+            var camera = null;
+
+            loadScene();
+
+            document.addEventListener("contextmenu", function() {
+                event.preventDefault();
+            }, true);
+            
+            window.addEventListener("resize", function () {
+                if (engine) {
+                    engine.resize();
+                }
+            });
+        }
+        catch (exc)
+        {
+            document.getElementById("webgl-not-supported-message").setAttribute("style", "display:block");
+            document.getElementById("branding-field").setAttribute("style", "display:none");
+            
+            console.log(exc);
+        }
+    </script>
+</body>
+</html>
