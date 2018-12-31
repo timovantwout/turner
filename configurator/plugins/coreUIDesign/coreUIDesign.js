@@ -17,15 +17,9 @@ var coreUIDesign = function()
     this.displayCompanyLogoToggled = function(event)
     {        
         var toggled = event.target.checked;
-        
-        if (toggled)
-        {
-            //...
-        }
-        else
-        {
-            //...
-        }
+        var viewer  = turnerVECMain.viewerAPI;
+               
+        viewer.toggleCompanyLogo(toggled);
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -69,7 +63,7 @@ var coreUIDesign = function()
                
         viewer.toggle3DBackground(toggled);
     };
-    
+        
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
     //---------------------------------------------------------------------------------------------------------
@@ -137,8 +131,7 @@ var coreUIDesign = function()
     
     this.init = function()
     {
-        // add temporary HTML elements for snapping guidelines
-        // ...
+        var viewer  = turnerVECMain.viewerAPI;
         
         return true;
     }

@@ -9,6 +9,10 @@ var turnerVEC = function()
     // viewer object that is used by all plugins to manipulate the viewer layout and content
     this.viewerAPI = null;
     
+    this.dragStartX  = -1;
+    this.dragStartY  = -1;
+    this.dragElement = null;
+    
     //---------------------------------------------------------------------------------------------------------
     
     this.getZIPButtonClicked = function()
@@ -212,12 +216,58 @@ var turnerVEC = function()
         }
         console.log("Turner viewer connected.");
         
+        
+        // add callbacks for dragging / clicks on 2D UI elements
+        this.viewerAPI.addElementDragStartCallback("company-logo", this.elementDragStart);
+        this.viewerAPI.addDragEndCallback(this.elementDragEnd);
+        this.viewerAPI.addDragOverCallback(this.dragOverCallback);        
+        this.viewerAPI.addDragLeaveCallback(this.dragLeaveCallback);  
+        
         this.loadPlugins();
         console.log("All plugins loaded.");
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.elementDragStart = function(event)
+    {
+        console.log("drag start");
+        
+        that.dragStartX = event.screenX;
+        that.dragStartY = event.screenY;
+        //that.dragElement = ...;
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.elementDragEnd = function(event)
+    {
+        console.log("drag end");
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.dragOverCallback = function(event)
+    {
+        // prevent default to allow drop
+        //event.preventDefault();
+            
+        var dX = event.screenX - that.dragStartX;
+        var dY = event.screenY - that.dragStartY;
+        
+        //that.dragElement.style.top  = dX + "px";
+        //that.dragElement.style.left = dY + "pY";
     };
 
     //---------------------------------------------------------------------------------------------------------
     
+    this.dragLeaveCallback = function(event)
+    {
+        console.log("drag leave");
+    };
+
+    //---------------------------------------------------------------------------------------------------------
+        
 };
 
 // creates the global variable for the turner virtual experience configurator (turner VEC)
