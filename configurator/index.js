@@ -9,9 +9,12 @@ var turnerVEC = function()
     // viewer object that is used by all plugins to manipulate the viewer layout and content
     this.viewerAPI = null;
     
-    this.dragStartX  = -1;
-    this.dragStartY  = -1;
-    this.dragElement = null;
+    this.dragStartX     = -1;
+    this.dragStartY     = -1;
+    this.dragElementID  = "";
+    this.dragElemStartX = -1;
+    this.dragElemStartY = -1;
+    this.guidelineElems = [];
     
     //---------------------------------------------------------------------------------------------------------
     
@@ -214,56 +217,141 @@ var turnerVEC = function()
             console.error("Unable to connect to viewer.");
             return;
         }
-        console.log("Turner viewer connected.");
-        
+        console.log("Turner viewer connected.");        
         
         // add callbacks for dragging / clicks on 2D UI elements
         this.viewerAPI.addElementDragStartCallback("company-logo", this.elementDragStart);
         this.viewerAPI.addDragEndCallback(this.elementDragEnd);
-        this.viewerAPI.addDragOverCallback(this.dragOverCallback);        
-        this.viewerAPI.addDragLeaveCallback(this.dragLeaveCallback);  
+        this.viewerAPI.addDragOverCallback(this.dragOverCallback);     
         
+        viewerFrame.addEventListener("pointerout", this.dragLeaveCallback);  
+                        
+        this.guidelineElems.push(document.getElementById("mainGuidelineH0"));
+        this.guidelineElems.push(document.getElementById("mainGuidelineV0"));       
+        this.guidelineElems.push(document.getElementById("mainGuidelineH1"));        
+        this.guidelineElems.push(document.getElementById("mainGuidelineV1"));        
+        
+        // load plugins        
         this.loadPlugins();
         console.log("All plugins loaded.");
     };
     
     //---------------------------------------------------------------------------------------------------------
     
+    this.stopDragging = function()
+    {      
+        if (this.dragElementID == "")
+        {
+            return;
+        }
+        
+        this.dragElementID = "";  
+                
+        var i = 0;
+        for (; i < this.guidelineElems.length; ++i)
+        {
+            this.guidelineElems[i].style.visibility = "hidden";
+        }
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.positionGuidelines = function(pv0, ph0, pv1, ph1)
+    {
+        var glH0 = this.guidelineElems[0];
+        var glV0 = this.guidelineElems[1];
+        var glH1 = this.guidelineElems[2];
+        var glV1 = this.guidelineElems[3];
+        
+        glV0.style.left = pv0 + "px";
+        glV0.style.top  = 0;
+        
+        glH0.style.left = 0;
+        glH0.style.top  = ph0 + "px";
+        
+        glV1.style.left = pv1 + "px";
+        glV1.style.top  = 0;
+        
+        glH1.style.left = 0;
+        glH1.style.top  = ph1 + "px";
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    //                                      callback functions
+    //---------------------------------------------------------------------------------------------------------
+    
     this.elementDragStart = function(event)
     {
-        console.log("drag start");
-        
         that.dragStartX = event.screenX;
         that.dragStartY = event.screenY;
-        //that.dragElement = ...;
+        
+        that.dragElementID  = this.id;
+        that.dragElemStartX = that.viewerAPI.getElementPosX(this.id);
+        that.dragElemStartY = that.viewerAPI.getElementPosY(this.id);
+        
+        var i = 0;        
+        for (; i < that.guidelineElems.length; ++i)
+        {
+            that.guidelineElems[i].style.visibility = "visible";
+        }
+        
+        //TODO: read real values
+        var elemW = 80;
+        var elemH = 34;        
+        that.positionGuidelines(that.dragElemStartX,         that.dragElemStartY,
+                                that.dragElemStartX + elemW, that.dragElemStartY + elemH);
     };
     
     //---------------------------------------------------------------------------------------------------------
     
     this.elementDragEnd = function(event)
     {
-        console.log("drag end");
+        that.stopDragging();
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.dragLeaveCallback = function(event)
+    {
+        that.stopDragging();
     };
     
     //---------------------------------------------------------------------------------------------------------
     
     this.dragOverCallback = function(event)
     {
-        // prevent default to allow drop
-        //event.preventDefault();
-            
-        var dX = event.screenX - that.dragStartX;
-        var dY = event.screenY - that.dragStartY;
+        if (that.dragElementID == "")
+        {
+            return;
+        }
+                            
+        var dragDiffX = event.screenX - that.dragStartX;
+        var dragDiffY = event.screenY - that.dragStartY;
+                      
+        var newPosX = that.dragElemStartX + dragDiffX;
+        var newPosY = that.dragElemStartY + dragDiffY;
         
-        //that.dragElement.style.top  = dX + "px";
-        //that.dragElement.style.left = dY + "pY";
-    };
-
-    //---------------------------------------------------------------------------------------------------------
-    
-    this.dragLeaveCallback = function(event)
-    {
-        console.log("drag leave");
+        // detect if we would drag to an invalid position,
+        // which could leave the image to be dragged outside the canvas,
+        // in that case we cancel the dragging operation
+        // TODOs:
+        // * check also against maximum values
+        // * account for image size
+        if (newPosX < 0 || newPosY < 0)
+        {
+            that.stopDragging();
+            return;
+        }
+        
+        that.viewerAPI.setElementPosition(that.dragElementID,
+                                          "left", "top",
+                                          newPosX + "px", newPosY + "px");
+                                          
+        //TODO: read real values
+        var elemW = 80;
+        var elemH = 34;        
+        that.positionGuidelines(newPosX,         newPosY,
+                                newPosX + elemW, newPosY + elemH);
     };
 
     //---------------------------------------------------------------------------------------------------------
