@@ -18,22 +18,6 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.getZIPButtonClicked = function()
-    {
-        var zip = new JSZip();
-
-        //TODO: add the real viewer content,
-        //      including the current modifications from this configurator
-        zip.file("Hello.txt", "Hello World\n");
-        
-        zip.generateAsync({type:"blob"})
-        .then(function(content) {
-            saveAs(content, "turner-viewer.zip");
-        });
-    }
-    
-    //---------------------------------------------------------------------------------------------------------
-    
     this.addPluginArea = function(pluginName)
     {
         var toolSelectionElem = document.getElementById("toolSelection");
@@ -280,6 +264,70 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     //                                      callback functions
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.getZIPButtonClicked = function()
+    {
+        var zip = new JSZip();
+
+        //TODO: add the real viewer content,
+        //      including the current modifications from this configurator
+        zip.file("Hello.txt", "Hello World\n");
+        
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            saveAs(content, "turner-viewer.zip");
+        });
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.toggleViewerSizeButtonClicked = function()
+    {
+        var viewerWrapElem = document.getElementById('viewer-frame-wrapper');
+        var viewerElem     = document.getElementById('viewer');
+        var labelElem      = document.getElementById('resizeViewerButtonLabel');
+        
+        // go to shrinked view mode
+        if (viewerWrapElem.style.top == "")
+        {
+            viewerWrapElem.style.position  = "absolute";
+            viewerWrapElem.style.top       = "50%";
+            viewerWrapElem.style.left      = "50%";
+            viewerWrapElem.style.transform = "translate(-50%, -50%)";
+            viewerWrapElem.style.border    = "1px dashed #333";
+            
+            viewerWrapElem.style.width  = "auto";
+            viewerWrapElem.style.height = "auto";
+            
+            viewerElem.style.width  = "300px";
+            viewerElem.style.height = "300px";
+            viewerElem.style.resize = "both";
+            
+            // we could change the button text here, if desired
+            //labelElem.innerText = "Max. View";
+        }
+        // go to maximized view mode
+        else
+        {
+            viewerWrapElem.style.position  = "";
+            viewerWrapElem.style.top       = "";
+            viewerWrapElem.style.left      = "";
+            viewerWrapElem.style.transform = "";
+            viewerWrapElem.style.border    = "";
+            
+            viewerWrapElem.style.width  = "";
+            viewerWrapElem.style.height = "";
+            
+            viewerElem.style.width  = "";
+            viewerElem.style.height = "";
+            viewerElem.style.resize = "";
+            
+            // we could change the button text here, if desired
+            //labelElem.innerText = "Shrink View";
+        }
+    };
+    
     //---------------------------------------------------------------------------------------------------------
     
     this.elementPointerDownCallback = function(event)

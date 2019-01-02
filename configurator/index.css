@@ -58,7 +58,7 @@ html, body
     margin: 4px 0.5%;
     padding: 4px 1%;
     display: inline-block;
-    width:  30%;
+    width:  30.5%;
     height: 34px;
     background: linear-gradient(#555, #333);
     color: white;
@@ -119,16 +119,24 @@ html, body
     box-shadow: none;
 }
 
-.viewer-container
+#viewer-container
 {
+    display: inline-flex;
+    text-align: center;
     border: 0;
     margin: 0;
-    padding: 0;
-    background: white;
+    padding: 0;    
     flex: 1;
     min-width:  300px;
     min-height: 300px;
-    overflow: hidden; /* TODO: still some weird spacing at the bottom */
+    background: url('images/workspace-background.jpg');    
+}
+
+#viewer-frame-wrapper
+{
+    width:  100%;
+    height: 100%;
+    display: inline-flex;    
 }
 
 #viewer
@@ -138,6 +146,8 @@ html, body
     padding: 0;
     width:  100%;
     height: 100%;
+    min-width:  300px;    
+    min-height: 300px;    
 }
 
 .guideline-h-t, .guideline-h-b, .guideline-v-l, .guideline-v-r

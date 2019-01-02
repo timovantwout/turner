@@ -41,14 +41,16 @@
     <div class="container-fluid main-container">
         <div class="row layout-stack">            
             <!-- 3D viewer -->
-            <div class="order-sm-2 col-sm-auto viewer-container">
+            <div id="viewer-container" class="order-sm-2 col-sm-auto">
                 <!-- we integrate the viewer as usual, using an iframe element -->
-                <iframe id="viewer" src="../viewer/index.html"></iframe>
-                <!-- temporary guidelines when dragging an image -->
-                <div id="mainGuidelineH0" class="guideline-h-t"></div>
-                <div id="mainGuidelineV0" class="guideline-v-l"></div>
-                <div id="mainGuidelineH1" class="guideline-h-b"></div>
-                <div id="mainGuidelineV1" class="guideline-v-r"></div>
+                <div id="viewer-frame-wrapper">
+                    <iframe id="viewer" src="../viewer/index.html"></iframe>
+                    <!-- temporary guidelines when dragging an image -->
+                    <div id="mainGuidelineH0" class="guideline-h-t"></div>
+                    <div id="mainGuidelineV0" class="guideline-v-l"></div>
+                    <div id="mainGuidelineH1" class="guideline-h-b"></div>
+                    <div id="mainGuidelineV1" class="guideline-v-r"></div>
+                </div>
             </div>
             <!-- tools -->
             <div class="order-sm-1 col-sm-3 tools-container">
@@ -65,7 +67,7 @@
                               onclick="turnerVECMain.toggleViewerSizeButtonClicked()"
                               class="vecToolsButton"
                               title="Shrink/grow viewer area for testing">
-                              <span>Resize</span>
+                              <span id="resizeViewerButtonLabel">Resize View</span>
                          </div>
                         <div id="getZIPButton"
                              onclick="turnerVECMain.getZIPButtonClicked()"
