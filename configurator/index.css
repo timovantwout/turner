@@ -48,33 +48,39 @@ html, body
 #vecTools
 {
     text-align: center;
-    background: rgb(87, 185, 88);
+    background: linear-gradient(#349f47, #297a3b);
 }
 
 .vecToolsButton
 {
     vertical-align: sub;
     border: 0;
-    margin: 2% 1%;
-    padding: 1%;
+    margin: 4px 0.5%;
+    padding: 4px 1%;
     display: inline-block;
-    width:  46%;
+    width:  30%;
     height: 34px;
-    background: #333;
+    background: linear-gradient(#555, #333);
     color: white;
-    font-size: 95%;
+    font-size: 85%;
     border-radius: 8px;
 }
 
 .vecToolsButton:hover
 {
     cursor: pointer;
-    background: #777;
+    background: linear-gradient(#888, #666);
 }
 
 .vecToolsButton > span
 {
     vertical-align: sub;
+}
+
+#getZIPButton > img
+{    
+    vertical-align: top;
+    margin-right: 2px;
 }
 
 #tools-collapse
@@ -118,7 +124,7 @@ html, body
     border: 0;
     margin: 0;
     padding: 0;
-    background: yellow;
+    background: white;
     flex: 1;
     min-width:  300px;
     min-height: 300px;
@@ -268,7 +274,7 @@ html, body
 
 input:checked + .slider
 {
-    background-color: rgb(87, 185, 88);
+    background-color: #349f47;
 }
 
 input:checked + .slider:before

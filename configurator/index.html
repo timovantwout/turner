@@ -53,20 +53,28 @@
             <!-- tools -->
             <div class="order-sm-1 col-sm-3 tools-container">
                 <div id="tools">
+                    <!-- VEC settings / action toolbar -->
                     <div id="vecTools">
                         <div id="setModelButton"
                              onclick="turnerVECMain.setModelButtonClicked()"
                              class="vecToolsButton"
                              title="Set the 3D model to be displayed">
-                             <span>Set 3D Model</span>
+                             <span>Set Model</span>
                         </div>
+                        <div id="resizeViewerButton"
+                              onclick="turnerVECMain.toggleViewerSizeButtonClicked()"
+                              class="vecToolsButton"
+                              title="Shrink/grow viewer area for testing">
+                              <span>Resize</span>
+                         </div>
                         <div id="getZIPButton"
                              onclick="turnerVECMain.getZIPButtonClicked()"
                              class="vecToolsButton"
                              title="Download the current scene as ready-to-use HTML viewer">
-                             <span>Download ZIP</span>
-                         </div>
+                             <img src="images/baseline-get_app-24px.svg"><span>ZIP</span>
+                         </div>                         
                     </div>
+                    <!-- viewer configuration toolbar -->
                     <div id="toolSelection">
                         <div class="toolSelectionButton"></div>
                         <div class="toolSelectionButton activeToolButton"></div>
