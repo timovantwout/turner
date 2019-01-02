@@ -220,11 +220,13 @@ var turnerVEC = function()
         console.log("Turner viewer connected.");        
         
         // add callbacks for dragging / clicks on 2D UI elements
-        this.viewerAPI.addElementDragStartCallback("company-logo", this.elementDragStart);
-        this.viewerAPI.addDragEndCallback(this.elementDragEnd);
-        this.viewerAPI.addDragOverCallback(this.dragOverCallback);     
+        this.viewerAPI.addElementPointerDownCallback("company-logo", this.elementPointerDownCallback);
+        this.viewerAPI.addElementPointerDownCallback("product-logo", this.elementPointerDownCallback);
+        this.viewerAPI.addElementPointerDownCallback("three-d-icon",      this.elementPointerDownCallback);
+        this.viewerAPI.addPointerUpCallback(this.pointerUpCallback);
+        this.viewerAPI.addPointerMoveCallback(this.pointerMoveCallback);
         
-        viewerFrame.addEventListener("pointerout", this.dragLeaveCallback);  
+        viewerFrame.addEventListener("pointerout", this.pointerLeaveCallback);  
                         
         this.guidelineElems.push(document.getElementById("mainGuidelineH0"));
         this.guidelineElems.push(document.getElementById("mainGuidelineV0"));       
@@ -280,8 +282,10 @@ var turnerVEC = function()
     //                                      callback functions
     //---------------------------------------------------------------------------------------------------------
     
-    this.elementDragStart = function(event)
+    this.elementPointerDownCallback = function(event)
     {
+        that.stopDragging();
+                
         that.dragStartX = event.screenX;
         that.dragStartY = event.screenY;
         
@@ -295,30 +299,30 @@ var turnerVEC = function()
             that.guidelineElems[i].style.visibility = "visible";
         }
         
-        //TODO: read real values
-        var elemW = 80;
-        var elemH = 34;        
+        var elemW = that.viewerAPI.getElementWidth(that.dragElementID);
+        var elemH = that.viewerAPI.getElementHeight(that.dragElementID);
         that.positionGuidelines(that.dragElemStartX,         that.dragElemStartY,
                                 that.dragElemStartX + elemW, that.dragElemStartY + elemH);
     };
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.elementDragEnd = function(event)
+    this.pointerUpCallback = function(event)
     {
         that.stopDragging();
     };
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.dragLeaveCallback = function(event)
+    this.pointerLeaveCallback = function(event)
     {
-        that.stopDragging();
+        // we could stop dragging here, but we don't
+        //instead, we clamp the draggable range to allow "sliding" elements on an edge
     };
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.dragOverCallback = function(event)
+    this.pointerMoveCallback = function(event)
     {
         if (that.dragElementID == "")
         {
@@ -331,31 +335,28 @@ var turnerVEC = function()
         var newPosX = that.dragElemStartX + dragDiffX;
         var newPosY = that.dragElemStartY + dragDiffY;
         
-        // detect if we would drag to an invalid position,
-        // which could leave the image to be dragged outside the canvas,
-        // in that case we cancel the dragging operation
-        // TODOs:
-        // * check also against maximum values
-        // * account for image size
-        if (newPosX < 0 || newPosY < 0)
-        {
-            that.stopDragging();
-            return;
-        }
+        var elemW = that.viewerAPI.getElementWidth(that.dragElementID);
+        var elemH = that.viewerAPI.getElementHeight(that.dragElementID);
+
+        var viewerW = that.viewerAPI.getViewerWidth();
+        var viewerH = that.viewerAPI.getViewerHeight();
+
+        // clamp to keep the element fully inside the viewer        
+        newPosX = Math.max(newPosX, 0);
+        newPosY = Math.max(newPosY, 0);
+        newPosX = Math.min(newPosX, viewerW - elemW);
+        newPosY = Math.min(newPosY, viewerH - elemH);
         
         that.viewerAPI.setElementPosition(that.dragElementID,
                                           "left", "top",
                                           newPosX + "px", newPosY + "px");
-                                          
-        //TODO: read real values
-        var elemW = 80;
-        var elemH = 34;        
+
         that.positionGuidelines(newPosX,         newPosY,
                                 newPosX + elemW, newPosY + elemH);
     };
 
     //---------------------------------------------------------------------------------------------------------
-        
+
 };
 
 // creates the global variable for the turner virtual experience configurator (turner VEC)

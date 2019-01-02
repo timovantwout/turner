@@ -170,19 +170,25 @@ var toggle3DBackground = function(toggled)
 /************************************************************/
 
 /**
- * switches the display of the company logo on or off
+ * switches the display of the given element on or off
  */
-var toggleCompanyLogo = function(toggled)
+var toggleElementVisibility = function(elementID, toggled)
 {
-    var companyLogoElem = document.getElementById("company-logo");
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
     
     if (toggled)
     {
-        companyLogoElem.style.visibility = "visible";
+        elem.style.visibility = "visible";
     }
     else
     {
-        companyLogoElem.style.visibility = "hidden";
+        elem.style.visibility = "hidden";
     }
 };
 
@@ -239,9 +245,54 @@ var getElementPosY = function(elementID)
     return elem.offsetTop;
 };
 
+
 /************************************************************/
 
-var addElementDragStartCallback = function(elementID, callback)
+var getElementWidth = function(elementID)
+{
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+    
+    return elem.offsetWidth;
+};
+
+/************************************************************/
+
+var getElementHeight = function(elementID)
+{
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+    
+    return elem.offsetHeight;
+};
+
+/************************************************************/
+
+var getViewerWidth = function()
+{
+    return document.body.offsetWidth;
+};
+
+/************************************************************/
+
+var getViewerHeight = function()
+{
+    return document.body.offsetHeight;
+};
+
+/************************************************************/
+
+var addElementPointerDownCallback = function(elementID, callback)
 {
     var elem = document.getElementById(elementID);
     
@@ -256,14 +307,14 @@ var addElementDragStartCallback = function(elementID, callback)
 
 /************************************************************/
 
-var addDragEndCallback = function(callback)
+var addPointerUpCallback = function(callback)
 {   
     window.addEventListener("pointerup", callback);
 };
 
 /************************************************************/
 
-var addDragOverCallback = function(callback)
+var addPointerMoveCallback = function(callback)
 {   
     window.addEventListener("pointermove", callback);
 };

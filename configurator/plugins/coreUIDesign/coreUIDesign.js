@@ -19,7 +19,7 @@ var coreUIDesign = function()
         var toggled = event.target.checked;
         var viewer  = turnerVECMain.viewerAPI;
                
-        viewer.toggleCompanyLogo(toggled);
+        viewer.toggleElementVisibility("company-logo", toggled);
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -27,15 +27,9 @@ var coreUIDesign = function()
     this.displayProductLogoToggled = function(event)
     {        
         var toggled = event.target.checked;
-        
-        if (toggled)
-        {
-            //...
-        }
-        else
-        {
-            //...
-        }
+        var viewer  = turnerVECMain.viewerAPI;
+               
+        viewer.toggleElementVisibility("product-logo", toggled);
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -43,15 +37,9 @@ var coreUIDesign = function()
     this.display3DIconToggled = function(event)
     {        
         var toggled = event.target.checked;
-        
-        if (toggled)
-        {
-            //...
-        }
-        else
-        {
-            //...
-        }
+        var viewer  = turnerVECMain.viewerAPI;
+               
+        viewer.toggleElementVisibility("three-d-icon", toggled);
     };
     
     //---------------------------------------------------------------------------------------------------------
