@@ -113,7 +113,9 @@ html, body
 
 .activeToolButton
 {
-    background: white;
+    background: url('plugins/coreUIDesign/coreUIDesign.svg'); /* todo: placeholder */
+    height: 64px;
+    width: 64px;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
