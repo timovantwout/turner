@@ -211,6 +211,11 @@ var setElementPosition = function(elementID,
         return;
     }
     
+    var otherHSide = (horizontalSide == "left") ? "right"  : "left";
+    var otherVSide = (verticalSide   == "top")  ? "bottom" : "top";
+    
+    elem.style[otherHSide]     = "";
+    elem.style[otherVSide]     = "";
     elem.style[horizontalSide] = horizontalOffset;
     elem.style[verticalSide]   = verticalOffset;
 };

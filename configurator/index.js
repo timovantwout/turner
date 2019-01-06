@@ -242,7 +242,8 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.positionGuidelines = function(pv0, ph0, pv1, ph1)
+    this.positionGuidelines = function(pv0, ph0, pv1, ph1,
+                                       ce)
     {
         var glH0 = this.guidelineElems[0];
         var glV0 = this.guidelineElems[1];
@@ -349,6 +350,7 @@ var turnerVEC = function()
         
         var elemW = that.viewerAPI.getElementWidth(that.dragElementID);
         var elemH = that.viewerAPI.getElementHeight(that.dragElementID);
+        
         that.positionGuidelines(that.dragElemStartX,         that.dragElemStartY,
                                 that.dragElemStartX + elemW, that.dragElemStartY + elemH);
     };
@@ -395,9 +397,27 @@ var turnerVEC = function()
         newPosX = Math.min(newPosX, viewerW - elemW);
         newPosY = Math.min(newPosY, viewerH - elemH);
         
+        var hOffset   = newPosX;
+        var vOffset   = newPosY;
+        var hBoundary = "left";
+        var vBoundary = "top";
+        
+        // always position element w.r.t. to the closest boundary
+        if (newPosX + 0.5 * elemW >= 0.5 * viewerW)
+        {
+            hOffset   = viewerW - (newPosX + elemW);
+            hBoundary = "right";
+        }
+                
+        if (newPosY + 0.5 * elemH >= 0.5 * viewerH)
+        {
+            vOffset   = viewerH - (newPosY + elemH);
+            vBoundary = "bottom";
+        }
+        
         that.viewerAPI.setElementPosition(that.dragElementID,
-                                          "left", "top",
-                                          newPosX + "px", newPosY + "px");
+                                          hBoundary, vBoundary,
+                                          hOffset + "px", vOffset + "px");
 
         that.positionGuidelines(newPosX,         newPosY,
                                 newPosX + elemW, newPosY + elemH);
