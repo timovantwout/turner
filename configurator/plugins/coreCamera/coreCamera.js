@@ -1,6 +1,6 @@
 
 
-var core3DInteraction = function()
+var coreCamera = function()
 {
     //---------------------------------------------------------------------------------------------------------
     //                                  plugin description / tooltip
@@ -21,19 +21,30 @@ var core3DInteraction = function()
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
     //---------------------------------------------------------------------------------------------------------
-        
+
     this.uiElements =
     [    
         {
             "type"      : "heading",
-            "text"      : "Allowed 3D Interactions"
+            "text"      : "Camera Settings"
         },        
         {
             "type"      : "text",
-            "text"      : "Configure which 3D interactions are possible, and how they are individually constrained."
+            "text"      : "Configure parameters of the virtual camera, such as field of view or focus."
+        },
+        {
+            "type"      : "spacing"
+        },        
+        {
+            "type"      : "heading",
+            "text"      : "Post-Processing"
+        },        
+        {
+            "type"      : "text",
+            "text"      : "Configure post-processing effects on the rendered image."
         }
     ];
-        
+
     //---------------------------------------------------------------------------------------------------------
     
     this.init = function()
@@ -44,4 +55,4 @@ var core3DInteraction = function()
     }
 };
 
-turnerVECMain.plugins.core3DInteraction = new core3DInteraction();
+turnerVECMain.plugins.coreCamera = new coreCamera();

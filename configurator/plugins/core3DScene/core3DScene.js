@@ -1,6 +1,6 @@
 
 
-var core3DInteraction = function()
+var core3DScene = function()
 {
     //---------------------------------------------------------------------------------------------------------
     //                                  plugin description / tooltip
@@ -26,11 +26,22 @@ var core3DInteraction = function()
     [    
         {
             "type"      : "heading",
-            "text"      : "Allowed 3D Interactions"
+            "text"      : "Lighting Environment"
         },        
         {
             "type"      : "text",
-            "text"      : "Configure which 3D interactions are possible, and how they are individually constrained."
+            "text"      : "Configure the 360° lighting environment."
+        },
+        {
+            "type" : "spacing"
+        },
+        {
+            "type"      : "heading",
+            "text"      : "Shadow Plane"
+        },        
+        {
+            "type"      : "text",
+            "text"      : "Choose if a shadow plane should be used, and how to display it."
         }
     ];
         
@@ -44,4 +55,4 @@ var core3DInteraction = function()
     }
 };
 
-turnerVECMain.plugins.core3DInteraction = new core3DInteraction();
+turnerVECMain.plugins.core3DScene = new core3DScene();

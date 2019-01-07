@@ -59,9 +59,6 @@ var coreUIDesign = function()
     this.uiElements =
     [    
         {
-            "type" : "spacing"
-        },
-        {
             "type"      : "heading",
             "text"      : "Branding"
         },        

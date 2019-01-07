@@ -6,6 +6,8 @@ var turnerVEC = function()
     // do not alter the name of this variable - it is used by all the plugins to register themselves
     this.plugins = {};
 
+    this.activePlugin = "";
+    
     // viewer object that is used by all plugins to manipulate the viewer layout and content
     this.viewerAPI = null;
     
@@ -22,8 +24,17 @@ var turnerVEC = function()
     {
         var toolSelectionElem = document.getElementById("toolSelection");
         
-        var newPluginAreaButton   = document.createElement("div");
+        var newPluginAreaButton = document.createElement("div");
         newPluginAreaButton.classList.add("toolSelectionButton");
+        newPluginAreaButton.id = "plugin-button-" + pluginName;
+        newPluginAreaButton.style.backgroundImage = "url('plugins/" + pluginName + "/" + pluginName + ".png')";
+        
+        (function(pName){
+            newPluginAreaButton.onclick = function()
+            {
+                that.setActivePlugin(pName);
+            };
+        })(pluginName);
         
         toolSelectionElem.appendChild(newPluginAreaButton);
                 
@@ -31,7 +42,9 @@ var turnerVEC = function()
         
         var newPluginArea = document.createElement("div");
         newPluginArea.classList.add("pluginArea");
-        newPluginArea.id = "pluginArea_" + pluginName;        
+        newPluginArea.id = "pluginArea_" + pluginName;     
+
+        newPluginArea.style.display = "none";
         
         toolsElem.appendChild(newPluginArea);        
     };
@@ -96,6 +109,7 @@ var turnerVEC = function()
         outerElem.appendChild(labelTextElem);
 
         helpElem.classList.add("help-button");
+        helpElem.setAttribute("data-toggle", "tooltip");
         helpElem.title = pluginUIElemObj.tooltipText;
         outerElem.appendChild(helpElem);
         
@@ -184,7 +198,7 @@ var turnerVEC = function()
             }
         }
     };
-
+    
     //---------------------------------------------------------------------------------------------------------
     
     this.init = function()
@@ -220,6 +234,21 @@ var turnerVEC = function()
         // load plugins        
         this.loadPlugins();
         console.log("All plugins loaded.");
+        
+        // tooltips need extra initialization
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip(); 
+        });
+        
+        // activate the first plugin
+        for (var pluginName in this.plugins)
+        {
+            if (this.plugins.hasOwnProperty(pluginName))
+            {
+                this.setActivePlugin(pluginName);
+                break;
+            }
+        }
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -265,6 +294,31 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     //                                      callback functions
+    //---------------------------------------------------------------------------------------------------------
+        
+    this.setActivePlugin = function(pluginName)
+    {
+        var pluginButtonElem;
+        var pluginAreaElem;
+        
+        if (that.activePlugin != "")
+        {
+            pluginButtonElem = document.getElementById("plugin-button-" + that.activePlugin);
+            pluginButtonElem.classList.remove("activeToolButton");
+            
+            pluginAreaElem = document.getElementById("pluginArea_" + that.activePlugin);
+            pluginAreaElem.style.display = "none";
+        }
+        
+        pluginButtonElem = document.getElementById("plugin-button-" + pluginName);
+        pluginButtonElem.classList.add("activeToolButton");
+        
+        pluginAreaElem = document.getElementById("pluginArea_" + pluginName);
+        pluginAreaElem.style.display = "";
+        
+        that.activePlugin = pluginName;
+    };
+    
     //---------------------------------------------------------------------------------------------------------
     
     this.getZIPButtonClicked = function()
