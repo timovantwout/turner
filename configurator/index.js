@@ -132,6 +132,66 @@ var turnerVEC = function()
     };
     
     //---------------------------------------------------------------------------------------------------------
+         /*<div class="uiElemContainer">
+                        <span class="label-text">Cool Value</span>
+                        <span class="help-button" data-toggle="tooltip" title="" data-original-title="Specifies cool range"></span>                        
+                        <span class="valueslider-container">
+                            <span class="valueslider-text"><span id="mytextDisplay">3.75</span></span>
+                            <input type="range" min="1" max="100" value="50" class="valueslider" id="myRange">
+                        </span>
+                    </div>*/
+    this.genSliderHTML = function(pluginUIElemObj)
+    {
+        var outerElem = document.createElement("div");
+        outerElem.classList.add("uiElemContainer");
+        
+        var labelTextElem   = document.createElement("span");
+        var helpElem        = document.createElement("span");
+        var vsContElem      = document.createElement("span");
+        var valTextContElem = document.createElement("span");
+        var valTextElem     = document.createElement("span");
+        var sliderElem      = document.createElement("input");
+        
+        labelTextElem.classList.add("label-text");
+        labelTextElem.innerText = pluginUIElemObj.labelText;
+        outerElem.appendChild(labelTextElem);
+
+        helpElem.classList.add("help-button");
+        helpElem.setAttribute("data-toggle", "tooltip");
+        helpElem.title = pluginUIElemObj.tooltipText;
+        outerElem.appendChild(helpElem);
+        
+        vsContElem.classList.add("valueslider-container");
+        outerElem.appendChild(vsContElem);
+        
+        valTextElem.id        = pluginUIElemObj.id + "_valueTextElem";
+        valTextElem.innerHTML = pluginUIElemObj.initValue
+        valTextContElem.appendChild(valTextElem);
+        
+        valTextContElem.classList.add("valueslider-text");
+        vsContElem.appendChild(valTextContElem);
+        
+        sliderElem.classList.add("valueslider");        
+        sliderElem.type     = "range";
+        sliderElem.id       = pluginUIElemObj.id;
+        sliderElem.min      = pluginUIElemObj.minValue;
+        sliderElem.max      = pluginUIElemObj.maxValue;
+        sliderElem.value    = pluginUIElemObj.initValue;        
+        (function(valTextElemID)
+        {
+            sliderElem.oninput = function(event)
+            {
+                var valTextElem = document.getElementById(valTextElemID);
+                valTextElem.innerHTML = this.value;
+                pluginUIElemObj.callback.call(this, event);
+            }
+        })(pluginUIElemObj.id + "_valueTextElem");
+        vsContElem.appendChild(sliderElem);
+        
+        return outerElem;
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
     
     this.addPluginUIElement = function(pluginUIElemObj, pluginUIAreaElem)
     {
@@ -149,6 +209,9 @@ var turnerVEC = function()
             case "toggle":
                 pluginUIAreaElem.appendChild(this.genToggleSwitchHTML(pluginUIElemObj));
                 break;
+            case "slider":
+                pluginUIAreaElem.appendChild(this.genSliderHTML(pluginUIElemObj));
+                break;                        
             default:
                 console.error("Plugin UI element type \"" + pluginUIElemObj.type + "\" is not a known type.");
                 break;
