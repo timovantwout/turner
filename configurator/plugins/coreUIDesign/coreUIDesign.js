@@ -7,7 +7,7 @@ var coreUIDesign = function()
     this.description = 
     {
         "title"   : "UI Design",
-        "tooltip" : "Configure basic 2D UI elements"
+        "tooltip" : "Configure 2D elements"
     };
     
     //---------------------------------------------------------------------------------------------------------

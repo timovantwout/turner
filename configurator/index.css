@@ -93,8 +93,8 @@ html, body
     border: 0;
     margin: 0;
     padding: 0 8px;
-    height: 72px;
-    background: #333;
+    height: 78px;
+    background: linear-gradient(#333, #555);
 }
 
 #toolSelectionWhitespace
@@ -106,7 +106,7 @@ html, body
 .toolSelectionButton
 {   
     border: 0;
-    margin: 8px 8px 0 0;
+    margin: 14px 8px 0 0;
     padding: 0;
     display: inline-flex;
     width: 64px;

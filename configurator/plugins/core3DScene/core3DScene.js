@@ -9,7 +9,7 @@ var core3DScene = function()
     this.description = 
     {
         "title"   : "Camera",
-        "tooltip" : "Configure virtual camera"
+        "tooltip" : "Configure 3D scene setup"
     };
     
     //---------------------------------------------------------------------------------------------------------

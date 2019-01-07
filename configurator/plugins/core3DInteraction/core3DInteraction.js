@@ -9,7 +9,7 @@ var core3DInteraction = function()
     this.description = 
     {
         "title"   : "Camera",
-        "tooltip" : "Configure virtual camera"
+        "tooltip" : "Configure 3D interaction"
     };
     
     //---------------------------------------------------------------------------------------------------------

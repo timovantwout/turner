@@ -28,6 +28,8 @@ var turnerVEC = function()
         newPluginAreaButton.classList.add("toolSelectionButton");
         newPluginAreaButton.id = "plugin-button-" + pluginName;
         newPluginAreaButton.style.backgroundImage = "url('plugins/" + pluginName + "/" + pluginName + ".png')";
+        newPluginAreaButton.setAttribute("data-toggle", "tooltip");
+        newPluginAreaButton.title = this.plugins[pluginName].description.tooltip;
         
         (function(pName){
             newPluginAreaButton.onclick = function()
