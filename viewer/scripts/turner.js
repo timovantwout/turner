@@ -118,14 +118,14 @@ function loadScene() {
             camera.setPosition(cameraInitPos);
             camera.setTarget(sceneCenter);
             
-            camera.lowerRadiusLimit = refDist * 0.5;
-            camera.upperRadiusLimit = refDist * 4.0;
+            camera.lowerRadiusLimit = refDist * 0.3;
+            camera.upperRadiusLimit = refDist * 1.5;
             		
             camera.minZ = camera.lowerRadiusLimit * 0.1;
             camera.maxZ = camera.upperRadiusLimit * 10.0;
 			
-            camera.wheelPrecision *= 10;
-            camera.pinchPrecision *= 10;
+            camera.wheelPrecision *= 20;
+            camera.pinchPrecision *= 20;
                         
             camera.attachControl(canvas, true);   
 			
