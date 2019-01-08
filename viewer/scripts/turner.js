@@ -24,6 +24,68 @@ else
 }
 
 
+var TurnerWheelFOVInput = function (camera, minFOV, maxFOV) {
+    this.inertialFovOffset = 0;
+    this.scaling = 0.00005;
+    this.camera = camera;
+    this.minFOV = minFOV;
+    this.maxFOV = maxFOV;
+}
+
+TurnerWheelFOVInput.prototype.getTypeName = function () {
+    return "TurnerWheelFOVInput";
+};
+
+TurnerWheelFOVInput.prototype.getSimpleName = function () {
+    return "wheelFOV";
+};
+
+TurnerWheelFOVInput.prototype.attachControl = function (element, noPreventDefault) {
+    if (!this._wheel) {
+        var camera = this.camera;
+        var _this = this;
+        
+        this._wheel = function (p, s) {
+            if (p.type !== BABYLON.PointerEventTypes.POINTERWHEEL) { return; }
+            var event = p.event;
+            var delta;
+            if (event.wheelDelta) {
+                delta = -event.wheelDelta * _this.scaling;
+            } else {
+                let deltaValue = event.deltaY || event.detail;
+                delta = -deltaValue * _this.scaling;
+            }
+            _this.inertialFovOffset += delta;    
+        }
+    
+        this._observer = camera.getScene().onPointerObservable.add(this._wheel, BABYLON.PointerEventTypes.POINTERWHEEL);
+    }
+};
+
+TurnerWheelFOVInput.prototype.detachControl = function (element) {
+    if (this._observer && element) {
+        this.camera.getScene().onPointerObservable.remove(this._observer);
+        this._observer = null;
+        this._wheel = null;
+    }
+};
+
+TurnerWheelFOVInput.prototype.checkInputs = function () {
+    if(this.inertialFovOffset != 0)
+    {
+        this.camera.fov += this.inertialFovOffset;
+        this.camera.fov = Math.max(this.minFOV, Math.min(this.maxFOV, this.camera.fov));
+    
+        this.inertialFovOffset *= this.camera.inertia;
+        if (Math.abs(this.inertialFovOffset) < BABYLON.Epsilon) {
+            this.inertialFovOffset = 0;
+        }
+    }
+};
+
+
+
+
 function loadScene() {
     if (engine) {
         engine.dispose();
@@ -109,9 +171,26 @@ function loadScene() {
             var radius = 3;
             
             camera = new BABYLON.ArcRotateCamera("camera", alpha, beta, radius, BABYLON.Vector3.Zero(), sceneObj);
+          
             
+            camera.inputs.removeByType("ArcRotateCameraMouseWheelInput");
+
+            // fov = 2 * arctan(frame_size / (focal_len * 2))
+            // focal_len = h x W D / fov
+            // tan (fov/2) = (d/2)/f
+            // f = (d/2)/tan(fov/2)
+            var minFOV = 13.7 * Math.PI / 180; // 100mm
+            var maxFOV = 46.4 * Math.PI / 180; //  28mm
+            var turnerInput = new TurnerWheelFOVInput(camera, minFOV, maxFOV);
+            camera.inputs.add(turnerInput);
+
+
             var sceneCenter = new BABYLON.Vector3(0,0,0);//bbCenter.multiplyByFloats(scaleFactor, scaleFactor, scaleFactor);
                         
+
+            // setting a typical 35mm focal length on 35mm film
+            camera.fov = 0.66;
+
             var refDist       = (0.5 * refScale) / Math.tan(0.5 * camera.fov);
             var cameraInitPos = sceneCenter.add(new BABYLON.Vector3(0,0, refDist));
                         
@@ -120,7 +199,7 @@ function loadScene() {
             
             camera.lowerRadiusLimit = refDist * 0.3;
             camera.upperRadiusLimit = refDist * 1.5;
-            		
+
             camera.minZ = camera.lowerRadiusLimit * 0.1;
             camera.maxZ = camera.upperRadiusLimit * 10.0;
 			
@@ -129,11 +208,10 @@ function loadScene() {
                         
             camera.attachControl(canvas, true);   
 			
-			
 			// setup environment
-			sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData("images/environment.dds", sceneObj);    
-			
-			currentSkyboxScale     = 4.0 * camera.upperRadiusLimit;
+			sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData("images/environment.dds", sceneObj);
+
+        	currentSkyboxScale     = 4.0 * camera.upperRadiusLimit;
 			currentSkyboxBlurLevel = 0.5;
 			
 			currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
