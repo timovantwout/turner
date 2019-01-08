@@ -23,6 +23,19 @@ else
 	});
 }
 
+var viewerIsReadyCallbacks = [];
+
+var viewerReady = false;
+
+function emitViewerReady()
+{
+    viewerReady = true;
+    
+    for (var i = 0; i < viewerIsReadyCallbacks.length; ++i)
+    {
+        viewerIsReadyCallbacks[i]();
+    }
+};
 
 function loadScene() {
     if (engine) {
@@ -138,6 +151,7 @@ function loadScene() {
 			
 			currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
 
+            emitViewerReady();
 
             engine.runRenderLoop(function () {
                 sceneObj.render();
@@ -151,6 +165,28 @@ function loadScene() {
 /************************ VIEWER API ************************/
 /************************************************************/
 
+/**
+ * Tells whether the viewer is already initialized.
+ */
+var viewerIsReady = function()
+{
+    return viewerReady;
+};
+ 
+/**
+ * Adds a callback that is executed whenever the viewer is ready.
+ * If the viewer is already ready, it is executed right away.
+ */
+var addIsReadyCallback = function(callback)
+{
+    viewerIsReadyCallbacks.push(callback);
+    
+    if (viewerIsReady())
+    {
+        callback();
+    }
+}; 
+ 
 /**
  * switches the display of the 3D environment on or off
  */
@@ -170,7 +206,28 @@ var toggle3DBackground = function(toggled)
 /************************************************************/
 
 /**
- * switches the display of the given element on or off
+ * Sets the 3D environment map to be used, must be a ".dds"
+ * or ".env" file compatible with BabylonJS.
+ */
+var setEnvironmentMap = function(envFile)
+{
+    if (sceneObj.environmentTexture)
+    {
+        sceneObj.environmentTexture.dispose();
+    }
+    sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData(envFile, sceneObj);    			    
+    
+    if (currentSkybox != null)
+    {
+        currentSkybox.dispose();
+        currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
+    }    
+};
+
+/************************************************************/
+
+/**
+ * Switches the display of the given element on or off
  */
 var toggleElementVisibility = function(elementID, toggled)
 {

@@ -115,9 +115,7 @@ var coreUIDesign = function()
     //---------------------------------------------------------------------------------------------------------
     
     this.init = function()
-    {
-        var viewer  = turnerVECMain.viewerAPI;
-        
+    {        
         return true;
     }
 };

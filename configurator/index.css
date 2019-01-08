@@ -377,3 +377,48 @@ input:checked + .slider:before
   border: 0;
   border-radius: 24px;
 }
+
+/********* image selection *********/
+
+.imagecollection-container
+{
+    background: #111;    
+    padding: 6px;                        
+    display: table;
+    width: 100%;   
+    border-radius: 6px;
+}    
+.imagecollection-element
+{
+    float: left;
+    margin: 6px;
+    width:  100px;                    
+    height: 100px;
+    background-size: cover;     
+    background-color: #333;
+    border: 1px solid #333;
+}  
+.imagecollection-activeelement
+{                        
+    border: 1px solid #777;
+}
+.imagecollection-elementlabel
+{
+    position: relative;
+    top:0;
+    left:0;
+    color: white;
+    background-color: #333;
+    font-size: 70%;
+    opacity: 0.85;
+    text-align: center;
+}
+.imagecollection-activeelement, .imagecollection-element:hover
+{
+    background-color: #555;
+}
+.imagecollection-activeelement > .imagecollection-elementlabel,
+.imagecollection-element:hover > .imagecollection-elementlabel
+{
+    opacity: 1.0;                        
+}

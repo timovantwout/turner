@@ -132,14 +132,7 @@ var turnerVEC = function()
     };
     
     //---------------------------------------------------------------------------------------------------------
-         /*<div class="uiElemContainer">
-                        <span class="label-text">Cool Value</span>
-                        <span class="help-button" data-toggle="tooltip" title="" data-original-title="Specifies cool range"></span>                        
-                        <span class="valueslider-container">
-                            <span class="valueslider-text"><span id="mytextDisplay">3.75</span></span>
-                            <input type="range" min="1" max="100" value="50" class="valueslider" id="myRange">
-                        </span>
-                    </div>*/
+
     this.genSliderHTML = function(pluginUIElemObj)
     {
         var outerElem = document.createElement("div");
@@ -192,6 +185,80 @@ var turnerVEC = function()
     };
     
     //---------------------------------------------------------------------------------------------------------
+         
+    this.genImageSelectorHTML = function(pluginUIElemObj)
+    {
+        var outerElem = document.createElement("div");        
+        outerElem.classList.add("uiElemContainer");
+        
+        var labelTextElem = document.createElement("span");
+        var helpElem      = document.createElement("span");
+        var imgCContainer = document.createElement("div");
+        
+        labelTextElem.classList.add("label-text");
+        labelTextElem.innerText = pluginUIElemObj.labelText;
+        outerElem.appendChild(labelTextElem);
+
+        helpElem.classList.add("help-button");
+        helpElem.setAttribute("data-toggle", "tooltip");
+        helpElem.title = pluginUIElemObj.tooltipText;
+        outerElem.appendChild(helpElem);
+        
+        outerElem.appendChild(document.createElement("br"));
+        
+        imgCContainer.classList.add("imagecollection-container");
+        imgCContainer.classList.add("clearfix");
+        imgCContainer.id = pluginUIElemObj.id;
+        outerElem.appendChild(imgCContainer);
+
+        var collectionElems = pluginUIElemObj.content;
+
+        var imageCElem;
+        var imageLElem;
+        var i = 0;
+        var initialSelectionElem = null;
+        for (; i < collectionElems.length; ++i)
+        {
+            imageCElem = document.createElement("div");
+            imageCElem.classList.add("imagecollection-element");
+            imageCElem.style.backgroundImage = "url('" + collectionElems[i].url + "')";
+            imageCElem.id = imgCContainer.id + "_" + collectionElems[i].name;
+            imgCContainer.appendChild(imageCElem);
+            
+            (function(rootID, selectedID, selectedName, callback){
+                imageCElem.onclick =  function()
+                {                    
+                    var oldActiveElem = document.querySelector("#" + rootID + " > .imagecollection-activeelement");
+                    oldActiveElem.classList.remove("imagecollection-activeelement");
+                    
+                    var newActiveElem = document.querySelector("#" + rootID + " > #" + selectedID);
+                    newActiveElem.classList.add("imagecollection-activeelement");       
+                    
+                    callback.call(newActiveElem, selectedName);
+                };
+            })(imgCContainer.id, imageCElem.id, collectionElems[i].name, pluginUIElemObj.callback);
+            
+            imageLElem = document.createElement("div");
+            imageLElem.classList.add("imagecollection-elementlabel");
+            imageLElem.innerHTML = collectionElems[i].displayName;
+            imageCElem.appendChild(imageLElem);
+            
+            // activate first element by default, check for specified element
+            if (i == 0 || collectionElems[i].name == pluginUIElemObj.initialSelection)
+            {
+                imageCElem.classList.add("imagecollection-activeelement");                
+                if (initialSelectionElem)
+                {
+                    initialSelectionElem.classList.remove("imagecollection-activeelement");
+                }            
+                initialSelectionElem = imageCElem;
+            }
+        }
+                       
+        return outerElem;
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
     
     this.addPluginUIElement = function(pluginUIElemObj, pluginUIAreaElem)
     {
@@ -211,7 +278,10 @@ var turnerVEC = function()
                 break;
             case "slider":
                 pluginUIAreaElem.appendChild(this.genSliderHTML(pluginUIElemObj));
-                break;                        
+                break;  
+            case "image-selector":
+                pluginUIAreaElem.appendChild(this.genImageSelectorHTML(pluginUIElemObj));                
+                break;
             default:
                 console.error("Plugin UI element type \"" + pluginUIElemObj.type + "\" is not a known type.");
                 break;
@@ -237,29 +307,31 @@ var turnerVEC = function()
     
     this.loadPlugins = function()
     {
-        var retVal = false;
-        
         for (var pluginName in this.plugins)
         {
             if (this.plugins.hasOwnProperty(pluginName))
             {
-                // perform plugin-specific initialization
-                retVal = this.plugins[pluginName].init();
+                (function(piName)
+                {
+                    that.viewerAPI.addIsReadyCallback(function(){
+                        // perform plugin-specific initialization
+                        var retVal = that.plugins[piName].init();    
+                        if (retVal)
+                        {   
+                            console.log("Plugin \"" + piName + "\" loaded successfully.");
+                        }
+                        else
+                        {
+                            console.error("Error initializing plugin \"" + piName + "\".");
+                        }                
+                    });
+                })(pluginName);
                 
-                if (retVal)
-                {
-                    // add the plugin's main button / icon to the UI
-                    this.addPluginArea(pluginName);
-                    
-                    // populate the plugin's area with its own UI elements
-                    this.populatePluginArea(pluginName);
-                    
-                    console.log("Plugin \"" + pluginName + "\" loaded successfully.");
-                }
-                else
-                {
-                    console.error("Error initializing plugin \"" + pluginName + "\".");
-                }
+                // add the plugin's main button / icon to the UI
+                this.addPluginArea(pluginName);
+                
+                // populate the plugin's area with its own UI elements
+                this.populatePluginArea(pluginName);
             }
         }
     };

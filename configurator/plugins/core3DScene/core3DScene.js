@@ -13,10 +13,38 @@ var core3DScene = function()
     };
     
     //---------------------------------------------------------------------------------------------------------
+    //                                        plugin variables
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.environments = [
+                           {
+                            "name"        : "hollywood",
+                            "url"         : "environments/hollywood/hollywood.png",
+                            "displayName" : "Hollywood"
+                           },
+                           {
+                             "name"        : "studio_softboxes",
+                             "url"         : "environments/studio_softboxes/studio_softboxes.png",
+                             "displayName" : "Studio Softboxes"
+                           },
+                           {
+                             "name"        : "runyon_canyon",
+                             "url"         : "environments/runyon_canyon/runyon_canyon.png",
+                             "displayName" : "Runyon Canyon"
+                           }
+                        ];
+                        
+    this.initialEnvironment = "studio_softboxes";
+    
+    //---------------------------------------------------------------------------------------------------------
     //                                    plugin UI element callbacks
     //---------------------------------------------------------------------------------------------------------
     
-   
+    this.skyboxChanged = function(selectedName)
+    {
+        var viewer = turnerVECMain.viewerAPI;
+        viewer.setEnvironmentMap("../configurator/environments/" + selectedName + "/" + selectedName + ".dds");
+    };
         
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
@@ -31,6 +59,15 @@ var core3DScene = function()
         {
             "type"      : "text",
             "text"      : "Configure the 360° lighting environment."
+        },
+        {
+            "type"             : "image-selector",
+            "id"               : "envmap-image-selector",
+            "content"          : this.environments,
+            "initialSelection" : this.initialEnvironment,
+            "callback"         : this.skyboxChanged,
+            "tooltipText"      : "Selects a 360° lighting environment", 
+            "labelText"        : "Environment"
         },
         {
             "type" : "spacing"
@@ -49,7 +86,19 @@ var core3DScene = function()
     
     this.init = function()
     {
-        var viewer  = turnerVECMain.viewerAPI;
+        var viewer = turnerVECMain.viewerAPI;
+        
+        var eName;
+        var i = 0;
+        for (; i < this.environments.length; ++i)
+        {
+            eName = this.environments[i].name;
+            if (eName == this.initialEnvironment)
+            {
+                viewer.setEnvironmentMap("../configurator/environments/" + eName + "/" + eName + ".dds");
+                break;
+            }
+        }
         
         return true;
     }
