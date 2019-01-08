@@ -34,7 +34,8 @@ var core3DScene = function()
                            }
                         ];
                         
-    this.initialEnvironment = "studio_softboxes";
+    this.initialEnvironment     = "studio_softboxes";
+    this.initialSkyboxSharpness = 0.5;
     
     //---------------------------------------------------------------------------------------------------------
     //                                    plugin UI element callbacks
@@ -45,7 +46,15 @@ var core3DScene = function()
         var viewer = turnerVECMain.viewerAPI;
         viewer.setEnvironmentMap("../configurator/environments/" + selectedName + "/" + selectedName + ".dds");
     };
-        
+      
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.skyboxSharpnessSliderToggled = function(event)
+    {
+        var viewer = turnerVECMain.viewerAPI;
+        viewer.setSkyboxSharpness(this.value);
+    };
+    
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
     //---------------------------------------------------------------------------------------------------------
@@ -58,16 +67,27 @@ var core3DScene = function()
         },        
         {
             "type"      : "text",
-            "text"      : "Configure the 360° lighting environment."
+            "text"      : "Configure the 360° lighting environment and, if visible, the appearance of the skybox."
         },
         {
             "type"             : "image-selector",
-            "id"               : "envmap-image-selector",
+            "id"               : "core3DScene_envmapSelector",
             "content"          : this.environments,
             "initialSelection" : this.initialEnvironment,
             "callback"         : this.skyboxChanged,
             "tooltipText"      : "Selects a 360° lighting environment", 
             "labelText"        : "Environment"
+        },
+        {
+            "id"          : "core3DScene_skyboxSharpnessSlider",
+            "type"        : "slider",
+            "minValue"    : 0.0,
+            "maxValue"    : 1.0,
+            "step"        : 0.1,
+            "initValue"   : this.initialSkyboxSharpness,
+            "callback"    : this.skyboxSharpnessSliderToggled,
+            "tooltipText" : "Specifies the sharpness of the visualized 3D skybox", 
+            "labelText"   : "Skybox Sharpness"
         },
         {
             "type" : "spacing"
@@ -95,10 +115,12 @@ var core3DScene = function()
             eName = this.environments[i].name;
             if (eName == this.initialEnvironment)
             {
-                viewer.setEnvironmentMap("../configurator/environments/" + eName + "/" + eName + ".dds");
+                viewer.setEnvironmentMap("../configurator/environments/" + eName + "/" + eName + ".dds");                
                 break;
             }
         }
+        
+        viewer.setSkyboxSharpness(this.initialSkyboxSharpness);
         
         return true;
     }

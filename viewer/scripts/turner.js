@@ -1,8 +1,9 @@
 ﻿var sceneObj               = null;
+var renderPipeline         = null;
+var postProcess            = null;
 var currentSkybox          = null;
 var currentSkyboxScale     = null;
 var currentSkyboxBlurLevel = null;
-
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
@@ -229,6 +230,16 @@ function loadScene() {
 			
 			currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
 
+            renderPipeline            = new BABYLON.DefaultRenderingPipeline("default", true, sceneObj, [camera]);            
+            renderPipeline.fxaaEnabled  = true;
+            renderPipeline.bloomEnabled = true;
+            renderPipeline.bloomWeight  = 0.5;
+            
+            // setup post processing            
+            postProcess = renderPipeline.imageProcessing;
+            postProcess.contrast = 1.0;
+            postProcess.exposure = 1.0;
+                        
             emitViewerReady();
 
             engine.runRenderLoop(function () {
@@ -250,7 +261,9 @@ var viewerIsReady = function()
 {
     return viewerReady;
 };
- 
+
+/************************************************************/
+  
 /**
  * Adds a callback that is executed whenever the viewer is ready.
  * If the viewer is already ready, it is executed right away.
@@ -264,7 +277,9 @@ var addIsReadyCallback = function(callback)
         callback();
     }
 }; 
- 
+
+/************************************************************/
+
 /**
  * switches the display of the 3D environment on or off
  */
@@ -279,6 +294,49 @@ var toggle3DBackground = function(toggled)
         currentSkybox.dispose();
         currentSkybox = null;
     }
+};
+
+/************************************************************/
+
+var setSkyboxSharpness = function(value)
+{
+    currentSkyboxBlurLevel = 1.0 - value;
+    
+    if (currentSkybox)
+    {
+        currentSkybox.dispose();
+        currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
+    }
+};
+
+/************************************************************/
+
+var setContrast = function(value)
+{
+    postProcess.contrast = value;
+};
+
+/************************************************************/
+
+var setExposure = function(value)
+{
+    postProcess.exposure = value;
+};
+
+/************************************************************/
+
+var setBloom = function(value)
+{
+    if (value > 0.0)
+    {
+        renderPipeline.bloomEnabled = true;
+    }
+    else
+    {
+        renderPipeline.bloomEnabled = false;
+    }
+    
+    renderPipeline.bloomWeight = value;
 };
 
 /************************************************************/

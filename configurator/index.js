@@ -169,6 +169,7 @@ var turnerVEC = function()
         sliderElem.id       = pluginUIElemObj.id;
         sliderElem.min      = pluginUIElemObj.minValue;
         sliderElem.max      = pluginUIElemObj.maxValue;
+        sliderElem.step     = pluginUIElemObj.step;
         sliderElem.value    = pluginUIElemObj.initValue;        
         (function(valTextElemID)
         {
