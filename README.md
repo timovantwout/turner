@@ -1,7 +1,7 @@
 *DRAFT STAGE: This entire README page and the project name are both WIP.*
 
 
-# Turner
+# Turner 3D
 A responsive and easy-to-use 3D item viewer for the modern Web.
 
 This is how one can embed it, with default settings:
@@ -14,9 +14,9 @@ This is how one can embed it, with default settings:
 * You can find the plain viewer [here](https://dgg3d.github.io/turner/viewer/)
 
 
-# What is Turner?
+# What is Turner 3D?
 
-Turner is a responsive and easy-to-use 3D item viewer for the modern Web, along with an intuitive configuration backend. It allows to seamlessly publish 3D models embedded into common Web pages, without any plugins, and it runs on all common Web-capable devices (including smart phones and tablets). Through the extensible configuration backend, 3D model owners can setup the exact user experience and 3D tools they desire for their end users.
+Turner 3D is a responsive and easy-to-use 3D item viewer for the modern Web, along with an intuitive configuration backend. It allows to seamlessly publish 3D models embedded into common Web pages, without any plugins, and it runs on all common Web-capable devices (including smart phones and tablets). Through the extensible configuration backend, 3D model owners can setup the exact user experience and 3D tools they desire for their end users.
 
 Primary use cases include:
 
@@ -38,11 +38,11 @@ Setting the technical scope more precisely, Turner is ...
 * compatible with CDNs (see [examples](...)) for worldwide asset delivery at maximum speed.
 
 
-Turner is *not* ...
+Turner 3D is *not* ...
 
 * a 3D rendering framework itself (but supports the use of different underlying 3D renderers).
 
-* a viewing tool for AR or VR use cases.
+* a viewing tool for AR use cases.
 
 * an "out-of-core" viewing tool for massive 3D models.
 
@@ -50,7 +50,7 @@ Turner is *not* ...
 # Which formats are supported?
 
 Currently, the only accepted input format for turner is *glTF* (.glTF and .glb).
-We believe in open, royalty-free standards, and glTF - the "jpeg for 3D" - fits very well with the mission of Turner: becoming a broadly used, open-source item viewer for the modern Web.
+We believe in open, royalty-free standards, and glTF - the "jpeg for 3D" - fits very well with the mission of Turner 3D: becoming a broadly used, open-source item viewer for the modern Web.
 
 
 # What is the team behind Turner?
@@ -58,5 +58,7 @@ We believe in open, royalty-free standards, and glTF - the "jpeg for 3D" - fits 
 Turner is an open-source project, driven by the world-wide 3D community.
 
 This GitHub repository is maintained by [DGG](https://github.com/DGG3D) and ..., ensuring long-term stability of the software. Initial contributors are
+* [DGG](https://darmstadt-graphics.com/)
+* [Fraunhofer IGD](https://www.igd.fraunhofer.de/en) / [CultLab3D](https://www.cultlab3d.de/)
 * ...
-* ...
+
