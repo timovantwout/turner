@@ -1,4 +1,5 @@
 ﻿var sceneObj               = null;
+var camera                 = null;
 var renderPipeline         = null;
 var postProcess            = null;
 var currentSkybox          = null;
@@ -307,6 +308,22 @@ var setSkyboxSharpness = function(value)
         currentSkybox.dispose();
         currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
     }
+};
+
+/************************************************************/
+
+var setMinVerticalCameraAngle = function(value)
+{
+    // map from [-90°, 90°] to [PI, 0]
+    camera.upperBetaLimit = ((180.0 - (value + 90)) / 180.0) * Math.PI;
+};
+
+/************************************************************/
+
+var setMaxVerticalCameraAngle = function(value)
+{
+    // map from [-90°, 90°] to [PI, 0]
+    camera.lowerBetaLimit = ((180.0 - (value + 90)) / 180.0) * Math.PI;
 };
 
 /************************************************************/
