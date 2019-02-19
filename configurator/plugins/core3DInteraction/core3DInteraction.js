@@ -13,15 +13,56 @@ var core3DInteraction = function()
     };
     
     //---------------------------------------------------------------------------------------------------------
-    //                                    plugin UI element callbacks
+    //                                        plugin variables
     //---------------------------------------------------------------------------------------------------------
     
-   
+    var that = this;
+    
+    this.minCameraAngleDeg = -90.0;
+    this.maxCameraAngleDeg =  90.0;    
+    
+    //---------------------------------------------------------------------------------------------------------
+    //                                    plugin UI element callbacks
+    //---------------------------------------------------------------------------------------------------------
+
+    this.minCameraAngleSliderToggled = function(event)
+    {
+        var v =  parseFloat(this.value);
         
+        if (v > that.maxCameraAngleDeg)
+        {
+            v = that.maxCameraAngleDeg;
+            this.value = v;
+        }
+        
+        that.minCameraAngleDeg = v;
+        
+        var viewer = turnerVECMain.viewerAPI;        
+        viewer.setMinVerticalCameraAngle(v);
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.maxCameraAngleSliderToggled = function(event)
+    {
+        var v =  parseFloat(this.value);
+        
+        if (v < that.minCameraAngleDeg)
+        {
+            v = that.minCameraAngleDeg;
+            this.value = v;
+        }
+        
+        that.maxCameraAngleDeg = v;
+        
+        var viewer = turnerVECMain.viewerAPI;        
+        viewer.setMaxVerticalCameraAngle(v);
+    };
+
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
     //---------------------------------------------------------------------------------------------------------
-        
+
     this.uiElements =
     [    
         {
@@ -31,11 +72,40 @@ var core3DInteraction = function()
         {
             "type"      : "text",
             "text"      : "Configure which 3D interactions are possible, and how they are individually constrained."
+        },
+        {
+            "type"      : "spacing"
+        },        
+        {
+            "type"      : "text",
+            "text"      : "Configure minimum and maximum vertical camera angles."
+        },
+        {
+            "id"          : "core3DInteraction_minCameraAngleSlider",
+            "type"        : "slider",
+            "minValue"    : -90.0,
+            "maxValue"    : 90.0,
+            "step"        : 1.0,
+            "initValue"   : this.minCameraAngleDeg,
+            "callback"    : this.minCameraAngleSliderToggled,
+            "tooltipText" : "Specifies the minimum vertical camera angle, in degrees", 
+            "labelText"   : "Minimum Angle"
+        },
+        {
+            "id"          : "core3DInteraction_maxCameraAngleSlider",
+            "type"        : "slider",
+            "minValue"    : -90.0,
+            "maxValue"    : 90.0,
+            "step"        : 1.0,
+            "initValue"   : this.maxCameraAngleDeg,
+            "callback"    : this.maxCameraAngleSliderToggled,
+            "tooltipText" : "Specifies the maximum vertical camera angle, in degrees", 
+            "labelText"   : "Maximum Angle"
         }
     ];
-        
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.init = function()
     {
         var viewer  = turnerVECMain.viewerAPI;
