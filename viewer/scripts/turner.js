@@ -1,4 +1,6 @@
-﻿var sceneObj               = null;
+﻿var maxImgDimPx = 80;
+
+var sceneObj               = null;
 var camera                 = null;
 var renderPipeline         = null;
 var postProcess            = null;
@@ -400,6 +402,78 @@ var toggleElementVisibility = function(elementID, toggled)
     {
         elem.style.visibility = "hidden";
     }
+};
+
+/************************************************************/
+
+/**
+ * Sets the image to be used for the given element.
+ */
+var setElementImage = function(elementID, imageURL)
+{
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+        
+    var elemImage = new Image();
+    
+    elemImage.crossOrigin = "anonymous";
+    
+    elemImage.onload = function()
+    {        
+        var maxW   = maxImgDimPx;
+        var maxH   = maxImgDimPx;
+        var width  = elemImage.width;
+        var height = elemImage.height;
+
+        // image needs rescaling
+        if (width > maxW || height > maxH)
+        {
+            if (width > height)
+            {
+                if (width > maxW)
+                {
+                    height *= maxW / width;
+                    width = maxW;
+                }
+            }
+            else
+            {
+                if (height > maxH)
+                {
+                    width *= maxH / height;
+                    height = maxH;
+                }
+            }
+            
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(elemImage, 0, 0);
+        
+            ctx.width  = width;
+            ctx.height = height;
+            
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(elemImage, 0, 0, width, height);
+
+            var rescaledImgDataURL     = canvas.toDataURL("image/png");
+            elem.style.backgroundImage = "url('" + rescaledImgDataURL + "')";
+        }
+        // image does not need rescaling
+        else
+        {
+            elem.style.backgroundImage = "url('" + imageURL + "')";    
+        }
+        
+        elem.style.width  = width  + "px";
+        elem.style.height = height + "px";
+    };
+    
+    elemImage.src = imageURL;    
 };
 
 /************************************************************/
