@@ -54,24 +54,30 @@ var coreUIDesign = function()
       
     //---------------------------------------------------------------------------------------------------------
 
-    this.companyLogoChooserTriggered = function(event)
-    {        
-        //...
-    };      
+    this.companyLogoChooserTriggered = function(event, dataURL)
+    {   
+        var viewer = turnerVECMain.viewerAPI;
+        
+        viewer.setElementImage("company-logo", dataURL);
+    };
     
     //---------------------------------------------------------------------------------------------------------
 
-    this.productLogoChooserTriggered = function(event)
+    this.productLogoChooserTriggered = function(event, dataURL)
     {        
-        //...
-    };    
+        var viewer = turnerVECMain.viewerAPI;
+        
+        viewer.setElementImage("product-logo", dataURL);
+    };
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.company3DIconChooserTriggered = function(event)
+    this.company3DIconChooserTriggered = function(event, dataURL)
     {        
-        //...
-    };      
+        var viewer = turnerVECMain.viewerAPI;
+        
+        viewer.setElementImage("three-d-icon", dataURL);
+    };
         
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements

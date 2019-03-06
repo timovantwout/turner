@@ -177,7 +177,7 @@ var turnerVEC = function()
             {
                 var valTextElem = document.getElementById(valTextElemID);
                 valTextElem.innerHTML = this.value;
-                pluginUIElemObj.callback.call(this, event);
+                pluginUIElemObj.callback.call(that, event);
             }
         })(pluginUIElemObj.id + "_valueTextElem");
         vsContElem.appendChild(sliderElem);
@@ -266,10 +266,11 @@ var turnerVEC = function()
         var outerElem = document.createElement("div");        
         outerElem.classList.add("uiElemContainer");
         
-        var labelTextElem = document.createElement("span");
-        var helpElem      = document.createElement("span");
-        var imgCContainer = document.createElement("div");        
-        var buttonElem    = document.createElement("input");
+        var labelTextElem      = document.createElement("span");
+        var helpElem           = document.createElement("span");
+        var imgCContainer      = document.createElement("div");        
+        var buttonElem         = document.createElement("label");
+        var invisibleFileInput = document.createElement("input");
         
         labelTextElem.classList.add("label-text");
         labelTextElem.innerText = pluginUIElemObj.labelText;
@@ -281,12 +282,35 @@ var turnerVEC = function()
         outerElem.appendChild(helpElem);
         
         buttonElem.classList.add("browse-button");        
-        buttonElem.type     = "button";
-        buttonElem.value    = "Browse ...";
-        buttonElem.id       = pluginUIElemObj.id;
-        buttonElem.checked  = pluginUIElemObj.initValue;
-        buttonElem.onchange = pluginUIElemObj.callback;
+        buttonElem.type      = "button";
+        buttonElem.innerText = "Browse ...";
+        buttonElem.id        = pluginUIElemObj.id;
+        buttonElem.checked   = pluginUIElemObj.initValue;        
         outerElem.appendChild(buttonElem);
+        
+        invisibleFileInput.style.display = "none";        
+        invisibleFileInput.type          = "file";
+        invisibleFileInput.accept        = "image/gif, image/jpeg, image/png";
+        (function(buttonElemID)
+        {
+            invisibleFileInput.onchange = function(event)
+            {
+                var reader = new FileReader();
+                reader.onload = function(e)
+                {                    
+                    var imgDataURL = e.target.result;
+                    
+                    // Here, we could access some element to show a thumbnail and / or a text (filename)
+                    //var buttonElem = document.getElementById(buttonElemID);
+                    //...                                
+                    //var fileBrowserVal = event.srcElement.value.replace("C:\\fakepath\\", "");
+                
+                    pluginUIElemObj.callback.call(that, event, imgDataURL);                    
+                };                
+                reader.readAsDataURL(event.srcElement.files[0]);                
+            }
+        })(pluginUIElemObj.id);
+        buttonElem.appendChild(invisibleFileInput);        
         
         return outerElem;
     }    
