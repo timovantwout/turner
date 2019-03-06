@@ -51,6 +51,27 @@ var coreUIDesign = function()
                
         viewer.toggle3DBackground(toggled);
     };
+      
+    //---------------------------------------------------------------------------------------------------------
+
+    this.companyLogoChooserTriggered = function(event)
+    {        
+        //...
+    };      
+    
+    //---------------------------------------------------------------------------------------------------------
+
+    this.productLogoChooserTriggered = function(event)
+    {        
+        //...
+    };    
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.company3DIconChooserTriggered = function(event)
+    {        
+        //...
+    };      
         
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
@@ -67,20 +88,20 @@ var coreUIDesign = function()
             "text"      : "Configure visibility, image and links for different logos, and drag them around on the canvas."
         },
         {
-            "id"          : "coreUIDesign_displayCompanyLogoToggle",
+            "id"          : "coreUIDesign_companyLogoChooser",
             "type"        : "toggle",
             "initValue"   : true,
             "callback"    : this.displayCompanyLogoToggled,
             "tooltipText" : "Toggles display of the company logo", 
-            "labelText"   : "Company Logo"
-        },
+            "labelText"   : "Show Company Logo"
+        },      
         {
             "id"          : "coreUIDesign_displayProductLogoToggle",
             "type"        : "toggle",
             "initValue"   : true,
             "callback"    : this.displayProductLogoToggled,
             "tooltipText" : "Toggles display of the product logo", 
-            "labelText"   : "Product Logo"
+            "labelText"   : "Show Product Logo"
         },
         {
             "id"          : "coreUIDesign_display3DIconToggle",
@@ -88,7 +109,31 @@ var coreUIDesign = function()
             "initValue"   : true,
             "callback"    : this.display3DIconToggled,
             "tooltipText" : "Toggles display of the \"3D\" indicator", 
-            "labelText"   : "\"3D\" Icon"
+            "labelText"   : "Show \"3D\" Icon"
+        },
+        {
+            "id"          : "coreUIDesign_displayCompanyLogoToggle",
+            "type"        : "image-configurator",
+            "initValue"   : "images/company-logo.png",
+            "callback"    : this.companyLogoChooserTriggered,
+            "tooltipText" : "Selects the image to be used for the company logo",
+            "labelText"   : "Company Logo Image"
+        },
+        {
+            "id"          : "coreUIDesign_productLogoChooser",
+            "type"        : "image-configurator",
+            "initValue"   : "images/product-logo.png",
+            "callback"    : this.productLogoChooserTriggered,
+            "tooltipText" : "Selects the image to be used for the product logo",
+            "labelText"   : "Product Logo Image"
+        },        
+        {
+            "id"          : "coreUIDesign_3DIconChooser",
+            "type"        : "image-configurator",
+            "initValue"   : "images/3d-icon.svg",
+            "callback"    : this.company3DIconChooserTriggered,
+            "tooltipText" : "Selects the image to be used for the 3D icon",
+            "labelText"   : "3D Icon Image"
         },
         {
             "type" : "spacing"

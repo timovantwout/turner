@@ -253,6 +253,33 @@ html, body
     background-size: 18px;
 }
 
+.browse-button
+{
+    position: relative;
+    float: right;
+    border: none;
+    color: white;
+    padding: 3px 9px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9em;
+    background-color: #349f47;
+}
+
+.browse-button:hover
+{
+    cursor: pointer;   
+    border: none;    
+    background-color: #57c76af0;
+}
+
+.browse-button:focus
+{
+    border: none;
+    outline:none;
+}
+
 /****** toggle switch *********/
 
 .switch

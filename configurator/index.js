@@ -261,6 +261,38 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
+    this.genImageConfiguratorHTML = function(pluginUIElemObj)
+    {        
+        var outerElem = document.createElement("div");        
+        outerElem.classList.add("uiElemContainer");
+        
+        var labelTextElem = document.createElement("span");
+        var helpElem      = document.createElement("span");
+        var imgCContainer = document.createElement("div");        
+        var buttonElem    = document.createElement("input");
+        
+        labelTextElem.classList.add("label-text");
+        labelTextElem.innerText = pluginUIElemObj.labelText;
+        outerElem.appendChild(labelTextElem);
+
+        helpElem.classList.add("help-button");
+        helpElem.setAttribute("data-toggle", "tooltip");
+        helpElem.title = pluginUIElemObj.tooltipText;
+        outerElem.appendChild(helpElem);
+        
+        buttonElem.classList.add("browse-button");        
+        buttonElem.type     = "button";
+        buttonElem.value    = "Browse ...";
+        buttonElem.id       = pluginUIElemObj.id;
+        buttonElem.checked  = pluginUIElemObj.initValue;
+        buttonElem.onchange = pluginUIElemObj.callback;
+        outerElem.appendChild(buttonElem);
+        
+        return outerElem;
+    }    
+    
+    //---------------------------------------------------------------------------------------------------------
+    
     this.addPluginUIElement = function(pluginUIElemObj, pluginUIAreaElem)
     {
         switch (pluginUIElemObj.type)
@@ -283,6 +315,9 @@ var turnerVEC = function()
             case "image-selector":
                 pluginUIAreaElem.appendChild(this.genImageSelectorHTML(pluginUIElemObj));                
                 break;
+            case "image-configurator":
+                pluginUIAreaElem.appendChild(this.genImageConfiguratorHTML(pluginUIElemObj));                
+                break;                
             default:
                 console.error("Plugin UI element type \"" + pluginUIElemObj.type + "\" is not a known type.");
                 break;
