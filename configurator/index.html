@@ -38,7 +38,8 @@
     
   <body onload="turnerVECMain.init();">
     <!-- BEGIN CONFIGURATOR UI -->
-    <div class="container-fluid main-container">
+    
+    <div class="container-fluid main-container">        
         <div class="row layout-stack">            
             <!-- 3D viewer -->
             <div id="viewer-container" class="order-sm-2 col-sm-auto">
@@ -61,13 +62,19 @@
                              onclick="turnerVECMain.setModelButtonClicked()"
                              class="vecToolsButton"
                              title="Set the 3D model to be displayed">
-                             <span>Set Model</span>
+                             <span>Model ...</span>
+                        </div>
+                        <div id="demoModeButton"
+                             onclick="turnerVECMain.toggleDemoModeButtonClicked()"
+                             class="vecToolsButton"
+                             title="Toggle demo mode for testing links and buttons">
+                             <span>Demo Mode</span>                             
                         </div>
                         <div id="resizeViewerButton"
                               onclick="turnerVECMain.toggleViewerSizeButtonClicked()"
                               class="vecToolsButton"
                               title="Shrink/grow viewer area for testing">
-                              <span id="resizeViewerButtonLabel">Resize View</span>
+                              <span id="resizeViewerButtonLabel">Resize Mode</span>                              
                          </div>
                         <div id="getZIPButton"
                              onclick="turnerVECMain.getZIPButtonClicked()"
@@ -75,14 +82,13 @@
                              title="Download the current scene as ready-to-use HTML viewer">
                              <img src="images/baseline-get_app-24px.svg"><span>ZIP</span>
                          </div>                         
-                    </div>
-                    <!-- viewer configuration toolbar -->
-                    <div id="toolSelection">
-                    </div>
-                    <div id="toolSelectionWhitespace"></div>                    
+                    </div>                    
+                    <!-- viewer configuration toolbar -->                    
+                    <div id="controls-disabled-overlay"></div>
+                    <div id="toolSelection"></div>
+                    <div id="toolSelectionWhitespace"></div>
                 </div>                
-                <div id="tools-collapse">
-                </div>
+                <div id="tools-collapse"></div>                
             </div>
         </div>
     </div>

@@ -1,5 +1,14 @@
 ﻿var maxImgDimPx = 80;
 
+var elementIDToLink = 
+{
+    "company-logo" : "https://www.darmstadt-graphics.com/",
+    "product-logo" : "https://dgg3d.github.io/turner"
+};
+
+var buttonsEnabled = true;
+
+
 var sceneObj               = null;
 var camera                 = null;
 var renderPipeline         = null;
@@ -7,6 +16,7 @@ var postProcess            = null;
 var currentSkybox          = null;
 var currentSkyboxScale     = null;
 var currentSkyboxBlurLevel = null;
+
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
@@ -382,6 +392,44 @@ var setEnvironmentMap = function(envFile)
 /************************************************************/
 
 /**
+ * Switches the interactive buttons on or off.
+ * Useful for switching between editing and preview mode.
+ */
+var toggleButtons = function(val)
+{
+    if (val != buttonsEnabled)
+    {
+        buttonsEnabled = val;
+     
+        for (var p in elementIDToLink)
+        {
+            if (elementIDToLink.hasOwnProperty(p))
+            {
+                var elem = document.getElementById(p);        
+                if (!elem)
+                {
+                    continue;
+                }
+                if (buttonsEnabled)
+                {           
+                    elem.setAttribute("href", elementIDToLink[p]);
+                }
+                else
+                {
+                    elem.setAttribute("href", "javascript:void(0)");
+                }
+            }
+        }
+    }
+    else
+    {
+        buttonsEnabled = val;
+    }
+};
+
+/************************************************************/
+
+/**
  * Switches the display of the given element on or off
  */
 var toggleElementVisibility = function(elementID, toggled)
@@ -476,8 +524,33 @@ var setElementImage = function(elementID, imageURL)
     elemImage.src = imageURL;    
 };
 
+
 /************************************************************/
 
+/**
+ * Sets the link to be used for the given element.
+ */
+var setElementLink = function(elementID, linkURL)
+{
+    elementIDToLink[elementID] = linkURL;
+    
+    if (buttonsEnabled)
+    {
+        var elementID = elementID;
+        
+        var elem = document.getElementById(elementID);
+        
+        if (!elem)
+        {
+            console.error("Cannot find element with ID \"" + elementID + "\".");
+            return;
+        }
+        
+        elem.setAttribute("href", linkURL);
+    }    
+};
+
+/************************************************************/
 /**
  * positions the given 2D element through CSS, using the given
  * values for sides and px offsets

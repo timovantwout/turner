@@ -11,6 +11,13 @@ var coreUIDesign = function()
     };
     
     //---------------------------------------------------------------------------------------------------------
+    //                                        plugin variables
+    //---------------------------------------------------------------------------------------------------------
+
+    this.initialCompanyLink = "http://dgg3d.com";
+    this.initialProductLink = "https://dgg3d.github.io/turner/";
+
+    //---------------------------------------------------------------------------------------------------------
     //                                    plugin UI element callbacks
     //---------------------------------------------------------------------------------------------------------
     
@@ -59,8 +66,13 @@ var coreUIDesign = function()
         var viewer = turnerVECMain.viewerAPI;
         
         viewer.setElementImage("company-logo", dataURL);
+        
+        // assuming one changes the logo, the link should potentiall be changed as well
+        // in order to prevent a case where users accidentally link to the default with their custom logo,
+        // simply clear the link on every logo change, for now
+        turnerVECMain.setInputElemValue("coreUIDesign_companyLogoLinkInput", "");
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
 
     this.productLogoChooserTriggered = function(event, dataURL)
@@ -68,15 +80,38 @@ var coreUIDesign = function()
         var viewer = turnerVECMain.viewerAPI;
         
         viewer.setElementImage("product-logo", dataURL);
+        
+        // assuming one changes the logo, the link should potentiall be changed as well
+        // in order to prevent a case where users accidentally link to the default with their custom logo,
+        // simply clear the link on every logo change, for now
+        turnerVECMain.setInputElemValue("coreUIDesign_productLogoLinkInput", "");
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
     
-    this.company3DIconChooserTriggered = function(event, dataURL)
+    this.three3DIconChooserTriggered = function(event, dataURL)
     {        
         var viewer = turnerVECMain.viewerAPI;
         
         viewer.setElementImage("three-d-icon", dataURL);
+    };
+    
+     //---------------------------------------------------------------------------------------------------------
+
+    this.companyLogoLinkInputChanged = function(event)
+    {   
+        var viewer = turnerVECMain.viewerAPI;
+        
+        viewer.setElementLink("company-logo", event.srcElement.value);
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+
+    this.productLogoLinkInputChanged = function(event, dataURL)
+    {        
+        var viewer = turnerVECMain.viewerAPI;
+        
+        viewer.setElementLink("product-logo", event.srcElement.value);
     };
         
     //---------------------------------------------------------------------------------------------------------
@@ -137,9 +172,25 @@ var coreUIDesign = function()
             "id"          : "coreUIDesign_3DIconChooser",
             "type"        : "image-configurator",
             "initValue"   : "images/3d-icon.svg",
-            "callback"    : this.company3DIconChooserTriggered,
+            "callback"    : this.three3DIconChooserTriggered,
             "tooltipText" : "Selects the image to be used for the 3D icon",
             "labelText"   : "3D Icon Image"
+        },
+        {
+            "id"          : "coreUIDesign_companyLogoLinkInput",
+            "type"        : "text-input",
+            "initValue"   : this.initialCompanyLink,
+            "callback"    : this.companyLogoLinkInputChanged,
+            "tooltipText" : "Configure the link to be used behind the company logo, if any - leave this empty for no link",
+            "labelText"   : "Company Logo Link"
+        },
+        {
+            "id"          : "coreUIDesign_productLogoLinkInput",
+            "type"        : "text-input",
+            "initValue"   : this.initialProductLink,
+            "callback"    : this.productLogoLinkInputChanged,
+            "tooltipText" : "Configure the link to be used behind the product logo, if any - leave this empty for no link",
+            "labelText"   : "Product Logo Link"
         },
         {
             "type" : "spacing"
@@ -162,7 +213,7 @@ var coreUIDesign = function()
             "labelText"   : "3D Scene Background"
         }
     ];
-        
+
     //---------------------------------------------------------------------------------------------------------
     
     this.init = function()

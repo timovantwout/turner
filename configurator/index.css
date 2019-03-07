@@ -1,207 +1,3 @@
-html, body
-{
-    border: 0;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    font-family: sans-serif;
-    user-select: none;
-}
-
-.main-container
-{
-    border: 0;
-    margin: 0;
-    padding: 0;
-    width:  100%;
-    height: 100%;
-    display: flex;
-}
-
-.layout-stack
-{
-    border: 0;
-    margin: 0;
-    padding: 0;
-    width:  100%;
-    height: 100%;
-}
-
-.tools-container
-{
-    border: 0;
-    margin: 0;
-    padding: 0;
-    background: white;
-    min-width: 340px;
-    -webkit-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
-    -moz-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
-    box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
-}
-
-#tools
-{
-
-}
-
-#vecTools
-{
-    text-align: center;
-    background: linear-gradient(#349f47, #297a3b);
-}
-
-.vecToolsButton
-{
-    vertical-align: sub;
-    border: 0;
-    margin: 4px 0.5%;
-    padding: 4px 1%;
-    display: inline-block;
-    width:  30.5%;
-    height: 34px;
-    background: linear-gradient(#555, #333);
-    color: white;
-    font-size: 83%;
-    border-radius: 8px;
-}
-
-.vecToolsButton:hover
-{
-    cursor: pointer;
-    background: linear-gradient(#888, #666);
-}
-
-.vecToolsButton > span
-{
-    vertical-align: sub;
-}
-
-#getZIPButton > img
-{    
-    vertical-align: top;
-    margin-right: 2px;
-}
-
-#tools-collapse
-{
-
-}
-
-#toolSelection
-{
-    border: 0;
-    margin: 0;
-    padding: 0 8px;
-    height: 78px;
-    background: linear-gradient(#333, #555);
-}
-
-#toolSelectionWhitespace
-{
-    width: 100%;
-    height: 12px;
-}
-
-.toolSelectionButton
-{   
-    border: 0;
-    margin: 14px 8px 0 0;
-    padding: 0;
-    display: inline-flex;
-    width: 64px;
-    height: 64px;
-    background: #aaa;
-    -webkit-box-shadow: inset 0px -10px 20px -8px rgba(100,100,100,1);
-    -moz-box-shadow: inset 0px -10px 20px -8px rgba(100,100,100,1);
-    box-shadow: inset 0px -10px 20px -8px rgba(100,100,100,1);
-}
-
-.toolSelectionButton:hover
-{
-    background: #eee;
-}
-
-.activeToolButton, .activeToolButton:hover
-{       
-    background-color: white;    
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-}
-
-#viewer-container
-{
-    display: inline-flex;
-    text-align: center;
-    border: 0;
-    margin: 0;
-    padding: 0;    
-    flex: 1;
-    min-width:  220px;
-    min-height: 300px;
-    background: url('images/workspace-background.jpg');    
-    overflow: hidden;
-}
-
-#viewer-frame-wrapper
-{
-    width:  100%;
-    height: 100%;    
-    display: inline-flex;    
-}
-
-#viewer
-{
-    border:  0;
-    margin:  0;
-    padding: 0;
-    width:  100%;
-    height: 100%;
-    min-width:  300px;    
-    min-height: 300px;    
-}
-
-.guideline-h-t, .guideline-h-b, .guideline-v-l, .guideline-v-r
-{
-    position:   absolute;
-    visibility: hidden;
-    opacity: 0.75;
-}
-
-.guideline-h-t, .guideline-h-b
-{    
-    height: 0px;
-    width: 100%;
-}
-
-.guideline-h-t
-{   
-    border-top: 1px dashed #333;
-    margin-top: -1px;
-}
-
-.guideline-h-b
-{   
-    border-bottom: 1px dashed #333;    
-}
-
-.guideline-v-l, .guideline-v-r
-{    
-    width: 0px;
-    height: 100%;    
-}
-
-.guideline-v-l
-{   
-    border-left: 1px dashed #333;
-    margin-left: -1px;
-}
-
-.guideline-v-r
-{       
-    border-right: 1px dashed #333;
-}
 
 /************** Generic UI elements **************/
 
@@ -251,6 +47,20 @@ html, body
     vertical-align: text-top;
     background-image: url('images/baseline-help-24px.svg');
     background-size: 18px;
+}
+
+.text-input
+{
+    max-width: 160px;
+    float: right;
+    color: #333;
+    font-size: 0.8em;
+    padding: 0.2em;    
+}
+
+.text-input:focus
+{
+    outline: 1px solid #57c76af0;
 }
 
 .browse-button
@@ -448,4 +258,239 @@ input:checked + .slider:before
 .imagecollection-element:hover > .imagecollection-elementlabel
 {
     opacity: 1.0;                        
+}
+
+
+/************** Non-Generic UI elements **************/
+
+
+html, body
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: sans-serif;
+    user-select: none;
+}
+
+.main-container
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width:  100%;
+    height: 100%;
+    display: flex;
+}
+
+.layout-stack
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width:  100%;
+    height: 100%;
+}
+
+.tools-container
+{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: white;
+    min-width: 340px;
+    -webkit-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
+    -moz-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
+    box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
+}
+
+#tools
+{
+
+}
+
+#vecTools
+{
+    text-align: center;
+    background: #999;
+}
+
+.vecToolsButton, .vecToolsButton-triggered
+{
+    vertical-align: sub;
+    border: 0;
+    margin: 3px 0.5%;
+    padding: 5px 1%;
+    display: inline-block;
+    width:  23%;
+    height: 34px;
+    background: linear-gradient(#555, #333);
+    color: white;
+    font-size: 79%;
+    border-radius: 8px;
+}
+
+.vecToolsButton:hover
+{
+    cursor: pointer;
+    background: linear-gradient(#777, #666);
+}
+
+.vecToolsButton-triggered
+{
+    background: linear-gradient(#3cab50, #349f47);
+}
+
+.vecToolsButton-triggered:hover
+{
+    background: linear-gradient(#4cce63, #3cab50);
+}
+
+.vecToolsButton > span
+{
+    vertical-align: sub;
+}
+
+#getZIPButton > img
+{    
+    vertical-align: top;
+    margin-right: 2px;
+}
+
+#tools-collapse
+{
+
+}
+
+#controls-disabled-overlay
+{
+    position: absolute;
+    visibility: hidden;
+    left: 0;
+    top: 42px;
+    width: 100%;
+    height: calc(100% - 42px);
+    height: -o-calc(100% - 42px);
+    height: -webkit-calc(100% - 42px);
+    height: -moz-calc(100% - 42px);
+    background: white;
+    opacity: 0.9;
+    z-index: 1;
+}
+
+#toolSelection
+{
+    border: 0;
+    margin: 0;
+    padding: 0 8px;
+    height: 78px;
+    background: linear-gradient(#333, #555);
+}
+
+#toolSelectionWhitespace
+{
+    width: 100%;
+    height: 12px;
+}
+
+.toolSelectionButton
+{   
+    border: 0;
+    margin: 14px 8px 0 0;
+    padding: 0;
+    display: inline-flex;
+    width: 64px;
+    height: 64px;
+    background: #aaa;
+    -webkit-box-shadow: inset 0px -10px 20px -8px rgba(100,100,100,1);
+    -moz-box-shadow: inset 0px -10px 20px -8px rgba(100,100,100,1);
+    box-shadow: inset 0px -10px 20px -8px rgba(100,100,100,1);
+}
+
+.toolSelectionButton:hover
+{
+    background: #eee;
+}
+
+.activeToolButton, .activeToolButton:hover
+{       
+    background-color: white;    
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+#viewer-container
+{
+    display: inline-flex;
+    text-align: center;
+    border: 0;
+    margin: 0;
+    padding: 0;    
+    flex: 1;
+    min-width:  220px;
+    min-height: 300px;
+    background: url('images/workspace-background.jpg');    
+    overflow: hidden;
+}
+
+#viewer-frame-wrapper
+{
+    width:  100%;
+    height: 100%;    
+    display: inline-flex;    
+}
+
+#viewer
+{
+    border:  0;
+    margin:  0;
+    padding: 0;
+    width:  100%;
+    height: 100%;
+    min-width:  300px;    
+    min-height: 300px;    
+}
+
+.guideline-h-t, .guideline-h-b, .guideline-v-l, .guideline-v-r
+{
+    position:   absolute;
+    visibility: hidden;
+    opacity: 0.75;
+}
+
+.guideline-h-t, .guideline-h-b
+{    
+    height: 0px;
+    width: 100%;
+}
+
+.guideline-h-t
+{   
+    border-top: 1px dashed #333;
+    margin-top: -1px;
+}
+
+.guideline-h-b
+{   
+    border-bottom: 1px dashed #333;    
+}
+
+.guideline-v-l, .guideline-v-r
+{    
+    width: 0px;
+    height: 100%;    
+}
+
+.guideline-v-l
+{   
+    border-left: 1px dashed #333;
+    margin-left: -1px;
+}
+
+.guideline-v-r
+{       
+    border-right: 1px dashed #333;
 }

@@ -95,6 +95,38 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
+    this.genTextInputHTML = function(pluginUIElemObj)
+    {
+        var outerElem = document.createElement("div");
+        outerElem.classList.add("uiElemContainer");
+        
+        var labelTextElem = document.createElement("span");
+        var helpElem      = document.createElement("span");
+        var switchElem    = document.createElement("label");
+        var inputElem     = document.createElement("input");
+        
+        labelTextElem.classList.add("label-text");
+        labelTextElem.innerText = pluginUIElemObj.labelText;
+        outerElem.appendChild(labelTextElem);
+
+        helpElem.classList.add("help-button");
+        helpElem.setAttribute("data-toggle", "tooltip");
+        helpElem.title = pluginUIElemObj.tooltipText;
+        outerElem.appendChild(helpElem);
+           
+        inputElem.classList.add("text-input");
+        inputElem.setAttribute("spellcheck", "false");
+        inputElem.type     = "text";
+        inputElem.id       = pluginUIElemObj.id;
+        inputElem.value    = pluginUIElemObj.initValue;
+        inputElem.oninput  = pluginUIElemObj.callback;
+        outerElem.appendChild(inputElem);
+        
+        return outerElem;
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
     this.genToggleSwitchHTML = function(pluginUIElemObj)
     {
         var outerElem = document.createElement("div");
@@ -330,6 +362,9 @@ var turnerVEC = function()
             case "text":
                 pluginUIAreaElem.appendChild(this.genExplanationTextHTML(pluginUIElemObj));
                 break;
+            case "text-input":
+                pluginUIAreaElem.appendChild(this.genTextInputHTML(pluginUIElemObj));
+                break;                
             case "toggle":
                 pluginUIAreaElem.appendChild(this.genToggleSwitchHTML(pluginUIElemObj));
                 break;
@@ -446,6 +481,24 @@ var turnerVEC = function()
                 break;
             }
         }
+        
+        // disable viewer buttons (edit mode)
+        this.viewerAPI.toggleButtons(false);
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+   
+    this.setInputElemValue = function(elementID, value)
+    {    
+        var elem = document.getElementById(elementID);
+        
+        if (!elem)
+        {
+            console.error("Cannot find element with ID \"" + elementID + "\".");
+            return;
+        }
+     
+        elem.value = value;
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -492,7 +545,7 @@ var turnerVEC = function()
     //---------------------------------------------------------------------------------------------------------
     //                                      callback functions
     //---------------------------------------------------------------------------------------------------------
-        
+
     this.setActivePlugin = function(pluginName)
     {
         var pluginButtonElem;
@@ -534,8 +587,44 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
+    this.toggleDemoModeButtonClicked = function()
+    {
+        var demoModeButtonElem  = document.getElementById('demoModeButton');
+        var controlsOverlayElem = document.getElementById('controls-disabled-overlay');
+        
+        if (demoModeButtonElem.classList.contains("vecToolsButton-triggered"))
+        {
+            demoModeButtonElem.classList.remove("vecToolsButton-triggered");    
+        
+            // going to edit mode        
+            that.viewerAPI.toggleButtons(false);            
+            controlsOverlayElem.style.visibility = "hidden";
+        }        
+        else
+        {
+            demoModeButtonElem.classList.add("vecToolsButton-triggered");
+         
+            // going to demo mode         
+            that.viewerAPI.toggleButtons(true);
+            controlsOverlayElem.style.visibility = "visible";
+        }        
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
     this.toggleViewerSizeButtonClicked = function()
     {
+        var resizeModeButtonElem = document.getElementById('resizeViewerButton');
+        
+        if (resizeModeButtonElem.classList.contains("vecToolsButton-triggered"))
+        {
+            resizeModeButtonElem.classList.remove("vecToolsButton-triggered");    
+        }
+        else
+        {
+            resizeModeButtonElem.classList.add("vecToolsButton-triggered");
+        }        
+        
         var viewerWrapElem = document.getElementById('viewer-frame-wrapper');
         var viewerElem     = document.getElementById('viewer');
         var labelElem      = document.getElementById('resizeViewerButtonLabel');
@@ -584,6 +673,13 @@ var turnerVEC = function()
     
     this.elementPointerDownCallback = function(event)
     {
+        var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        if (inDemoMode)
+        {
+            return;
+        }
+        
         that.stopDragging();
                 
         that.dragStartX = event.screenX;
@@ -610,6 +706,13 @@ var turnerVEC = function()
     
     this.pointerUpCallback = function(event)
     {
+        var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        if (inDemoMode)
+        {
+            return;
+        }
+        
         that.stopDragging();
     };
     
@@ -617,6 +720,13 @@ var turnerVEC = function()
     
     this.pointerLeaveCallback = function(event)
     {
+        var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        if (inDemoMode)
+        {
+            return;
+        }
+        
         // we could stop dragging here, but we don't
         //instead, we clamp the draggable range to allow "sliding" elements on an edge
     };
@@ -625,6 +735,13 @@ var turnerVEC = function()
     
     this.pointerMoveCallback = function(event)
     {
+        var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        if (inDemoMode)
+        {
+            return;
+        }
+        
         if (that.dragElementID == "")
         {
             return;
