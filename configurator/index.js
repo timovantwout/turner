@@ -18,6 +18,101 @@ var turnerVEC = function()
     this.dragElemStartY = -1;
     this.guidelineElems = [];
     
+    this.zippableDirContent = 
+    [    
+        {
+            name : "turner.custom.css",
+            type : "file"
+        },
+        {
+            name : "turner.custom.js",
+            type : "file"
+        },
+        {
+            name : "scene.gltf",
+            type : "file"
+        },
+        {
+            name : "scene.data.bin",
+            type : "file"
+        },
+        {
+            name : "material0_basecolor.jpg",
+            type : "file"
+        },
+        {
+            name : "material0_normal.jpg",
+            type : "file"
+        },
+        {
+            name : "index.html",
+            type : "file"
+        },
+        {
+            name : "images",
+            type : "directory",
+            content :
+            [
+                {
+                    name : "3d-icon.svg",
+                    type : "file"
+                },
+                {
+                    name : "company-logo.png",
+                    type : "file"
+                },
+                {
+                    name : "product-logo.png",
+                    type : "file"
+                },
+                {
+                    name : "environment.dds",
+                    type : "file"
+                }
+            ]
+        },
+        {
+            name : "scripts",
+            type : "directory",
+            content :
+            [
+                {
+                    name : "babylon.js",
+                    type : "file"
+                },
+                {
+                    name : "pep.min.js",
+                    type : "file"
+                },
+                {
+                    name : "turner.js",
+                    type : "file"
+                }
+            ]
+        }
+    ];
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.contentURLtoUint8Array = function(url, callback)
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "arraybuffer";
+
+        xhr.onload = function (oEvent)
+        {
+            var arrayBuffer = xhr.response;
+            if (arrayBuffer)
+            {
+                var byteArray = new Uint8Array(arrayBuffer);
+                callback(byteArray);
+            }
+        };
+
+        xhr.send(null);
+    };
+    
     //---------------------------------------------------------------------------------------------------------
     
     this.addPluginArea = function(pluginName)
@@ -574,15 +669,64 @@ var turnerVEC = function()
     this.getZIPButtonClicked = function()
     {
         var zip = new JSZip();
-
-        //TODO: add the real viewer content,
-        //      including the current modifications from this configurator
-        zip.file("Hello.txt", "Hello World\n");
         
-        zip.generateAsync({type:"blob"})
-        .then(function(content) {
-            saveAs(content, "turner-viewer.zip");
-        });
+        var fileCount = 0;
+        
+        // callback to be invoked for each added file
+        // as soon as all files have been added, create & download the ZIP
+        var fileAddedToZIP = function()
+        {
+            --fileCount;            
+            
+            if (fileCount == 0)
+            {
+                zip.generateAsync({type:"blob"}).then(function(content)
+                {
+                    saveAs(content, "turner-viewer.zip");
+                });   
+            }            
+        };
+        // callback that adds a file download, asynchronously,
+        // and makes sure "fileAddedToZIP" is called as soon as the download is finished
+        var addFileDownloadCallback = function(localFileURL)
+        {
+            that.contentURLtoUint8Array("../viewer/" + localFileURL,
+                function(uint8Data)
+                {
+                    zip.file(localFileURL, uint8Data);                            
+                    fileAddedToZIP();
+                }
+            );
+        };
+        // callback that can simply be used to count files
+        var countFile = function(localFileURL)
+        {
+            ++fileCount;
+        };
+        
+        // function that recursively walks over the directory content list and invokes the given function for each file
+        var addDirectoryContent = function(contentList, basePath, processFileCallback)
+        {
+            for (var i = 0; i < contentList.length; ++i)
+            {
+                var elem = contentList[i];
+                
+                if (elem.type == "file")
+                {
+                    processFileCallback(basePath + "/" + elem.name);                    
+                }
+                else if (elem.type == "directory")
+                {
+                    addDirectoryContent(elem.content, basePath + elem.name, processFileCallback);
+                }
+            }
+        };
+
+        // count files
+        addDirectoryContent(that.zippableDirContent, "", countFile);
+
+        // asynchronously add files to zip and download result when complete
+        addDirectoryContent(that.zippableDirContent, "", addFileDownloadCallback);
     };
     
     //---------------------------------------------------------------------------------------------------------
