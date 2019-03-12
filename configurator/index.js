@@ -54,7 +54,7 @@ var turnerVEC = function()
             content :
             [
                 {
-                    name : "3d-icon.svg",
+                    name : "three-d-icon.png",
                     type : "file"
                 },
                 {
@@ -112,7 +112,7 @@ var turnerVEC = function()
 
         xhr.send(null);
     };
-    
+        
     //---------------------------------------------------------------------------------------------------------
     
     this.addPluginArea = function(pluginName)
@@ -686,20 +686,65 @@ var turnerVEC = function()
                 });   
             }            
         };
+        
+        // collect css and js customizations from all plugins
+        var turnerCustomCSS = "";
+        var turnerCustomJS  = "";
+        
+        for (var pluginName in that.plugins)
+        {
+            if (that.plugins.hasOwnProperty(pluginName))
+            {
+                turnerCustomCSS += that.plugins[pluginName].getCustomCSS();
+                turnerCustomJS  += that.plugins[pluginName].getCustomJS();
+            }
+        }
+                
         // callback that adds a file download, asynchronously,
         // and makes sure "fileAddedToZIP" is called as soon as the download is finished
-        var addFileDownloadCallback = function(localFileURL)
+        var addFileDownloadCallback = function(filename, path)
         {
-            that.contentURLtoUint8Array("../viewer/" + localFileURL,
+            var fullFilename = path + "/" + filename;
+            
+            // special cases
+            if (filename == "three-d-icon.png" ||
+                filename == "company-logo.png" ||
+                filename == "product-logo.png"   )
+            {                
+                var filenameWithoutExtension = filename.split(".")[0];
+                var customURL                = that.viewerAPI.getElementImageCustomURL(filenameWithoutExtension);
+                
+                if (customURL != "")
+                {
+                    // we know that custom data is always converted to PNG
+                    that.contentURLtoUint8Array(customURL,
+                        function(uint8Data)
+                        {
+                            zip.file(fullFilename, uint8Data);
+                            fileAddedToZIP();
+                        }
+                    );
+                    
+                    return;
+                }
+            }
+            else if (filename == "turner.custom.css" ||
+                     filename == "turner.custom.js"    )
+            {
+                return;
+            }
+                        
+            // general case            
+            that.contentURLtoUint8Array("../viewer/" + fullFilename,
                 function(uint8Data)
                 {
-                    zip.file(localFileURL, uint8Data);                            
+                    zip.file(fullFilename, uint8Data);
                     fileAddedToZIP();
                 }
             );
         };
         // callback that can simply be used to count files
-        var countFile = function(localFileURL)
+        var countFile = function(filename, path)
         {
             ++fileCount;
         };
@@ -713,7 +758,7 @@ var turnerVEC = function()
                 
                 if (elem.type == "file")
                 {
-                    processFileCallback(basePath + "/" + elem.name);                    
+                    processFileCallback(elem.name, basePath);
                 }
                 else if (elem.type == "directory")
                 {
@@ -725,8 +770,14 @@ var turnerVEC = function()
         // count files
         addDirectoryContent(that.zippableDirContent, "", countFile);
 
-        // asynchronously add files to zip and download result when complete
+        // asynchronously add files to zip, except for turner.custom.css/js
         addDirectoryContent(that.zippableDirContent, "", addFileDownloadCallback);
+        
+        // asynchronously add  turner.custom.css/js and download result when complete
+        zip.file("turner.custom.css", turnerCustomCSS);
+        fileAddedToZIP();        
+        zip.file("turner.custom.js",  turnerCustomJS);
+        fileAddedToZIP();
     };
     
     //---------------------------------------------------------------------------------------------------------

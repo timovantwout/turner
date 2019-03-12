@@ -8,6 +8,12 @@ var elementIDToLink =
 
 var buttonsEnabled = true;
 
+var elementImageCustomization = 
+{
+    "company-logo" : "",
+    "product-logo" : "",
+    "three-d-icon" : ""
+};
 
 var sceneObj               = null;
 var camera                 = null;
@@ -497,33 +503,43 @@ var setElementImage = function(elementID, imageURL)
                     height = maxH;
                 }
             }
-            
-            var canvas = document.createElement('canvas');
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(elemImage, 0, 0);
+        }
         
-            ctx.width  = width;
-            ctx.height = height;
-            
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(elemImage, 0, 0, width, height);
-
-            var rescaledImgDataURL     = canvas.toDataURL("image/png");
-            elem.style.backgroundImage = "url('" + rescaledImgDataURL + "')";
-        }
-        // image does not need rescaling
-        else
-        {
-            elem.style.backgroundImage = "url('" + imageURL + "')";    
-        }
+        var canvas = document.createElement('canvas');
+        canvas.setAttribute("width",  width);
+        canvas.setAttribute("height", height);
+        
+        var ctx = canvas.getContext("2d");        
+        ctx.width  = width;
+        ctx.height = height;
+        ctx.drawImage(elemImage, 0, 0, width, height);
+        
+        var rescaledImgDataURL     = canvas.toDataURL("image/png");
+        elem.style.backgroundImage = "url('" + rescaledImgDataURL + "')";
+        
+        elementImageCustomization[elementID] = rescaledImgDataURL;
         
         elem.style.width  = width  + "px";
         elem.style.height = height + "px";
     };
     
-    elemImage.src = imageURL;    
+    elemImage.src = imageURL;
 };
 
+/************************************************************/
+
+var getElementImageCustomURL = function(elementID)
+{
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+    
+    return elementImageCustomization[elementID];
+};
 
 /************************************************************/
 
@@ -571,10 +587,47 @@ var setElementPosition = function(elementID,
     var otherHSide = (horizontalSide == "left") ? "right"  : "left";
     var otherVSide = (verticalSide   == "top")  ? "bottom" : "top";
     
-    elem.style[otherHSide]     = "";
-    elem.style[otherVSide]     = "";
+    elem.style[otherHSide]     = "inherit";
+    elem.style[otherVSide]     = "inherit";
     elem.style[horizontalSide] = horizontalOffset;
     elem.style[verticalSide]   = verticalOffset;
+};
+
+/************************************************************/
+
+var getElementCustomCSS = function(elementID, propertyIgnoreList)
+{
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+    
+    var cssStr = "";
+    
+    for (var i = 0; i < elem.style.length; ++i)
+    {
+        var propertyName = elem.style[i];
+        
+        var ignoreElem = false;
+        for (var j = 0; j < propertyIgnoreList.length; ++j)
+        {
+            if (propertyIgnoreList[j] == propertyName)
+            {
+                ignoreElem = true;
+                break;
+            }
+        }
+        
+        if (!ignoreElem)
+        {
+            cssStr += propertyName + ":" + elem.style[propertyName] + ";";
+        }
+    }
+        
+    return cssStr;
 };
 
 /************************************************************/

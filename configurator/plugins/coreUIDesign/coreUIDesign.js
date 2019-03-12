@@ -220,6 +220,41 @@ var coreUIDesign = function()
     {        
         return true;
     }
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.getCustomCSS = function()
+    {
+        var viewer = turnerVECMain.viewerAPI;
+            
+        var customCSS = "";
+        
+        var applyCustomCSS = function(elementID, cssContent)
+        {
+            var elemCustomCSS = viewer.getElementCustomCSS(elementID, ["background-image"]);
+            if (elemCustomCSS != "")
+            {
+                cssContent += "#" + elementID + "{" + elemCustomCSS + "}";   
+            }                                    
+            return cssContent;
+        };
+        
+        customCSS = applyCustomCSS("three-d-icon", customCSS);
+        customCSS = applyCustomCSS("company-logo", customCSS);
+        customCSS = applyCustomCSS("product-logo", customCSS);
+    
+        return customCSS;
+    }
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.getCustomJS = function()
+    {
+        return "";
+    }
+    
+    //---------------------------------------------------------------------------------------------------------
+    
 };
 
 turnerVECMain.plugins.coreUIDesign = new coreUIDesign();
