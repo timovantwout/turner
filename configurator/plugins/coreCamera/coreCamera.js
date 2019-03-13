@@ -15,10 +15,12 @@ var coreCamera = function()
     //---------------------------------------------------------------------------------------------------------
     //                                        plugin variables
     //---------------------------------------------------------------------------------------------------------
-        
-    this.initialContrast = 1.0;
-    this.initialExposure = 1.0;    
-    this.initialBloom    = 0.2;
+
+    var that = this;
+    
+    this.cameraContrast = 1.0;
+    this.cameraExposure = 1.0;    
+    this.cameraBloom    = 0.2;
     
     //---------------------------------------------------------------------------------------------------------
     //                                    plugin UI element callbacks    
@@ -26,26 +28,32 @@ var coreCamera = function()
     
     this.contrastSliderToggled = function(event)
     {
+        that.cameraContrast = event.srcElement.value;
+        
         var viewer = turnerVECMain.viewerAPI;        
-        viewer.setContrast(this.value);
+        viewer.setContrast(that.cameraContrast);
     };
     
     //---------------------------------------------------------------------------------------------------------
     
     this.exposureSliderToggled = function(event)
     {
+        that.cameraExposure = event.srcElement.value;
+        
         var viewer = turnerVECMain.viewerAPI;
-        viewer.setExposure(this.value);
+        viewer.setExposure(that.cameraExposure);
     };
     
     //---------------------------------------------------------------------------------------------------------
     
     this.bloomSliderToggled = function(event)
     {
+        that.cameraBloom = event.srcElement.value;
+        
         var viewer = turnerVECMain.viewerAPI;
-        viewer.setBloom(this.value);
+        viewer.setBloom(that.cameraBloom);
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
     //---------------------------------------------------------------------------------------------------------
@@ -77,7 +85,7 @@ var coreCamera = function()
             "minValue"    : 0.5,
             "maxValue"    : 2.0,
             "step"        : 0.1,
-            "initValue"   : this.initialContrast,
+            "initValue"   : this.cameraContrast,
             "callback"    : this.contrastSliderToggled,
             "tooltipText" : "Specifies the image contrast", 
             "labelText"   : "Contrast"
@@ -88,7 +96,7 @@ var coreCamera = function()
             "minValue"    : 0.5,
             "maxValue"    : 2.0,
             "step"        : 0.1,
-            "initValue"   : this.initialExposure,            
+            "initValue"   : this.cameraExposure,            
             "callback"    : this.exposureSliderToggled,
             "tooltipText" : "Specifies the exposure (affects HDR brightness & bloom)", 
             "labelText"   : "Exposure"
@@ -99,7 +107,7 @@ var coreCamera = function()
             "minValue"    : 0.0,
             "maxValue"    : 1.0,
             "step"        : 0.1,
-            "initValue"   : this.initialBloom,
+            "initValue"   : this.cameraBloom,
             "callback"    : this.bloomSliderToggled,
             "tooltipText" : "Specifies the amount of HDR bloom (around regions of high exposure)", 
             "labelText"   : "HDR Bloom"
@@ -112,8 +120,8 @@ var coreCamera = function()
     {
         var viewer  = turnerVECMain.viewerAPI;
         
-        viewer.setContrast(this.initialContrast);
-        viewer.setExposure(this.initialExposure);
+        viewer.setContrast(this.cameraContrast);
+        viewer.setExposure(this.cameraExposure);
         
         return true;
     }
@@ -129,7 +137,13 @@ var coreCamera = function()
     
     this.getCustomJS = function()
     {
-        return "";
+        var jsStr = "";
+
+        jsStr += "setContrast(" + that.cameraContrast + ");\n";
+        jsStr += "setExposure(" + that.cameraExposure + ");\n";
+        jsStr += "setBloom("    + that.cameraBloom    + ");\n";
+
+        return jsStr;
     }
     
     //---------------------------------------------------------------------------------------------------------
