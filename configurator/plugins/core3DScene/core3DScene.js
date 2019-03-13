@@ -16,6 +16,8 @@ var core3DScene = function()
     //                                        plugin variables
     //---------------------------------------------------------------------------------------------------------
     
+    var that = this;
+    
     this.environments = [
                            {
                             "name"        : "hollywood",
@@ -34,8 +36,8 @@ var core3DScene = function()
                            }
                         ];
                         
-    this.initialEnvironment     = "studio_softboxes";
-    this.initialSkyboxSharpness = 0.5;
+    this.currentEnvironment = "hollywood";
+    this.skyboxSharpness    = 0.5;
     
     //---------------------------------------------------------------------------------------------------------
     //                                    plugin UI element callbacks
@@ -51,8 +53,10 @@ var core3DScene = function()
     
     this.skyboxSharpnessSliderToggled = function(event)
     {
+        that.skyboxSharpness = event.srcElement.value;
+        
         var viewer = turnerVECMain.viewerAPI;
-        viewer.setSkyboxSharpness(this.value);
+        viewer.setSkyboxSharpness(that.skyboxSharpness);
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -73,7 +77,7 @@ var core3DScene = function()
             "type"             : "image-selector",
             "id"               : "core3DScene_envmapSelector",
             "content"          : this.environments,
-            "initialSelection" : this.initialEnvironment,
+            "initialSelection" : this.currentEnvironment,
             "callback"         : this.skyboxChanged,
             "tooltipText"      : "Selects a 360° lighting environment", 
             "labelText"        : "Environment"
@@ -84,7 +88,7 @@ var core3DScene = function()
             "minValue"    : 0.0,
             "maxValue"    : 1.0,
             "step"        : 0.1,
-            "initValue"   : this.initialSkyboxSharpness,
+            "initValue"   : this.skyboxSharpness,
             "callback"    : this.skyboxSharpnessSliderToggled,
             "tooltipText" : "Specifies the sharpness of the visualized 3D skybox", 
             "labelText"   : "Skybox Sharpness"
@@ -113,14 +117,14 @@ var core3DScene = function()
         for (; i < this.environments.length; ++i)
         {
             eName = this.environments[i].name;
-            if (eName == this.initialEnvironment)
+            if (eName == this.currentEnvironment)
             {
                 viewer.setEnvironmentMap("../configurator/environments/" + eName + "/" + eName + ".dds");                
                 break;
             }
         }
         
-        viewer.setSkyboxSharpness(this.initialSkyboxSharpness);
+        viewer.setSkyboxSharpness(that.skyboxSharpness);
         
         return true;
     }
@@ -136,7 +140,11 @@ var core3DScene = function()
     
     this.getCustomJS = function()
     {
-        return "";
+        var jsStr = "";
+
+        jsStr += "setSkyboxSharpness(" + that.skyboxSharpness + ");\n";
+
+        return jsStr;
     }
     
     //---------------------------------------------------------------------------------------------------------
