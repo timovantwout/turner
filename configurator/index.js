@@ -305,6 +305,7 @@ var turnerVEC = function()
                 var valTextElem = document.getElementById(valTextElemID);
                 valTextElem.innerHTML = this.value;
                 pluginUIElemObj.callback.call(that, event);
+                valTextElem.innerHTML = this.value;
             }
         })(pluginUIElemObj.id + "_valueTextElem");
         vsContElem.appendChild(sliderElem);
@@ -477,9 +478,9 @@ var turnerVEC = function()
                 break;
         }
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.populatePluginArea = function(pluginName)
     {
         var plugin           = this.plugins[pluginName];    
@@ -492,9 +493,9 @@ var turnerVEC = function()
             this.addPluginUIElement(pluginUIElemObjs[i], pluginUIAreaElem);
         }
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.loadPlugins = function()
     {
         for (var pluginName in this.plugins)
@@ -525,9 +526,9 @@ var turnerVEC = function()
             }
         }
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.init = function()
     {
         var viewerVersion = "1.0";
@@ -689,7 +690,7 @@ var turnerVEC = function()
         
         // collect css and js customizations from all plugins
         var turnerCustomCSS = "";
-        var turnerCustomJS  = "";
+        var turnerCustomJS  = "addIsReadyCallback(function(){\n\n";
         
         for (var pluginName in that.plugins)
         {
@@ -699,6 +700,8 @@ var turnerVEC = function()
                 turnerCustomJS  += that.plugins[pluginName].getCustomJS();
             }
         }
+
+        turnerCustomJS += "\n});\n";
                 
         // callback that adds a file download, asynchronously,
         // and makes sure "fileAddedToZIP" is called as soon as the download is finished
@@ -723,8 +726,7 @@ var turnerVEC = function()
                             zip.file(fullFilename, uint8Data);
                             fileAddedToZIP();
                         }
-                    );
-                    
+                    );                    
                     return;
                 }
             }
@@ -732,6 +734,23 @@ var turnerVEC = function()
                      filename == "turner.custom.js"    )
             {
                 return;
+            }
+            else if (filename == "environment.dds")
+            {
+                var customEnvURL = that.viewerAPI.getEnvironmentMapCustomURL();
+                
+                if (customEnvURL != "")
+                {
+                    // we know that custom environments are always given as DDS
+                    that.contentURLtoUint8Array(customEnvURL,
+                        function(uint8Data)
+                        {
+                            zip.file(fullFilename, uint8Data);
+                            fileAddedToZIP();
+                        }
+                    );                    
+                    return;
+                }
             }
                         
             // general case            

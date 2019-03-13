@@ -15,6 +15,8 @@ var elementImageCustomization =
     "three-d-icon" : ""
 };
 
+var environmentMapCustomization = "";
+
 var sceneObj               = null;
 var camera                 = null;
 var renderPipeline         = null;
@@ -340,7 +342,7 @@ var setMinVerticalCameraAngle = function(value)
 
 var setMaxVerticalCameraAngle = function(value)
 {
-    // map from [-90°, 90°] to [PI, 0]
+    // map from [-90°, 90°] to [PI, 0]    
     camera.lowerBetaLimit = ((180.0 - (value + 90)) / 180.0) * Math.PI;
 };
 
@@ -392,7 +394,21 @@ var setEnvironmentMap = function(envFile)
     {
         currentSkybox.dispose();
         currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
-    }    
+    }
+    
+    environmentMapCustomization = envFile;
+};
+
+/************************************************************/
+
+/**
+ * If a different environment than the standard one is used,
+ * this function returns the respective URL, otherwise an
+ * empty string.
+ */
+var getEnvironmentMapCustomURL = function()
+{
+    return environmentMapCustomization;
 };
 
 /************************************************************/
