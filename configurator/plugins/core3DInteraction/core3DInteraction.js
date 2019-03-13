@@ -27,36 +27,36 @@ var core3DInteraction = function()
 
     this.minCameraAngleSliderToggled = function(event)
     {
-        var v =  parseFloat(this.value);
+        var v = parseFloat(event.srcElement.value);
         
         if (v > that.maxCameraAngleDeg)
         {
             v = that.maxCameraAngleDeg;
-            this.value = v;
+            event.srcElement.value = v;
         }
         
         that.minCameraAngleDeg = v;
         
         var viewer = turnerVECMain.viewerAPI;        
-        viewer.setMinVerticalCameraAngle(v);
+        viewer.setMinVerticalCameraAngle(that.minCameraAngleDeg);
     };
     
     //---------------------------------------------------------------------------------------------------------
     
     this.maxCameraAngleSliderToggled = function(event)
     {
-        var v =  parseFloat(this.value);
+        var v = parseFloat(event.srcElement.value);
         
         if (v < that.minCameraAngleDeg)
         {
             v = that.minCameraAngleDeg;
-            this.value = v;
+            event.srcElement.value = v;
         }
         
         that.maxCameraAngleDeg = v;
         
         var viewer = turnerVECMain.viewerAPI;        
-        viewer.setMaxVerticalCameraAngle(v);
+        viewer.setMaxVerticalCameraAngle(that.maxCameraAngleDeg);
     };
 
     //---------------------------------------------------------------------------------------------------------
@@ -124,7 +124,12 @@ var core3DInteraction = function()
     
     this.getCustomJS = function()
     {
-        return "";
+        var jsStr = "";
+        
+        jsStr += "setMinVerticalCameraAngle(" + that.minCameraAngleDeg + ");\n";
+        jsStr += "setMaxVerticalCameraAngle(" + that.maxCameraAngleDeg + ");\n";
+        
+        return jsStr;
     }
     
     //---------------------------------------------------------------------------------------------------------
