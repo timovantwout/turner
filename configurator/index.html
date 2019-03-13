@@ -34,8 +34,8 @@
     <title>Turner - Virtual Experience Configurator</title>
   
   </head>
-  
-    
+
+
   <body onload="turnerVECMain.init();">
     <!-- BEGIN CONFIGURATOR UI -->
     
@@ -58,12 +58,15 @@
                 <div id="tools">
                     <!-- VEC settings / action toolbar -->
                     <div id="vecTools">
-                        <div id="setModelButton"
-                             onclick="turnerVECMain.setModelButtonClicked()"
+                        <label id="setModelButton"                             
                              class="vecToolsButton"
                              title="Set the 3D model to be displayed">
                              <span>Model ...</span>
-                        </div>
+                             <input type     = "file"
+                                    accept   = ".glb, application/gltf-buffer"
+                                    style    = "display:none;"
+                                    onchange = "turnerVECMain.modelSelectionButtonClicked(event)">
+                        </label>
                         <div id="demoModeButton"
                              onclick="turnerVECMain.toggleDemoModeButtonClicked()"
                              class="vecToolsButton"
@@ -82,11 +85,32 @@
                              title="Download the current scene as ready-to-use HTML viewer">
                              <img src="images/baseline-get_app-24px.svg"><span>ZIP</span>
                          </div>                         
-                    </div>                    
-                    <!-- viewer configuration toolbar -->                    
+                    </div>
+
                     <div id="controls-disabled-overlay"></div>
-                    <div id="toolSelection"></div>
-                    <div id="toolSelectionWhitespace"></div>
+                    
+                    <!-- plugin type selector -->
+                    <div id="pluginTypeSelectorArea">
+                        <div id="viewerConfigButton"
+                             class="vecToolsButton vecToolsButtonAlt1-triggered"
+                             title="Configure the viewer and scene environment">
+                             Configure Viewer
+                        </div>
+                        <div id="itemConfigButton"
+                             class="vecToolsButton"
+                             title="Configure the appearance of the 3D item">
+                             Configure Item
+                         </div>
+                    </div>
+
+                    <!-- viewer configuration toolbar -->
+                    <div id="toolSelectionViewer"></div>
+                    <div class="toolSelectionWhitespace"></div>
+
+                    <!-- item configuration toolbar -->                    
+                    <div id="toolSelectionItem"></div>
+                    <div class="toolSelectionWhitespace"></div>
+
                 </div>                
                 <div id="tools-collapse"></div>                
             </div>

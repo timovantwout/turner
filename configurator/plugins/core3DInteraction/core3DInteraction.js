@@ -8,7 +8,8 @@ var core3DInteraction = function()
     
     this.description = 
     {
-        "title"   : "Camera",
+        "title"   : "3D Interaction",
+        "type"    : "ViewerConfigPlugin",
         "tooltip" : "Configure 3D interaction"
     };
     

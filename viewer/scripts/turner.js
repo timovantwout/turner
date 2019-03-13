@@ -17,7 +17,9 @@ var elementImageCustomization =
 
 var environmentMapCustomization = "";
 
+var engine                 = null;
 var sceneObj               = null;
+var mainMesh               = null;
 var camera                 = null;
 var renderPipeline         = null;
 var postProcess            = null;
@@ -25,6 +27,7 @@ var currentSkybox          = null;
 var currentSkyboxScale     = null;
 var currentSkyboxBlurLevel = null;
 
+var refScale = 3.5;
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
@@ -119,6 +122,46 @@ TurnerWheelFOVInput.prototype.checkInputs = function () {
 };
 
 
+function setupMainMesh()
+{
+    mainMesh = new BABYLON.Mesh("mainModelMesh", sceneObj);
+                        
+    var sceneBBMin = new BABYLON.Vector3( Number.MAX_VALUE,  Number.MAX_VALUE,  Number.MAX_VALUE);
+    var sceneBBMax = new BABYLON.Vector3(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE);
+            
+    sceneObj.meshes.forEach(function(mesh)
+    {
+        if (mesh !== mainMesh)
+        {
+            if (mesh.material)
+            {
+                mesh.material.forceIrradianceInFragment = true;                    
+                mesh.material.backFaceCulling           = false;
+                
+                /*if (useObjectSpaceNormalMap)
+                {
+                    mesh.material.useObjectSpaceNormalMap = true;        
+                }*/
+            }
+        
+            mesh.computeWorldMatrix(true);
+            var minBox = mesh.getBoundingInfo().boundingBox.minimumWorld;
+            var maxBox = mesh.getBoundingInfo().boundingBox.maximumWorld;
+            BABYLON.Tools.CheckExtends(minBox, sceneBBMin, sceneBBMax);
+            BABYLON.Tools.CheckExtends(maxBox, sceneBBMin, sceneBBMax);
+            
+            mesh.setParent(mainMesh);
+        }
+    });
+    
+    var centerVec   = sceneBBMax.subtract(sceneBBMin);
+    var bSphereRad  = centerVec.length() * 0.5;
+    var bbCenter    = sceneBBMin.add(centerVec.multiplyByFloats(0.5, 0.5, 0.5));          
+    var scaleFactor = refScale / (2.0 * bSphereRad);
+                
+    mainMesh.scaling = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
+    mainMesh.translate(bbCenter.negate(), BABYLON.Space.WORLD);    
+}
 
 
 function loadScene() {
@@ -130,7 +173,7 @@ function loadScene() {
     engine.enableOfflineSupport = false;
 
     var rootUrl  = "";    
-    var fileName = "scene.gltf";
+    var fileName = "scene.glb";
 
     //set the following to false in order to hide the animated loading screen
     BABYLON.SceneLoader.ShowLoadingScreen = true;
@@ -144,61 +187,29 @@ function loadScene() {
     xhr.onload = function()
     {    
         // check glTF extras for object space normals
-        var sceneJSON = JSON.parse(xhr.responseText);
+        //var sceneJSON = JSON.parse(xhr.responseText);
         
         var useObjectSpaceNormalMap = false;
         
+        //TODO: CHECK HOW WE CAN REALIZE THIS WITHOUT AN ADDITIONAL XHR
+        //      OTHERWISE, THE API FUNCTION TO LOAD MODELS BECOMES WEIRD (CAN'T ACCEPT FILE OBJECTS)
+        /*
         if (sceneJSON.materials[0] && sceneJSON.materials[0].normalTexture)
         {
             var normalTextureJSON    = sceneJSON.materials[0].normalTexture;        
-             useObjectSpaceNormalMap = normalTextureJSON.extras && normalTextureJSON.extras.objectSpaceNormals;
+            useObjectSpaceNormalMap = normalTextureJSON.extras && normalTextureJSON.extras.objectSpaceNormals;
         }
+        */
             
-        BABYLON.SceneLoader.Load(rootUrl, fileName, engine, function (scene) {
-            
+        BABYLON.SceneLoader.Load(rootUrl, fileName, engine, function (scene)
+        {   
             sceneObj = scene;
             
             sceneObj.clearColor = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0);
             
-            var mainMesh = new BABYLON.Mesh("mainModelMesh", sceneObj);
-            
-            var sceneBBMin = new BABYLON.Vector3( Number.MAX_VALUE,  Number.MAX_VALUE,  Number.MAX_VALUE);
-            var sceneBBMax = new BABYLON.Vector3(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE);
-                    
-            sceneObj.meshes.forEach(function(mesh)
-            {
-                if (mesh !== mainMesh && mesh.material)
-                {
-                    mesh.material.forceIrradianceInFragment = true;
-                
-                    mesh.material.cameraExposure          = 1.2;
-                    mesh.material.cameraContrast          = 1.5;
-                    mesh.material.backFaceCulling         = false;
-                    
-                    if (useObjectSpaceNormalMap)
-                    {
-                        mesh.material.useObjectSpaceNormalMap = true;        
-                    }
-                                        
-                    mesh.computeWorldMatrix(true);
-                    var minBox = mesh.getBoundingInfo().boundingBox.minimumWorld;
-                    var maxBox = mesh.getBoundingInfo().boundingBox.maximumWorld;
-                    BABYLON.Tools.CheckExtends(minBox, sceneBBMin, sceneBBMax);
-                    BABYLON.Tools.CheckExtends(maxBox, sceneBBMin, sceneBBMax);
-                    
-                    mesh.setParent(mainMesh);
-                }
-            });
-			
-            var centerVec  = sceneBBMax.subtract(sceneBBMin);
-            var bSphereRad = centerVec.length() * 0.5;
-            var bbCenter   = sceneBBMin.add(centerVec.multiplyByFloats(0.5, 0.5, 0.5));
-                    
-            var refScale    = 3.5;
-            var scaleFactor = refScale / (2.0 * bSphereRad);
-                        
-            mainMesh.scaling = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
-            mainMesh.translate(bbCenter.negate(), BABYLON.Space.WORLD);            
+           
+            setupMainMesh();         
+           
                         
             // these values will be overridden anyway when we set the position
             var alpha  = 0;
@@ -206,7 +217,6 @@ function loadScene() {
             var radius = 3;
             
             camera = new BABYLON.ArcRotateCamera("camera", alpha, beta, radius, BABYLON.Vector3.Zero(), sceneObj);
-          
             
             camera.inputs.removeByType("ArcRotateCameraMouseWheelInput");
 
@@ -266,7 +276,8 @@ function loadScene() {
             engine.runRenderLoop(function () {
                 sceneObj.render();
             });
-        });
+        }
+        );
     }
 }
 
@@ -298,6 +309,38 @@ var addIsReadyCallback = function(callback)
         callback();
     }
 }; 
+
+/************************************************************/
+
+/**
+ * Sets the model to be shown inside the viewer.
+ */
+var setModelFromFile = function(file)
+{
+    BABYLON.SceneLoader.AppendAsync("file:", file, sceneObj).then((scene) =>
+    {
+        var skyboxEnabled = currentSkybox != null;
+        if (skyboxEnabled)
+        {
+            toggle3DBackground(false);    
+        }
+        
+        mainMesh.dispose();        
+        
+        setupMainMesh();
+        
+        if (skyboxEnabled)
+        {
+            toggle3DBackground(true);
+        }
+        
+        //TODO: save the custom file for latter ZIPing
+        //...
+    }).catch((error) =>
+    {                
+        console.error("Unable to load model.");
+    });
+};
 
 /************************************************************/
 

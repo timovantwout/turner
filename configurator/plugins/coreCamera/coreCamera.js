@@ -9,6 +9,7 @@ var coreCamera = function()
     this.description = 
     {
         "title"   : "Camera",
+        "type"    : "ViewerConfigPlugin",
         "tooltip" : "Configure virtual camera"
     };
         

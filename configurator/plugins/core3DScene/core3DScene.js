@@ -8,7 +8,8 @@ var core3DScene = function()
     
     this.description = 
     {
-        "title"   : "Camera",
+        "title"   : "3D Scene",
+        "type"    : "ViewerConfigPlugin",
         "tooltip" : "Configure 3D scene setup"
     };
     

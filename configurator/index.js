@@ -29,19 +29,7 @@ var turnerVEC = function()
             type : "file"
         },
         {
-            name : "scene.gltf",
-            type : "file"
-        },
-        {
-            name : "scene.data.bin",
-            type : "file"
-        },
-        {
-            name : "material0_basecolor.jpg",
-            type : "file"
-        },
-        {
-            name : "material0_normal.jpg",
+            name : "scene.glb",
             type : "file"
         },
         {
@@ -117,7 +105,11 @@ var turnerVEC = function()
     
     this.addPluginArea = function(pluginName)
     {
-        var toolSelectionElem = document.getElementById("toolSelection");
+        var pluginType = this.plugins[pluginName].description.type
+        
+        var toolSelectionElem = pluginType == "ViewerConfigPlugin" ?
+                                    document.getElementById("toolSelectionViewer") :
+                                    document.getElementById("toolSelectionItem");
         
         var newPluginAreaButton = document.createElement("div");
         newPluginAreaButton.classList.add("toolSelectionButton");
@@ -416,7 +408,7 @@ var turnerVEC = function()
         buttonElem.checked   = pluginUIElemObj.initValue;        
         outerElem.appendChild(buttonElem);
         
-        invisibleFileInput.style.display = "none";        
+        invisibleFileInput.style.display = "none";
         invisibleFileInput.type          = "file";
         invisibleFileInput.accept        = "image/gif, image/jpeg, image/png";
         (function(buttonElemID)
@@ -435,7 +427,7 @@ var turnerVEC = function()
                 
                     pluginUIElemObj.callback.call(that, event, imgDataURL);                    
                 };                
-                reader.readAsDataURL(event.srcElement.files[0]);                
+                reader.readAsDataURL(event.srcElement.files[0]);
             }
         })(pluginUIElemObj.id);
         buttonElem.appendChild(invisibleFileInput);        
@@ -1007,6 +999,13 @@ var turnerVEC = function()
 
     //---------------------------------------------------------------------------------------------------------
 
+    this.modelSelectionButtonClicked = function(event)
+    {
+        that.viewerAPI.setModelFromFile(event.srcElement.files[0]);
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
 };
 
 // creates the global variable for the turner virtual experience configurator (turner VEC)
