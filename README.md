@@ -62,3 +62,11 @@ This GitHub repository is maintained by [DGG](https://github.com/DGG3D) and ...,
 * [Fraunhofer IGD](https://www.igd.fraunhofer.de/en) / [CultLab3D](https://www.cultlab3d.de/)
 * ...
 
+
+# How can I create a custom Lighting environment (skybox)?
+
+Turner requires .dds files, ideally of size 1MB or less.
+
+* https://forum.babylonjs.com/t/how-to-create-custom-pbr-environments/613
+
+
