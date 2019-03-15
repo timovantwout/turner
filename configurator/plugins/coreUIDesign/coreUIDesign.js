@@ -72,6 +72,7 @@ var coreUIDesign = function()
         // in order to prevent a case where users accidentally link to the default with their custom logo,
         // simply clear the link on every logo change, for now
         turnerVECMain.setInputElemValue("coreUIDesign_companyLogoLinkInput", "");
+        viewer.setElementLink("company-logo","");
     };
 
     //---------------------------------------------------------------------------------------------------------
@@ -86,6 +87,7 @@ var coreUIDesign = function()
         // in order to prevent a case where users accidentally link to the default with their custom logo,
         // simply clear the link on every logo change, for now
         turnerVECMain.setInputElemValue("coreUIDesign_productLogoLinkInput", "");
+        viewer.setElementLink("product-logo","");
     };
 
     //---------------------------------------------------------------------------------------------------------
@@ -251,7 +253,14 @@ var coreUIDesign = function()
     
     this.getCustomJS = function()
     {
-        return "";
+        var viewer = turnerVECMain.viewerAPI;
+        
+        var jsStr = "";
+        
+        jsStr += "setElementLink(\"company-logo\", \"" + viewer.getElementLink("company-logo") + "\");\n";
+        jsStr += "setElementLink(\"product-logo\", \"" + viewer.getElementLink("product-logo") + "\");\n";
+        
+        return jsStr;
     }
     
     //---------------------------------------------------------------------------------------------------------

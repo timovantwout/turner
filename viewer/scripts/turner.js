@@ -475,7 +475,7 @@ var toggleButtons = function(val)
                 {
                     continue;
                 }
-                if (buttonsEnabled)
+                if (buttonsEnabled && elementIDToLink[p] != "")
                 {           
                     elem.setAttribute("href", elementIDToLink[p]);
                 }
@@ -621,10 +621,35 @@ var setElementLink = function(elementID, linkURL)
             return;
         }
         
-        elem.setAttribute("href", linkURL);
+        if (linkURL == "")
+        {
+            elem.setAttribute("href", "javascript:void(0)");
+        }
+        else
+        {
+            elem.setAttribute("href", linkURL);
+        }
     }    
 };
 
+/************************************************************/
+
+/**
+ * Returns the link to be used for the given element.
+ */
+var getElementLink = function(elementID)
+{
+    var elem = document.getElementById(elementID);
+        
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+    
+    return elementIDToLink[elementID];
+};
+    
 /************************************************************/
 /**
  * positions the given 2D element through CSS, using the given
