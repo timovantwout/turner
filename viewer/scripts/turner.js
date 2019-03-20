@@ -17,6 +17,8 @@ var elementImageCustomization =
 
 var environmentMapCustomization = "";
 
+var customModelFileURL = "";
+
 var engine                 = null;
 var sceneObj               = null;
 var mainMesh               = null;
@@ -120,6 +122,23 @@ TurnerWheelFOVInput.prototype.checkInputs = function () {
         }
     }
 };
+ 
+ 
+function toggleObjectSpaceNormalMap(useObjectSpaceNormalMap)
+{
+    if (!useObjectSpaceNormalMap)
+    {
+        return;
+    }
+    
+    sceneObj.meshes.forEach(function(mesh)
+    {
+        if (mesh.material)
+        {
+            mesh.material.useObjectSpaceNormalMap = true;
+        }    
+    });
+}
 
 
 function setupMainMesh()
@@ -137,11 +156,6 @@ function setupMainMesh()
             {
                 mesh.material.forceIrradianceInFragment = true;                    
                 mesh.material.backFaceCulling           = false;
-                
-                /*if (useObjectSpaceNormalMap)
-                {
-                    mesh.material.useObjectSpaceNormalMap = true;        
-                }*/
             }
         
             mesh.computeWorldMatrix(true);
@@ -164,6 +178,30 @@ function setupMainMesh()
 }
 
 
+function addOSNormalMapPluginHook(bjsLoaderPlugin)
+{
+    bjsLoaderPlugin.onParsed = function(glTFData)
+    {   
+        if (glTFData.json.materials[0] &&
+            glTFData.json.materials[0].normalTexture)
+        {
+            var normalTextureJSON = glTFData.json.materials[0].normalTexture;        
+            
+            if (normalTextureJSON.extras &&
+                normalTextureJSON.extras.objectSpaceNormals)
+            {
+                console.log("Asset seems to have an object-space normal map. Triggering object-space normal mapping.")
+                
+                bjsLoaderPlugin.onComplete = function()
+                {
+                    toggleObjectSpaceNormalMap(true);  
+                };                
+            }
+        }        
+    };
+}
+
+
 function loadScene() {
     if (engine) {
         engine.dispose();
@@ -179,106 +217,83 @@ function loadScene() {
     BABYLON.SceneLoader.ShowLoadingScreen = true;
     
     BABYLON.SceneLoader.ForceFullSceneLoadingForIncremental = true;    
-    
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", fileName, true);
-    xhr.send();
-    
-    xhr.onload = function()
-    {    
-        // check glTF extras for object space normals
-        //var sceneJSON = JSON.parse(xhr.responseText);
+                      
+    var bjsLoaderPlugin = BABYLON.SceneLoader.Load(rootUrl, fileName, engine, function (scene)
+    {
+        sceneObj = scene;
         
-        var useObjectSpaceNormalMap = false;
+        sceneObj.clearColor = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0);
+
+        setupMainMesh();         
+
+        // these values will be overridden anyway when we set the position
+        var alpha  = 0;
+        var beta   = 0;
+        var radius = 3;
         
-        //TODO: CHECK HOW WE CAN REALIZE THIS WITHOUT AN ADDITIONAL XHR
-        //      OTHERWISE, THE API FUNCTION TO LOAD MODELS BECOMES WEIRD (CAN'T ACCEPT FILE OBJECTS)
-        /*
-        if (sceneJSON.materials[0] && sceneJSON.materials[0].normalTexture)
-        {
-            var normalTextureJSON    = sceneJSON.materials[0].normalTexture;        
-            useObjectSpaceNormalMap = normalTextureJSON.extras && normalTextureJSON.extras.objectSpaceNormals;
-        }
-        */
-            
-        BABYLON.SceneLoader.Load(rootUrl, fileName, engine, function (scene)
-        {   
-            sceneObj = scene;
-            
-            sceneObj.clearColor = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0);
-            
-           
-            setupMainMesh();         
-           
-                        
-            // these values will be overridden anyway when we set the position
-            var alpha  = 0;
-            var beta   = 0;
-            var radius = 3;
-            
-            camera = new BABYLON.ArcRotateCamera("camera", alpha, beta, radius, BABYLON.Vector3.Zero(), sceneObj);
-            
-            camera.inputs.removeByType("ArcRotateCameraMouseWheelInput");
+        camera = new BABYLON.ArcRotateCamera("camera", alpha, beta, radius, BABYLON.Vector3.Zero(), sceneObj);
+        
+        camera.inputs.removeByType("ArcRotateCameraMouseWheelInput");
 
-            // fov = 2 * arctan(frame_size / (focal_len * 2))
-            // focal_len = h x W D / fov
-            // tan (fov/2) = (d/2)/f
-            // f = (d/2)/tan(fov/2)
-            var minFOV = 13.7 * Math.PI / 180; // 100mm
-            var maxFOV = 46.4 * Math.PI / 180; //  28mm
-            var turnerInput = new TurnerWheelFOVInput(camera, minFOV, maxFOV);
-            camera.inputs.add(turnerInput);
+        // fov = 2 * arctan(frame_size / (focal_len * 2))
+        // focal_len = h x W D / fov
+        // tan (fov/2) = (d/2)/f
+        // f = (d/2)/tan(fov/2)
+        var minFOV = 13.7 * Math.PI / 180; // 100mm
+        var maxFOV = 46.4 * Math.PI / 180; //  28mm
+        var turnerInput = new TurnerWheelFOVInput(camera, minFOV, maxFOV);
+        camera.inputs.add(turnerInput);
 
 
-            var sceneCenter = new BABYLON.Vector3(0,0,0);//bbCenter.multiplyByFloats(scaleFactor, scaleFactor, scaleFactor);
-                        
+        var sceneCenter = new BABYLON.Vector3(0,0,0);//bbCenter.multiplyByFloats(scaleFactor, scaleFactor, scaleFactor);
+                    
 
-            // setting a typical 35mm focal length on 35mm film
-            camera.fov = 0.66;
+        // setting a typical 35mm focal length on 35mm film
+        camera.fov = 0.66;
 
-            var refDist       = (0.5 * refScale) / Math.tan(0.5 * camera.fov);
-            var cameraInitPos = sceneCenter.add(new BABYLON.Vector3(0,0, refDist));
-                        
-            camera.setPosition(cameraInitPos);
-            camera.setTarget(sceneCenter);
-            
-            camera.lowerRadiusLimit = refDist * 0.3;
-            camera.upperRadiusLimit = refDist * 1.5;
+        var refDist       = (0.5 * refScale) / Math.tan(0.5 * camera.fov);
+        var cameraInitPos = sceneCenter.add(new BABYLON.Vector3(0,0, refDist));
+                    
+        camera.setPosition(cameraInitPos);
+        camera.setTarget(sceneCenter);
+        
+        camera.lowerRadiusLimit = refDist * 0.3;
+        camera.upperRadiusLimit = refDist * 1.5;
 
-            camera.minZ = camera.lowerRadiusLimit * 0.1;
-            camera.maxZ = camera.upperRadiusLimit * 10.0;
-			
-            camera.wheelPrecision *= 20;
-            camera.pinchPrecision *= 20;
-                        
-            camera.attachControl(canvas, true);   
-			
-			// setup environment
-			sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData("images/environment.dds", sceneObj);
+        camera.minZ = camera.lowerRadiusLimit * 0.1;
+        camera.maxZ = camera.upperRadiusLimit * 10.0;
+        
+        camera.wheelPrecision *= 20;
+        camera.pinchPrecision *= 20;
+                    
+        camera.attachControl(canvas, true);   
+        
+        // setup environment
+        sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData("images/environment.dds", sceneObj);
 
-        	currentSkyboxScale     = 4.0 * camera.upperRadiusLimit;
-			currentSkyboxBlurLevel = 0.5;
-			
-			currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
+        currentSkyboxScale     = 4.0 * camera.upperRadiusLimit;
+        currentSkyboxBlurLevel = 0.5;
+        
+        currentSkybox = sceneObj.createDefaultSkybox(sceneObj.environmentTexture, true, currentSkyboxScale, currentSkyboxBlurLevel);
 
-            renderPipeline            = new BABYLON.DefaultRenderingPipeline("default", true, sceneObj, [camera]);            
-            renderPipeline.fxaaEnabled  = true;
-            renderPipeline.bloomEnabled = true;
-            renderPipeline.bloomWeight  = 0.5;
-            
-            // setup post processing            
-            postProcess = renderPipeline.imageProcessing;
-            postProcess.contrast = 1.0;
-            postProcess.exposure = 1.0;
-                        
-            emitViewerReady();
+        renderPipeline            = new BABYLON.DefaultRenderingPipeline("default", true, sceneObj, [camera]);            
+        renderPipeline.fxaaEnabled  = true;
+        renderPipeline.bloomEnabled = true;
+        renderPipeline.bloomWeight  = 0.5;
+        
+        // setup post processing            
+        postProcess = renderPipeline.imageProcessing;
+        postProcess.contrast = 1.0;
+        postProcess.exposure = 1.0;
+                    
+        emitViewerReady();
 
-            engine.runRenderLoop(function () {
-                sceneObj.render();
-            });
-        }
-        );
-    }
+        engine.runRenderLoop(function () {
+            sceneObj.render();
+        });
+    });    
+    
+    addOSNormalMapPluginHook(bjsLoaderPlugin);    
 }
 
 
@@ -317,29 +332,46 @@ var addIsReadyCallback = function(callback)
  */
 var setModelFromFile = function(file)
 {
-    BABYLON.SceneLoader.AppendAsync("file:", file, sceneObj).then((scene) =>
-    {
-        var skyboxEnabled = currentSkybox != null;
-        if (skyboxEnabled)
+    var bjsLoaderPlugin = BABYLON.SceneLoader.Append("file:", file, sceneObj,
+        function(scene)
         {
-            toggle3DBackground(false);    
-        }
-        
-        mainMesh.dispose();        
-        
-        setupMainMesh();
-        
-        if (skyboxEnabled)
+            var skyboxEnabled = currentSkybox != null;
+            if (skyboxEnabled)
+            {
+                toggle3DBackground(false);    
+            }
+            
+            mainMesh.dispose();        
+            
+            setupMainMesh();
+            
+            if (skyboxEnabled)
+            {
+                toggle3DBackground(true);
+            }
+            
+            var reader = new FileReader();
+            reader.onloadend = function ()
+            {
+                customModelFileURL = reader.result;
+            }
+            reader.readAsDataURL(file);
+        },
+        null,
+        function()
         {
-            toggle3DBackground(true);
+            console.error("Unable to load model.");
         }
-        
-        //TODO: save the custom file for latter ZIPing
-        //...
-    }).catch((error) =>
-    {                
-        console.error("Unable to load model.");
-    });
+    );
+    
+    addOSNormalMapPluginHook(bjsLoaderPlugin);
+};
+
+/************************************************************/
+
+var getCustomModelFileURL = function()
+{
+    return customModelFileURL;    
 };
 
 /************************************************************/

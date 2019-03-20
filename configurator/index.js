@@ -744,6 +744,22 @@ var turnerVEC = function()
                     return;
                 }
             }
+            else if (filename == "scene.glb")
+            {
+                var customModelURL = that.viewerAPI.getCustomModelFileURL();
+                if (customModelURL != "")
+                {
+                    // we know that custom environments are always given as DDS
+                    that.contentURLtoUint8Array(customModelURL,
+                        function(uint8Data)
+                        {
+                            zip.file(fullFilename, uint8Data);
+                            fileAddedToZIP();
+                        }
+                    );                    
+                    return;
+                }
+            }
                         
             // general case            
             that.contentURLtoUint8Array("../viewer/" + fullFilename,
