@@ -65,8 +65,15 @@ This GitHub repository is maintained by [DGG](https://github.com/DGG3D) and ...,
 
 # How can I create a custom Lighting environment (skybox)?
 
-Turner requires .dds files, ideally of size 1MB or less.
+Turner requires .dds files, ideally of size 1MB or less. For now it is only possible to convert your own HDR Images to dds by using external tools; The following link leads to a very informative tutorial about how to create custom environment lighting for babylon:
 
+* https://doc.babylonjs.com/how_to/use_hdr_environment
+
+The github project mentioned in the tutorials for converting hdr files into dds cubemaps can be found here:
+
+* https://github.com/derkreature/IBLBaker
+
+And here is an additional forum link about the topic:
 * https://forum.babylonjs.com/t/how-to-create-custom-pbr-environments/613
 
 
