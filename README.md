@@ -73,6 +73,10 @@ The github project mentioned in the tutorials for converting hdr files into dds 
 
 * https://github.com/derkreature/IBLBaker
 
+Example downloadable HDR environment images can be found here:
+
+* http://www.hdrlabs.com/gallery/
+
 And here is an additional forum link about the topic:
 * https://forum.babylonjs.com/t/how-to-create-custom-pbr-environments/613
 
