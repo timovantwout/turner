@@ -15,8 +15,11 @@ var coreUIDesign = function()
     //                                        plugin variables
     //---------------------------------------------------------------------------------------------------------
 
+    var that = this;
+    
     this.initialCompanyLink = "http://dgg3d.com";
     this.initialProductLink = "https://dgg3d.github.io/turner/";
+    this.backgroundIs3D     = true;
 
     //---------------------------------------------------------------------------------------------------------
     //                                    plugin UI element callbacks
@@ -54,10 +57,10 @@ var coreUIDesign = function()
     
     this.display3DBackgroundToggled = function(event)
     {        
-        var toggled = event.target.checked;
-        var viewer  = turnerVECMain.viewerAPI;
+        that.backgroundIs3D = event.target.checked;
+        var viewer          = turnerVECMain.viewerAPI;
                
-        viewer.toggle3DBackground(toggled);
+        viewer.toggle3DBackground(that.backgroundIs3D);
     };
       
     //---------------------------------------------------------------------------------------------------------
@@ -259,6 +262,7 @@ var coreUIDesign = function()
         
         jsStr += "setElementLink(\"company-logo\", \"" + viewer.getElementLink("company-logo") + "\");\n";
         jsStr += "setElementLink(\"product-logo\", \"" + viewer.getElementLink("product-logo") + "\");\n";
+        jsStr += "toggle3DBackground(" + (that.backgroundIs3D ? "true" : "false") + ");\n";
         
         return jsStr;
     }
