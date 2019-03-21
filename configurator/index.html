@@ -30,6 +30,7 @@
     <script src="plugins/core3DScene/core3DScene.js"></script>
     <script src="plugins/core3DInteraction/core3DInteraction.js"></script>
     <script src="plugins/coreCamera/coreCamera.js"></script>
+    <script src="plugins/coreItemMaterial/coreItemMaterial.js"></script>
         
     <title>Turner - Virtual Experience Configurator</title>
   
@@ -88,15 +89,17 @@
                     </div>
 
                     <div id="controls-disabled-overlay"></div>
-                    
+
                     <!-- plugin type selector -->
                     <div id="pluginTypeSelectorArea">
                         <div id="viewerConfigButton"
+                             onclick="turnerVECMain.configModeButtonClicked('toolSelectionViewer')"
                              class="vecToolsButton vecToolsButtonAlt1-triggered"
                              title="Configure the viewer and scene environment">
                              Configure Viewer
                         </div>
                         <div id="itemConfigButton"
+                             onclick="turnerVECMain.configModeButtonClicked('toolSelectionItem')"
                              class="vecToolsButton"
                              title="Configure the appearance of the 3D item">
                              Configure Item
@@ -105,10 +108,10 @@
 
                     <!-- viewer configuration toolbar -->
                     <div id="toolSelectionViewer"></div>
-                    <div class="toolSelectionWhitespace"></div>
-
+                    
                     <!-- item configuration toolbar -->                    
                     <div id="toolSelectionItem"></div>
+                    
                     <div class="toolSelectionWhitespace"></div>
 
                 </div>                

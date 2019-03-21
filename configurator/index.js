@@ -6,7 +6,12 @@ var turnerVEC = function()
     // do not alter the name of this variable - it is used by all the plugins to register themselves
     this.plugins = {};
 
-    this.activePlugin = "";
+    this.pluginCategoryToActivePlugin =
+    {
+        "ViewerConfigPlugin" : "",
+        "ItemConfigPlugin"   : ""
+    };
+    that.activePlugin = "";
     
     // viewer object that is used by all plugins to manipulate the viewer layout and content
     this.viewerAPI = null;
@@ -100,16 +105,16 @@ var turnerVEC = function()
 
         xhr.send(null);
     };
-        
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.addPluginArea = function(pluginName)
     {
         var pluginType = this.plugins[pluginName].description.type
         
         var toolSelectionElem = pluginType == "ViewerConfigPlugin" ?
-                                    document.getElementById("toolSelectionViewer") :
-                                    document.getElementById("toolSelectionItem");
+                                    document.getElementById("toolSelectionViewer") : //type is ViewerConfigPlugin
+                                    document.getElementById("toolSelectionItem");    //type is ItemConfigPlugin
         
         var newPluginAreaButton = document.createElement("div");
         newPluginAreaButton.classList.add("toolSelectionButton");
@@ -179,9 +184,9 @@ var turnerVEC = function()
         
         return outerElem;
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.genTextInputHTML = function(pluginUIElemObj)
     {
         var outerElem = document.createElement("div");
@@ -211,9 +216,9 @@ var turnerVEC = function()
         
         return outerElem;
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.genToggleSwitchHTML = function(pluginUIElemObj)
     {
         var outerElem = document.createElement("div");
@@ -249,7 +254,7 @@ var turnerVEC = function()
         
         return outerElem;
     };
-    
+
     //---------------------------------------------------------------------------------------------------------
 
     this.genSliderHTML = function(pluginUIElemObj)
@@ -634,27 +639,101 @@ var turnerVEC = function()
     //                                      callback functions
     //---------------------------------------------------------------------------------------------------------
 
+    this.configModeButtonClicked = function(elemID)
+    {
+        var buttonID      = (elemID   == "toolSelectionViewer" ? "viewerConfigButton" : "itemConfigButton");
+        var otherButtonID = (buttonID == "viewerConfigButton"  ? "itemConfigButton"   : "viewerConfigButton");
+        
+        var activatedButtonStyle   = (elemID               == "toolSelectionViewer"          ? "vecToolsButtonAlt1-triggered" : "vecToolsButtonAlt2-triggered");
+        var deactivatedButtonStyle = (activatedButtonStyle == "vecToolsButtonAlt1-triggered" ? "vecToolsButtonAlt2-triggered" : "vecToolsButtonAlt1-triggered");
+        
+        document.getElementById(buttonID     ).classList.add(     activatedButtonStyle);
+        document.getElementById(otherButtonID).classList.remove(deactivatedButtonStyle);
+
+        var otherElemID = (elemID == "toolSelectionViewer" ? "toolSelectionItem" : "toolSelectionViewer");
+        
+        var activatedElem   = document.getElementById(elemID);
+        var deactivatedElem = document.getElementById(otherElemID);
+        
+        activatedElem.style.display   = "inherit";
+        deactivatedElem.style.display = "none";
+        
+        var activeCategory = (elemID == "toolSelectionViewer" ? "ViewerConfigPlugin" : "ItemConfigPlugin");
+        
+        var firstOrActivePluginName = that.pluginCategoryToActivePlugin[activeCategory];
+        var plugin                  = null;
+                
+        if (firstOrActivePluginName == "")
+        {
+            for (var pName in that.plugins)
+            {     
+                if (that.plugins.hasOwnProperty(pName))
+                {
+                    plugin = that.plugins[pName];                
+                    if  (plugin.description.type == activeCategory)
+                    {
+                        firstOrActivePluginName = pName;
+                        break;
+                    }                    
+                }
+            }
+        }
+        
+        that.setActivePlugin(firstOrActivePluginName);
+    };
+
+    //---------------------------------------------------------------------------------------------------------
+
     this.setActivePlugin = function(pluginName)
     {
-        var pluginButtonElem;
+        if (pluginName == "")
+        {
+            return; //setting the active plugin to empty string after startup is not covered
+        }
+        
+        var pluginType = "";
+        var plugin     = null;
+        
+        for (var pName in that.plugins)
+        {     
+            if (that.plugins.hasOwnProperty(pName) &&
+                pName == pluginName                       )
+            {              
+                plugin = that.plugins[pName];                
+                if  (plugin.description.type == "ViewerConfigPlugin" ||
+                     plugin.description.type == "ItemConfigPlugin"     )
+                {
+                    pluginType = plugin.description.type;                    
+                }
+                break;
+            }
+        }
+        
+        if (pluginType == "")
+        {
+            console.error("Unable to activate plugin \"" + pluginName + "\", no valid plugin type found.");
+            return;
+        }
+                
         var pluginAreaElem;
         
         if (that.activePlugin != "")
         {
             pluginButtonElem = document.getElementById("plugin-button-" + that.activePlugin);
             pluginButtonElem.classList.remove("activeToolButton");
-            
+
             pluginAreaElem = document.getElementById("pluginArea_" + that.activePlugin);
             pluginAreaElem.style.display = "none";
         }
         
         pluginButtonElem = document.getElementById("plugin-button-" + pluginName);
         pluginButtonElem.classList.add("activeToolButton");
-        
+
         pluginAreaElem = document.getElementById("pluginArea_" + pluginName);
         pluginAreaElem.style.display = "";
-        
+
         that.activePlugin = pluginName;
+        that.pluginCategoryToActivePlugin[pluginType] = pluginName;
     };
     
     //---------------------------------------------------------------------------------------------------------
