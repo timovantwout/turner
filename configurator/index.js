@@ -740,150 +740,12 @@ var turnerVEC = function()
     
     this.getZIPButtonClicked = function()
     {
-        var zip = new JSZip();
-        
-        var fileCount = 0;
-        
-        // callback to be invoked for each added file
-        // as soon as all files have been added, create & download the ZIP
-        var fileAddedToZIP = function()
+        var zipReadyCallback = function(content)
         {
-            --fileCount;            
-            
-            if (fileCount == 0)
-            {
-                zip.generateAsync({type:"blob"}).then(function(content)
-                {
-                    saveAs(content, "turner-viewer.zip");
-                });   
-            }            
-        };
+            saveAs(content, "turner-viewer.zip");    
+        };    
         
-        // collect css and js customizations from all plugins
-        var turnerCustomCSS = "";
-        var turnerCustomJS  = "addIsReadyCallback(function(){\n\n";
-        
-        for (var pluginName in that.plugins)
-        {
-            if (that.plugins.hasOwnProperty(pluginName))
-            {
-                turnerCustomCSS += that.plugins[pluginName].getCustomCSS();
-                turnerCustomJS  += that.plugins[pluginName].getCustomJS();
-            }
-        }
-
-        turnerCustomJS += "\n});\n";
-                
-        // callback that adds a file download, asynchronously,
-        // and makes sure "fileAddedToZIP" is called as soon as the download is finished
-        var addFileDownloadCallback = function(filename, path)
-        {
-            var fullFilename = path + "/" + filename;
-            
-            // special cases
-            if (filename == "three-d-icon.png" ||
-                filename == "company-logo.png" ||
-                filename == "product-logo.png"   )
-            {                
-                var filenameWithoutExtension = filename.split(".")[0];
-                var customURL                = that.viewerAPI.getElementImageCustomURL(filenameWithoutExtension);
-                
-                if (customURL != "")
-                {
-                    // we know that custom data is always converted to PNG
-                    that.contentURLtoUint8Array(customURL,
-                        function(uint8Data)
-                        {
-                            zip.file(fullFilename, uint8Data);
-                            fileAddedToZIP();
-                        }
-                    );                    
-                    return;
-                }
-            }
-            else if (filename == "turner.custom.css" ||
-                     filename == "turner.custom.js"    )
-            {
-                return;
-            }
-            else if (filename == "environment.dds")
-            {
-                var customEnvURL = that.viewerAPI.getEnvironmentMapCustomURL();
-                
-                if (customEnvURL != "")
-                {
-                    // we know that custom environments are always given as DDS
-                    that.contentURLtoUint8Array(customEnvURL,
-                        function(uint8Data)
-                        {
-                            zip.file(fullFilename, uint8Data);
-                            fileAddedToZIP();
-                        }
-                    );                    
-                    return;
-                }
-            }
-            else if (filename == "scene.glb")
-            {
-                var customModelURL = that.viewerAPI.getCustomModelFileURL();
-                if (customModelURL != "")
-                {
-                    // we know that custom environments are always given as DDS
-                    that.contentURLtoUint8Array(customModelURL,
-                        function(uint8Data)
-                        {
-                            zip.file(fullFilename, uint8Data);
-                            fileAddedToZIP();
-                        }
-                    );                    
-                    return;
-                }
-            }
-                        
-            // general case            
-            that.contentURLtoUint8Array("../viewer/" + fullFilename,
-                function(uint8Data)
-                {
-                    zip.file(fullFilename, uint8Data);
-                    fileAddedToZIP();
-                }
-            );
-        };
-        // callback that can simply be used to count files
-        var countFile = function(filename, path)
-        {
-            ++fileCount;
-        };
-        
-        // function that recursively walks over the directory content list and invokes the given function for each file
-        var addDirectoryContent = function(contentList, basePath, processFileCallback)
-        {
-            for (var i = 0; i < contentList.length; ++i)
-            {
-                var elem = contentList[i];
-                
-                if (elem.type == "file")
-                {
-                    processFileCallback(elem.name, basePath);
-                }
-                else if (elem.type == "directory")
-                {
-                    addDirectoryContent(elem.content, basePath + elem.name, processFileCallback);
-                }
-            }
-        };
-
-        // count files
-        addDirectoryContent(that.zippableDirContent, "", countFile);
-
-        // asynchronously add files to zip, except for turner.custom.css/js
-        addDirectoryContent(that.zippableDirContent, "", addFileDownloadCallback);
-        
-        // asynchronously add  turner.custom.css/js and download result when complete
-        zip.file("turner.custom.css", turnerCustomCSS);
-        fileAddedToZIP();        
-        zip.file("turner.custom.js",  turnerCustomJS);
-        fileAddedToZIP();
+        getSceneAsZIP(zipReadyCallback, true);
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -1107,4 +969,172 @@ var turnerVEC = function()
 // do not alter the name of this variable - it is used by all the plugins to register themselves,
 // and also in the onload callback of the HTML body
 var turnerVECMain = new turnerVEC();
+
+
+/************************************************************/
+/********************* CONFIGURATOR API *********************/
+/************************************************************/
+
+/**
+ * Stores the current viewer as a ZIP file.
+ * Optionally, the 3D model file can be included as well.
+ */
+ var getSceneAsZIP = function(zipReadyCallback, include3DModel)
+ {
+    var zip = new JSZip();
+        
+    var fileCount = 0;
+    
+    // callback to be invoked for each added file
+    // as soon as all files have been added, create & download the ZIP
+    var fileAddedToZIP = function()
+    {
+        --fileCount;            
+        
+        if (fileCount == 0)
+        {
+            zip.generateAsync({type:"blob"}).then(function(content)
+            {
+                zipReadyCallback(content);
+            });   
+        }            
+    };
+    
+    // collect css and js customizations from all plugins
+    var turnerCustomCSS = "";
+    var turnerCustomJS  = "addIsReadyCallback(function(){\n\n";
+    
+    for (var pluginName in turnerVECMain.plugins)
+    {
+        if (turnerVECMain.plugins.hasOwnProperty(pluginName))
+        {
+            turnerCustomCSS += turnerVECMain.plugins[pluginName].getCustomCSS();
+            turnerCustomJS  += turnerVECMain.plugins[pluginName].getCustomJS();
+        }
+    }
+
+    turnerCustomJS += "\n});\n";
+            
+    // callback that adds a file download, asynchronously,
+    // and makes sure "fileAddedToZIP" is called as soon as the download is finished
+    var addFileDownloadCallback = function(filename, path)
+    {
+        var fullFilename = path + "/" + filename;
+        
+        // special cases
+        if (filename == "three-d-icon.png" ||
+            filename == "company-logo.png" ||
+            filename == "product-logo.png"   )
+        {                
+            var filenameWithoutExtension = filename.split(".")[0];
+            var customURL                = turnerVECMain.viewerAPI.getElementImageCustomURL(filenameWithoutExtension);
+            
+            if (customURL != "")
+            {
+                // we know that custom data is always converted to PNG
+                turnerVECMain.contentURLtoUint8Array(customURL,
+                    function(uint8Data)
+                    {
+                        zip.file(fullFilename, uint8Data);
+                        fileAddedToZIP();
+                    }
+                );                    
+                return;
+            }
+        }
+        else if (filename == "turner.custom.css" ||
+                 filename == "turner.custom.js"    )
+        {
+            return;
+        }
+        else if (filename == "environment.dds")
+        {
+            var customEnvURL = turnerVECMain.viewerAPI.getEnvironmentMapCustomURL();
+            
+            if (customEnvURL != "")
+            {
+                // we know that custom environments are always given as DDS
+                turnerVECMain.contentURLtoUint8Array(customEnvURL,
+                    function(uint8Data)
+                    {
+                        zip.file(fullFilename, uint8Data);
+                        fileAddedToZIP();
+                    }
+                );                    
+                return;
+            }
+        }
+        else if (filename == "scene.glb")
+        {
+            if (!include3DModel)
+            {                
+                return;
+            }
+            
+            var customModelURL = turnerVECMain.viewerAPI.getCustomModelFileURL();
+            if (customModelURL != "")
+            {
+                // we know that custom environments are always given as DDS
+                turnerVECMain.contentURLtoUint8Array(customModelURL,
+                    function(uint8Data)
+                    {
+                        zip.file(fullFilename, uint8Data);
+                        fileAddedToZIP();
+                    }
+                );                    
+                return;
+            }
+        }
+                    
+        // general case            
+        turnerVECMain.contentURLtoUint8Array("../viewer/" + fullFilename,
+            function(uint8Data)
+            {
+                zip.file(fullFilename, uint8Data);
+                fileAddedToZIP();
+            }
+        );
+    };
+    // callback that can simply be used to count files
+    var countFile = function(filename, path)
+    {
+        ++fileCount;
+    };
+    
+    // function that recursively walks over the directory content list and invokes the given function for each file
+    var addDirectoryContent = function(contentList, basePath, processFileCallback)
+    {
+        for (var i = 0; i < contentList.length; ++i)
+        {
+            var elem = contentList[i];
+            
+            if (elem.type == "file")
+            {
+                if (!include3DModel && elem.name == "scene.glb")
+                {
+                    continue;
+                }                
+                processFileCallback(elem.name, basePath);
+            }
+            else if (elem.type == "directory")
+            {
+                addDirectoryContent(elem.content, basePath + elem.name, processFileCallback);
+            }
+        }
+    };
+
+    // count files
+    addDirectoryContent(turnerVECMain.zippableDirContent, "", countFile);
+
+    // asynchronously add files to zip, except for turner.custom.css/js
+    addDirectoryContent(turnerVECMain.zippableDirContent, "", addFileDownloadCallback);
+    
+    // asynchronously add  turner.custom.css/js and download result when complete
+    zip.file("turner.custom.css", turnerCustomCSS);
+    fileAddedToZIP();        
+    zip.file("turner.custom.js",  turnerCustomJS);
+    fileAddedToZIP();
+ };
+
+/************************************************************/
 
