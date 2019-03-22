@@ -851,3 +851,58 @@ var addPointerMoveCallback = function(callback)
 };
 
 /************************************************************/
+
+var getItemMetallicFactor = function()
+{
+    for (var i = 0; i < sceneObj.meshes.length; ++i)
+    {
+        var mesh = sceneObj.meshes[i];
+        if (mesh.material && mesh.material.metallic != undefined)
+        {
+            return mesh.material.metallic;
+        }
+    }
+};
+
+/************************************************************/
+
+var setItemMetallicFactor = function(factor)
+{    
+    for (var i = 0; i < sceneObj.meshes.length; ++i)
+    {
+        var mesh = sceneObj.meshes[i];        
+        if (mesh.material && mesh.material.metallic != undefined)
+        {            
+            mesh.material.metallic = factor;
+            console.log(mesh.material);
+        }
+    }
+};
+
+/************************************************************/
+
+var getItemRoughnessFactor = function()
+{
+    for (var i = 0; i < sceneObj.meshes.length; ++i)
+    {
+        var mesh = sceneObj.meshes[i];
+        if (mesh.material && mesh.material.roughness != undefined)
+        {
+            return mesh.material.roughness;
+        }
+    }
+};
+
+/************************************************************/
+
+var setItemRoughnessFactor = function(factor)
+{
+    for (var i = 0; i < sceneObj.meshes.length; ++i)
+    {
+        var mesh = sceneObj.meshes[i];
+        if (mesh.material && mesh.material.roughness != undefined)
+        {
+            mesh.material.roughness = factor;            
+        }
+    }
+};

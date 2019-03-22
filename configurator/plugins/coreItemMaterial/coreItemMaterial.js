@@ -31,9 +31,8 @@ var coreItemMaterial = function()
         that.metallicFactor = event.srcElement.value;
         
         var viewer = turnerVECMain.viewerAPI;        
-        
-        //TODO: add this function
-        //viewer.setItemMetallicFactor(that.metallicFactor);
+                
+        viewer.setItemMetallicFactor(parseFloat(that.metallicFactor));
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -43,9 +42,8 @@ var coreItemMaterial = function()
         that.roughnessFactor = event.srcElement.value;
         
         var viewer = turnerVECMain.viewerAPI;        
-        
-        //TODO: add this function
-        viewer.setItemRoughnessFactor(that.roughnessFactor);
+                
+        viewer.setItemRoughnessFactor(parseFloat(that.roughnessFactor));
     };
 
     //---------------------------------------------------------------------------------------------------------
