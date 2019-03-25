@@ -298,12 +298,14 @@ var turnerVEC = function()
         (function(valTextElemID)
         {
             sliderElem.oninput = function(event)
-            {
+            {                
                 var valTextElem = document.getElementById(valTextElemID);
                 valTextElem.innerHTML = this.value;
                 pluginUIElemObj.callback.call(that, event);
                 valTextElem.innerHTML = this.value;
-            }
+            };
+            
+            sliderElem.onchange = sliderElem.oninput;            
         })(pluginUIElemObj.id + "_valueTextElem");
         vsContElem.appendChild(sliderElem);
         
@@ -592,6 +594,30 @@ var turnerVEC = function()
         }
      
         elem.value = value;
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.triggerOnInputEvent = function(elementID)
+    {
+        var elem = document.getElementById(elementID);
+        
+        if (!elem)
+        {
+            console.error("Cannot find element with ID \"" + elementID + "\".");
+            return;
+        }
+        
+        if ("createEvent" in document)
+        {
+            var evt = document.createEvent("HTMLEvents");
+            evt.initEvent("input", false, true);            
+            elem.dispatchEvent(evt);
+        }
+        else
+        {
+            elem.fireEvent("oninput");
+        }       
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -1014,7 +1040,7 @@ var turnerVECMain = new turnerVEC();
     }
 
     turnerCustomJS += "\n});\n";
-            
+
     // callback that adds a file download, asynchronously,
     // and makes sure "fileAddedToZIP" is called as soon as the download is finished
     var addFileDownloadCallback = function(filename, path)

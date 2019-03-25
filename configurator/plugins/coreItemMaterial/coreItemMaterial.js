@@ -19,6 +19,9 @@ var coreItemMaterial = function()
 
     var that = this;
     
+    this.defaultMetallicFactor  = 0.2;
+    this.defaultRoughnessFactor = 0.4;
+        
     this.metallicFactor  = 1.0;
     this.roughnessFactor = 1.0;
     
@@ -31,7 +34,7 @@ var coreItemMaterial = function()
         that.metallicFactor = event.srcElement.value;
         
         var viewer = turnerVECMain.viewerAPI;        
-                
+
         viewer.setItemMetallicFactor(parseFloat(that.metallicFactor));
     };
     
@@ -42,7 +45,7 @@ var coreItemMaterial = function()
         that.roughnessFactor = event.srcElement.value;
         
         var viewer = turnerVECMain.viewerAPI;        
-                
+
         viewer.setItemRoughnessFactor(parseFloat(that.roughnessFactor));
     };
 
@@ -85,36 +88,48 @@ var coreItemMaterial = function()
     ];
 
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.init = function()
     {
         var viewer  = turnerVECMain.viewerAPI;
-        
-        //TODO: read metallic / roughness values of loaded object
-        //      actually, this must be updated every time the user loads a new object
-        //...
-                
+
+        viewer.addModelLoadedCallback(function()
+        {
+            // read metallic / roughness values of loaded object    
+            var metallic  = viewer.getItemMetallicFactor();
+            var roughness = viewer.getItemRoughnessFactor();
+            
+            var metallicSliderElem  = document.getElementById("coreItemMaterial_metallicFactorSlider");
+            var roughnessSliderElem = document.getElementById("coreItemMaterial_roughnessFactorSlider");
+            
+            metallicSliderElem.value  = (metallic  == -1.0 ? defaultMetallicFactor  : metallic);
+            roughnessSliderElem.value = (roughness == -1.0 ? defaultRoughnessFactor : roughness);
+            
+            turnerVECMain.triggerOnInputEvent("coreItemMaterial_metallicFactorSlider");
+            turnerVECMain.triggerOnInputEvent("coreItemMaterial_roughnessFactorSlider");
+        });
+
         return true;
     }
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.getCustomCSS = function()
     {
         return "";
     }
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
     this.getCustomJS = function()
     {
         var jsStr = "";
 
         return jsStr;
     }
-    
+
     //---------------------------------------------------------------------------------------------------------
-    
+
 };
 
 turnerVECMain.plugins.coreItemMaterial = new coreItemMaterial();

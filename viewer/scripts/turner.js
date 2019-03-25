@@ -51,8 +51,10 @@ else
 }
 
 var viewerIsReadyCallbacks = [];
+var viewerReady            = false;
 
-var viewerReady = false;
+var modelIsLoadedCallbacks = [];
+var modelLoaded            = false;
 
 function emitViewerReady()
 {
@@ -61,6 +63,16 @@ function emitViewerReady()
     for (var i = 0; i < viewerIsReadyCallbacks.length; ++i)
     {
         viewerIsReadyCallbacks[i]();
+    }
+};
+
+function emitModelLoaded()
+{
+    modelLoaded = true;
+    
+    for (var i = 0; i < modelIsLoadedCallbacks.length; ++i)
+    {
+        modelIsLoadedCallbacks[i]();
     }
 };
 
@@ -287,7 +299,9 @@ function loadScene() {
         postProcess.exposure = 1.0;
                     
         emitViewerReady();
-
+        
+        emitModelLoaded();
+        
         engine.runRenderLoop(function () {
             sceneObj.render();
         });
@@ -317,13 +331,43 @@ var viewerIsReady = function()
  */
 var addIsReadyCallback = function(callback)
 {
-    viewerIsReadyCallbacks.push(callback);
-    
     if (viewerIsReady())
     {
         callback();
     }
+    else
+    {
+        viewerIsReadyCallbacks.push(callback);
+    }
 }; 
+
+/************************************************************/
+
+/**
+ * Tells whether the current model-to-load is already loaded.
+ */
+ var modelIsLoaded = function()
+{
+    return modelLoaded;
+};
+
+/************************************************************/
+
+/**
+ * Adds a callback that is executed whenever a model has been loaded.
+ * If a model is already loaded, it is executed right away.
+ */
+var addModelLoadedCallback = function(callback)
+{
+    if (modelIsLoaded())
+    {
+        callback();
+    }
+    else
+    {
+        modelIsLoadedCallbacks.push(callback);
+    }
+};
 
 /************************************************************/
 
@@ -332,6 +376,8 @@ var addIsReadyCallback = function(callback)
  */
 var setModelFromFile = function(file)
 {
+    modelLoaded = false;
+    
     var bjsLoaderPlugin = BABYLON.SceneLoader.Append("file:", file, sceneObj,
         function(scene)
         {
@@ -356,6 +402,8 @@ var setModelFromFile = function(file)
                 customModelFileURL = reader.result;
             }
             reader.readAsDataURL(file);
+            
+            emitModelLoaded();
         },
         null,
         function()
@@ -862,6 +910,7 @@ var getItemMetallicFactor = function()
             return mesh.material.metallic;
         }
     }
+    return -1.0;
 };
 
 /************************************************************/
@@ -873,8 +922,7 @@ var setItemMetallicFactor = function(factor)
         var mesh = sceneObj.meshes[i];        
         if (mesh.material && mesh.material.metallic != undefined)
         {            
-            mesh.material.metallic = factor;
-            console.log(mesh.material);
+            mesh.material.metallic = factor;            
         }
     }
 };
@@ -891,6 +939,7 @@ var getItemRoughnessFactor = function()
             return mesh.material.roughness;
         }
     }
+    return -1.0;
 };
 
 /************************************************************/
