@@ -35,7 +35,7 @@ var coreItemMaterial = function()
         
         var viewer = turnerVECMain.viewerAPI;        
 
-        viewer.setItemMetallicFactor(parseFloat(that.metallicFactor));
+        viewer.setItemMetallicFactor(parseFloat(that.metallicFactor));        
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -105,8 +105,8 @@ var coreItemMaterial = function()
             metallicSliderElem.value  = (metallic  == -1.0 ? defaultMetallicFactor  : metallic);
             roughnessSliderElem.value = (roughness == -1.0 ? defaultRoughnessFactor : roughness);
             
-            turnerVECMain.triggerOnInputEvent("coreItemMaterial_metallicFactorSlider");
-            turnerVECMain.triggerOnInputEvent("coreItemMaterial_roughnessFactorSlider");
+            turnerVECMain.triggerOnChangeEvent("coreItemMaterial_metallicFactorSlider");
+            turnerVECMain.triggerOnChangeEvent("coreItemMaterial_roughnessFactorSlider");
         });
 
         return true;

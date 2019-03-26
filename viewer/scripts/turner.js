@@ -29,6 +29,9 @@ var currentSkybox          = null;
 var currentSkyboxScale     = null;
 var currentSkyboxBlurLevel = null;
 
+var initModelRoughness = 0;
+var initModelMetallic  = 0;
+
 var refScale = 3.5;
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
@@ -300,6 +303,9 @@ function loadScene() {
                     
         emitViewerReady();
         
+        initModelRoughness = getItemRoughnessFactor();
+        initModelMetallic  = getItemMetallicFactor();
+        
         emitModelLoaded();
         
         engine.runRenderLoop(function () {
@@ -402,6 +408,9 @@ var setModelFromFile = function(file)
                 customModelFileURL = reader.result;
             }
             reader.readAsDataURL(file);
+                        
+            initModelRoughness = getItemRoughnessFactor();
+            initModelMetallic  = getItemMetallicFactor();
             
             emitModelLoaded();
         },
@@ -824,7 +833,6 @@ var getElementPosY = function(elementID)
     return elem.offsetTop;
 };
 
-
 /************************************************************/
 
 var getElementWidth = function(elementID)
@@ -955,3 +963,33 @@ var setItemRoughnessFactor = function(factor)
         }
     }
 };
+
+/************************************************************/
+
+var getItemAsGLBBlob = function(callback)
+{
+    var options =
+    {
+        "shouldExportTransformNode" : function(node)
+        {
+            // ignore the skybox node
+            return (node !== currentSkybox);
+        }
+    };
+    
+    BABYLON.GLTF2Export.GLBAsync(sceneObj, "scene", options).then((glbFileBlobs) =>
+    {
+        var glbBlob = glbFileBlobs.glTFFiles["scene.glb"];
+        callback(glbBlob);
+    });
+};
+
+/************************************************************/
+
+var itemIsUnchanged = function()
+{
+    return initModelRoughness == getItemRoughnessFactor() &&
+           initModelMetallic  == getItemMetallicFactor();
+};
+
+/************************************************************/

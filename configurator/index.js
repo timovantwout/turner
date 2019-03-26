@@ -15,7 +15,7 @@ var turnerVEC = function()
     
     // viewer object that is used by all plugins to manipulate the viewer layout and content
     this.viewerAPI = null;
-    
+        
     this.dragStartX     = -1;
     this.dragStartY     = -1;
     this.dragElementID  = "";
@@ -80,10 +80,29 @@ var turnerVEC = function()
                 {
                     name : "turner.js",
                     type : "file"
+                },
+                {
+                    name : "babylon.glTF2Serializer.min.js",
+                    type : "file"
                 }
+                
             ]
         }
     ];
+    
+    //---------------------------------------------------------------------------------------------------------
+    
+    this.blobToUint8Array = function(blob, callback)
+    {
+        var fileReader = new FileReader();
+        
+        fileReader.onload = function(event)
+        {
+            callback(event.target.result);
+        };
+        
+        fileReader.readAsArrayBuffer(blob);
+    };
     
     //---------------------------------------------------------------------------------------------------------
     
@@ -108,6 +127,22 @@ var turnerVEC = function()
 
     //---------------------------------------------------------------------------------------------------------
 
+    this.downloadFromUint8Array = function(filename, uint8data)
+    {
+        var blob        = new Blob([uint8data], {type: "application/octet-stream"});
+        
+        var url         = window.URL.createObjectURL(blob);    
+        
+        var anchor      = document.createElement("a");
+        anchor.href     = url;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+    };    
+
+    //---------------------------------------------------------------------------------------------------------
+    
     this.addPluginArea = function(pluginName)
     {
         var pluginType = this.plugins[pluginName].description.type
@@ -598,7 +633,7 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.triggerOnInputEvent = function(elementID)
+    this.triggerOnChangeEvent = function(elementID)
     {
         var elem = document.getElementById(elementID);
         
@@ -611,12 +646,12 @@ var turnerVEC = function()
         if ("createEvent" in document)
         {
             var evt = document.createEvent("HTMLEvents");
-            evt.initEvent("input", false, true);            
+            evt.initEvent("change", false, true);            
             elem.dispatchEvent(evt);
         }
         else
         {
-            elem.fireEvent("oninput");
+            elem.fireEvent("onchange");
         }       
     };
     
@@ -764,14 +799,42 @@ var turnerVEC = function()
     
     //---------------------------------------------------------------------------------------------------------
     
-    this.getZIPButtonClicked = function()
+    this.downloadButtonClicked = function()
     {
+        var radioButtons = document.getElementsByName("export-choice");
+        
+        var exportChoice = "all";
+        
+        for (var i = 0; i < radioButtons.length; ++i)
+        {
+            if (radioButtons[i].checked)
+            {
+                exportChoice = radioButtons[i].value;
+                break;
+            }
+        }
+        
         var zipReadyCallback = function(content)
         {
             saveAs(content, "turner-viewer.zip");    
         };    
         
-        getSceneAsZIP(zipReadyCallback, true);
+        switch (exportChoice)
+        {
+            default:
+            case "all":
+                getSceneAsZIP(zipReadyCallback, true);
+                break;
+            case "viewer":
+                getSceneAsZIP(zipReadyCallback, false);
+                break;
+            case "item":
+                getModelAsGLBUint8Array(function(uint8Array)
+                {
+                    that.downloadFromUint8Array("scene.glb", uint8Array);
+                });
+                break;
+        }        
     };
     
     //---------------------------------------------------------------------------------------------------------
@@ -1092,24 +1155,14 @@ var turnerVECMain = new turnerVEC();
         }
         else if (filename == "scene.glb")
         {
-            if (!include3DModel)
+            if (include3DModel)
             {                
-                return;
-            }
-            
-            var customModelURL = turnerVECMain.viewerAPI.getCustomModelFileURL();
-            if (customModelURL != "")
-            {
-                // we know that custom environments are always given as DDS
-                turnerVECMain.contentURLtoUint8Array(customModelURL,
-                    function(uint8Data)
-                    {
-                        zip.file(fullFilename, uint8Data);
-                        fileAddedToZIP();
-                    }
-                );                    
-                return;
-            }
+                getModelAsGLBUint8Array(function(uint8Data){
+                    zip.file(fullFilename, uint8Data);
+                    fileAddedToZIP();
+                });                
+            }            
+            return;
         }
                     
         // general case            
@@ -1164,3 +1217,38 @@ var turnerVECMain = new turnerVEC();
 
 /************************************************************/
 
+/**
+ * Stores the current viewer as a ZIP file.
+ * Optionally, the 3D model file can be included as well.
+ */
+var getModelAsGLBUint8Array = function(callback)
+{
+    // if the model has been manipulated during runtime,
+    // we have to use the BabylonJS .glb exporter
+    if (!turnerVECMain.viewerAPI.itemIsUnchanged())
+    {   
+        turnerVECMain.viewerAPI.getItemAsGLBBlob(function(glbBlob)
+        {
+            turnerVECMain.blobToUint8Array(glbBlob, function(uint8Array)
+            {
+                callback(uint8Array);
+            });
+        });
+    }
+    // if there were no changes to the model, simply use the existing file
+    else
+    {        
+        var customModelURL = turnerVECMain.viewerAPI.getCustomModelFileURL();
+        
+        // unaltered non-default model file
+        if (customModelURL != "")
+        {            
+            turnerVECMain.contentURLtoUint8Array(customModelURL, callback);
+        }
+        // unaltered default model file
+        else
+        {
+            turnerVECMain.contentURLtoUint8Array("../viewer/scene.glb", callback);
+        }
+    }
+};

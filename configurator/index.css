@@ -155,6 +155,65 @@ input:checked + .slider:before
     border-radius: 50%;
 }
 
+/****** radio button *********/
+
+.radiobutton-container {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.radiobutton-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.radiobutton-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 21px;
+  width: 21px;
+  background-color: #aaa;
+  border-radius: 50%;
+}
+
+.radiobutton-container:hover input ~ .radiobutton-checkmark {
+  background-color: #ccc;
+}
+
+.radiobutton-container input:checked ~ .radiobutton-checkmark {
+  background-color: #349f47;
+}
+
+.radiobutton-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.radiobutton-container input:checked ~ .radiobutton-checkmark:after {
+  display: block;
+}
+
+.radiobutton-container .radiobutton-checkmark:after {
+  top: 7px;
+  left: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: white;
+}
+
 /****** value slider *********/
 
 .valueslider-container
@@ -322,13 +381,14 @@ html, body
     vertical-align: sub;
     border: 0;
     margin: 3px 0.5%;
-    padding: 5px 1%;
+    padding: 6px 1%;
     display: inline-block;
     width:  23%;
-    height: 34px;
+    height: 33px;
     background: linear-gradient(#555, #444);
     color: white;
     font-size: 76%;
+    text-align: center;
 }
 
 .vecToolsButton:hover
@@ -408,6 +468,24 @@ html, body
 .vecToolsButtonAlt2-triggered, .vecToolsButtonAlt2-triggered:hover
 {
     background: #c7c300;
+}
+
+.modal-content
+{
+    border-radius: 0;
+    border: none;
+}
+
+.modal-header
+{
+    background: #333;
+    border-radius: 0;
+    color: white;
+}
+
+.modal-close-x
+{
+    color: white;
 }
 
 #toolSelectionViewer, #toolSelectionItem

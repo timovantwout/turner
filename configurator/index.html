@@ -38,8 +38,8 @@
 
 
   <body onload="turnerVECMain.init();">
-    <!-- BEGIN CONFIGURATOR UI -->
     
+    <!-- BEGIN CONFIGURATOR UI -->    
     <div class="container-fluid main-container">        
         <div class="row layout-stack">            
             <!-- 3D viewer -->
@@ -80,11 +80,11 @@
                               title="Shrink/grow viewer area for testing">
                               <span id="resizeViewerButtonLabel">Resize Mode</span>                              
                          </div>
-                        <div id="getZIPButton"
-                             onclick="turnerVECMain.getZIPButtonClicked()"
+                        <div id="getZIPButton"                             
                              class="vecToolsButton"
+                             data-toggle="modal" data-target="#export-modal"
                              title="Download the current scene as ready-to-use HTML viewer">
-                             <img src="images/baseline-get_app-24px.svg"><span>ZIP</span>
+                             <img src="images/baseline-get_app-24px.svg"><span>Export</span>
                          </div>                         
                     </div>
 
@@ -120,7 +120,43 @@
         </div>
     </div>
     <!-- END CONFIGURATOR UI -->
-  
+
+    <!-- BEGIN MODAL DIALOG FOR SAVING -->
+    <div class="modal" id="export-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Export Viewer or Item</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span class="modal-close-x" aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>What you would like to export?</p>
+            <div>
+              <label class="radiobutton-container" for="export-choice-all">Viewer + Item
+                <input type="radio" id="export-choice-all" name="export-choice" value="all" checked>
+                <span class="radiobutton-checkmark"></span>
+              </label>              
+              <label class="radiobutton-container" for="export-choice-viewer">Viewer Only
+                <input type="radio" id="export-choice-viewer" name="export-choice" value="viewer">
+                <span class="radiobutton-checkmark"></span>
+              </label>              
+              <label class="radiobutton-container" for="export-choice-item">Item Only (.glb)
+                <input type="radio" id="export-choice-item" name="export-choice" value="item">
+                <span class="radiobutton-checkmark"></span>
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="vecToolsButton" onclick="turnerVECMain.downloadButtonClicked()">Export</div>
+            <div class="vecToolsButton" data-dismiss="modal">Cancel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END MODAL DIALOG FOR SAVING -->
+    
   </body>
 
   </html>
