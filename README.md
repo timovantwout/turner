@@ -57,7 +57,7 @@ It is continuously developed further by following the requirements of many end u
 
 The GitHub repository is maintained by [DGG](https://github.com/DGG3D), ensuring long-term stability of the software.
 Initial contributors to Turner 3D are
-* [DGG](https://darmstadt-graphics.com/)
+* [DGG](www.dgg3d.com)
 * [Fraunhofer IGD](https://www.igd.fraunhofer.de/en) / [CultLab3D](https://www.cultlab3d.de/)
 
 
