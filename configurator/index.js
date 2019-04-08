@@ -189,6 +189,16 @@ var turnerVEC = function()
     };
    
     //---------------------------------------------------------------------------------------------------------
+   
+    this.genSeparatorHTML = function(pluginUIElemObj)
+    {
+        var sepElem = document.createElement("div");
+        sepElem.classList.add("uiElemSeparator");
+        
+        return sepElem;
+    };    
+   
+    //---------------------------------------------------------------------------------------------------------
       
     this.genSectionHeadingHTML = function(pluginUIElemObj)
     {
@@ -478,6 +488,38 @@ var turnerVEC = function()
     }    
     
     //---------------------------------------------------------------------------------------------------------
+
+    this.genColorChoiceHTML = function(pluginUIElemObj)
+    {
+        var outerElem = document.createElement("div");
+        outerElem.classList.add("uiElemContainer");
+        
+        var labelTextElem = document.createElement("span");
+        var helpElem      = document.createElement("span");
+        var switchElem    = document.createElement("label");
+        var inputElem     = document.createElement("input");
+        
+        labelTextElem.classList.add("label-text");
+        labelTextElem.innerText = pluginUIElemObj.labelText;
+        outerElem.appendChild(labelTextElem);
+
+        helpElem.classList.add("help-button");
+        helpElem.setAttribute("data-toggle", "tooltip");
+        helpElem.title = pluginUIElemObj.tooltipText;
+        outerElem.appendChild(helpElem);
+           
+        inputElem.classList.add("color-input");        
+        inputElem.type     = "color";
+        inputElem.id       = pluginUIElemObj.id;
+        inputElem.value    = pluginUIElemObj.initValue;
+        inputElem.oninput  = pluginUIElemObj.callback;
+        outerElem.appendChild(inputElem);
+        
+        return outerElem;
+    };
+
+    //---------------------------------------------------------------------------------------------------------
+
     
     this.addPluginUIElement = function(pluginUIElemObj, pluginUIAreaElem)
     {
@@ -506,7 +548,13 @@ var turnerVEC = function()
                 break;
             case "image-configurator":
                 pluginUIAreaElem.appendChild(this.genImageConfiguratorHTML(pluginUIElemObj));                
-                break;                
+                break;
+            case "color-choice":
+                pluginUIAreaElem.appendChild(this.genColorChoiceHTML(pluginUIElemObj));
+                break;
+            case "separator":
+                pluginUIAreaElem.appendChild(this.genSeparatorHTML(pluginUIElemObj));
+                break;
             default:
                 console.error("Plugin UI element type \"" + pluginUIElemObj.type + "\" is not a known type.");
                 break;

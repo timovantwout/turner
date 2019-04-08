@@ -28,6 +28,7 @@ var postProcess            = null;
 var currentSkybox          = null;
 var currentSkyboxScale     = null;
 var currentSkyboxBlurLevel = null;
+var turnerInput            = null;
 
 var initModelRoughness = 0;
 var initModelMetallic  = 0;
@@ -125,8 +126,8 @@ TurnerWheelFOVInput.prototype.detachControl = function (element) {
     }
 };
 
-TurnerWheelFOVInput.prototype.checkInputs = function () {
-    if(this.inertialFovOffset != 0)
+TurnerWheelFOVInput.prototype.checkInputs = function (forceUpdate) {
+    if(this.inertialFovOffset != 0 || forceUpdate)
     {
         this.camera.fov += this.inertialFovOffset;
         this.camera.fov = Math.max(this.minFOV, Math.min(this.maxFOV, this.camera.fov));
@@ -237,7 +238,7 @@ function loadScene() {
     {
         sceneObj = scene;
         
-        sceneObj.clearColor = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0);
+        sceneObj.clearColor = new BABYLON.Color4(1.0, 1.0, 1.0, 0.0); //transparent background
 
         setupMainMesh();         
 
@@ -254,9 +255,12 @@ function loadScene() {
         // focal_len = h x W D / fov
         // tan (fov/2) = (d/2)/f
         // f = (d/2)/tan(fov/2)
-        var minFOV = 13.7 * Math.PI / 180; // 100mm
-        var maxFOV = 46.4 * Math.PI / 180; //  28mm
-        var turnerInput = new TurnerWheelFOVInput(camera, minFOV, maxFOV);
+        //var minFOV = 13.7 * Math.PI / 180;   // 100mm
+        //var maxFOV = 46.4 * Math.PI / 180;   //  28mm
+        var minFOV = 3 * 9 * Math.PI / 180;
+        var maxFOV = 6 * 9 * Math.PI / 180;
+        
+        turnerInput = new TurnerWheelFOVInput(camera, minFOV, maxFOV);
         camera.inputs.add(turnerInput);
 
 
@@ -447,6 +451,17 @@ var toggle3DBackground = function(toggled)
         currentSkybox.dispose();
         currentSkybox = null;
     }
+    
+    if (!toggled)
+    {
+        // disable fxaa if we have a transparent background,
+        // since we'll otherwise get a visible outline
+        renderPipeline.fxaaEnabled = false;
+    }
+    else
+    {
+        renderPipeline.fxaaEnabled = true;
+    }
 };
 
 /************************************************************/
@@ -476,6 +491,42 @@ var setMaxVerticalCameraAngle = function(value)
 {
     // map from [-90°, 90°] to [PI, 0]    
     camera.lowerBetaLimit = ((180.0 - (value + 90)) / 180.0) * Math.PI;
+};
+
+/************************************************************/
+
+var setMinZoomFactor = function(value)
+{
+    value = Math.max(Math.min(value, 10), 1);
+    turnerInput.minFOV = value * 9 * Math.PI / 180;
+    turnerInput.checkInputs(true);
+};
+
+/************************************************************/
+
+var setMaxZoomFactor = function(value)
+{
+    value = Math.max(Math.min(value, 10), 1);
+    turnerInput.maxFOV = value * 9 * Math.PI / 180;
+    turnerInput.checkInputs(true);
+};
+
+/************************************************************/
+
+/**
+ * Toggles sensitivity of the interactive camera panning.
+ * A value of zero disables panning.
+ */
+var setPanningSensitivity = function(value)
+{   
+    if (value > 0) 
+    {
+        camera.panningSensibility = (1.1 - value) * 4000;        
+    }
+    else
+    {
+        camera.panningSensibility = 0;
+    }
 };
 
 /************************************************************/
@@ -738,10 +789,28 @@ var getElementLink = function(elementID)
     
     return elementIDToLink[elementID];
 };
+
+/************************************************************/
+/**
+ * Configures the given 2D element's background through CSS,
+ * using the given value 
+ */
+var setElementBackground = function(elementID, cssBackgroundStyle)
+{
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+    
+    elem.style.background = cssBackgroundStyle;
+};
     
 /************************************************************/
 /**
- * positions the given 2D element through CSS, using the given
+ * Positions the given 2D element through CSS, using the given
  * values for sides and px offsets
  * example: "top" and "3px" means "top: 3px;" in cSS
  */

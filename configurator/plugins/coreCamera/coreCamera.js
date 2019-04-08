@@ -21,7 +21,7 @@ var coreCamera = function()
     
     this.cameraContrast = 1.0;
     this.cameraExposure = 1.0;    
-    this.cameraBloom    = 0.2;
+    this.cameraBloom    = 0.0;
     
     //---------------------------------------------------------------------------------------------------------
     //                                    plugin UI element callbacks    
@@ -119,10 +119,11 @@ var coreCamera = function()
     
     this.init = function()
     {
-        var viewer  = turnerVECMain.viewerAPI;
+        var viewer = turnerVECMain.viewerAPI;
         
         viewer.setContrast(this.cameraContrast);
         viewer.setExposure(this.cameraExposure);
+        viewer.setBloom(this.cameraBloom);
         
         return true;
     }

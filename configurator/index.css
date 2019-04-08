@@ -6,6 +6,11 @@
     margin-bottom: 16px;
 }
 
+.uiElemSeparator
+{
+    border-bottom: 1px solid #bbb;    
+}
+
 .uiHeadingElemContainer
 {
     padding: 0px;
@@ -13,8 +18,8 @@
 
 .uiElemContainer
 {
-    padding: 12px;
-    border-bottom: 1px solid #bbb;
+    padding: 12px;  
+    border-bottom: 1px solid rgb(235,235,235);
 }
 
 .section-heading-text
@@ -56,6 +61,30 @@
     color: #333;
     font-size: 0.8em;
     padding: 0.2em;    
+}
+
+.color-input
+{
+    width: 24px;
+    height: 24px;
+    float: right;
+    background: #333;    
+    padding: 0;
+    border: 2px solid #333;
+    -webkit-appearance: none;	
+}
+.color-input::-webkit-color-swatch-wrapper
+{
+	padding: 0;
+}
+.color-input::-webkit-color-swatch
+{
+	border: none;
+}
+
+.color-input:focus
+{
+    outline: none;
 }
 
 .text-input:focus
@@ -332,6 +361,7 @@ html, body
     height: 100%;
     font-family: sans-serif;
     user-select: none;
+    overflow: hidden;
 }
 
 .main-container
@@ -358,11 +388,24 @@ html, body
     border: 0;
     margin: 0;
     padding: 0;
+    max-height: 100%;
+    overflow: auto;
     background: white;
-    min-width: 340px;
+    min-width: 360px;
     -webkit-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
     -moz-box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
     box-shadow: 10px -10px 20px -8px rgba(136,136,136,0.7);
+    scrollbar-color: #666 #333;
+}
+
+::-webkit-scrollbar {
+  background: #333;
+}
+::-webkit-scrollbar-track {
+  
+}
+::-webkit-scrollbar-thumb {
+  background: #666;
 }
 
 #tools
@@ -545,7 +588,8 @@ html, body
     flex: 1;
     min-width:  220px;
     min-height: 300px;
-    background: url('images/workspace-background.jpg');    
+    max-height: 100%;
+    background: url('images/workspace-background.jpg');
     overflow: hidden;
 }
 
@@ -563,8 +607,8 @@ html, body
     padding: 0;
     width:  100%;
     height: 100%;
-    min-width:  300px;    
-    min-height: 300px;    
+    min-width:  300px;
+    min-height: 300px;
 }
 
 .guideline-h-t, .guideline-h-b, .guideline-v-l, .guideline-v-r
