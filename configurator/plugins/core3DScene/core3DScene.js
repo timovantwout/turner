@@ -21,23 +21,38 @@ var core3DScene = function()
     
     this.environments = [
                            {
-                            "name"        : "hollywood",
-                            "url"         : "environments/hollywood/hollywood.png",
-                            "displayName" : "Hollywood"
+                            "name"        : "royal_esplanade",
+                            "url"         : "environments/royal_esplanade/royal_esplanade.png",
+                            "displayName" : "Royal Esplanade"
                            },
                            {
-                             "name"        : "studio_softboxes",
-                             "url"         : "environments/studio_softboxes/studio_softboxes.png",
-                             "displayName" : "Studio Softboxes"
+                             "name"        : "studio_small",
+                             "url"         : "environments/studio_small/studio_small.png",
+                             "displayName" : "Studio Small"
                            },
                            {
-                             "name"        : "runyon_canyon",
-                             "url"         : "environments/runyon_canyon/runyon_canyon.png",
-                             "displayName" : "Runyon Canyon"
+                             "name"        : "cape_hill",
+                             "url"         : "environments/cape_hill/cape_hill.png",
+                             "displayName" : "Cape Hill"
+                           },
+                                                      {
+                             "name"        : "blue_grotto",
+                             "url"         : "environments/blue_grotto/blue_grotto.png",
+                             "displayName" : "Blue Grotto"
+                           },
+                                                                                 {
+                             "name"        : "mossy_forest",
+                             "url"         : "environments/mossy_forest/mossy_forest.png",
+                             "displayName" : "Mossy Forest"
+                           },
+                                                                                                            {
+                             "name"        : "venice_sunset",
+                             "url"         : "environments/venice_sunset/venice_sunset.png",
+                             "displayName" : "Venice Sunset"
                            }
                         ];
                         
-    this.currentEnvironment = "hollywood";
+    this.currentEnvironment = "royal_esplanade";
     this.skyboxSharpness    = 0.5;
     
     //---------------------------------------------------------------------------------------------------------
