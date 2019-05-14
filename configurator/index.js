@@ -78,7 +78,7 @@ var turnerVEC = function()
                     type : "file"
                 },
                 {
-                    name : "turner.js",
+                    name : "turner.min.js",
                     type : "file"
                 },
                 {
