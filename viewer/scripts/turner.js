@@ -37,21 +37,21 @@ var refScale = 3.5;
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
-						   
+
 if (isFirefoxOrIceweasel)
 {
-	//assume we are inside an iframe
-	window.addEventListener("DOMMouseScroll", function(e){
-		e.preventDefault();	
-	});
+    //assume we are inside an iframe
+    window.addEventListener("DOMMouseScroll", function(e){
+        e.preventDefault();	
+    });
 }
 else
 {
-	//assume we are inside an iframe
-	window.addEventListener("mousewheel", function(e)
-	{
-		e.preventDefault();	
-	});
+    //assume we are inside an iframe
+    window.addEventListener("mousewheel", function(e)
+    {
+        e.preventDefault();	
+    }, { passive: false });
 }
 
 var viewerIsReadyCallbacks = [];
@@ -226,17 +226,30 @@ function loadScene() {
     engine = new BABYLON.Engine(canvas, true);
     engine.enableOfflineSupport = false;
 
-    var rootUrl  = "";    
+    engine.loadingUIBackgroundColor = "#f8f8f8";
+
+    var rootUrl  = "";
     var fileName = "scene.glb";
 
     //set the following to false in order to hide the animated loading screen
     BABYLON.SceneLoader.ShowLoadingScreen = true;
     
     BABYLON.SceneLoader.ForceFullSceneLoadingForIncremental = true;    
-                      
+
     var bjsLoaderPlugin = BABYLON.SceneLoader.Load(rootUrl, fileName, engine, function (scene)
     {
         sceneObj = scene;
+
+        scene.defaultCursor = "grab";
+
+        sceneObj.onPointerDown = function() {
+            scene.defaultCursor = "grabbing";
+        };
+
+        sceneObj.onPointerUp = function() {
+            scene.defaultCursor = "grab";
+            canvas.style.cursor = "grab";
+        };
         
         sceneObj.clearColor = new BABYLON.Color4(1.0, 1.0, 1.0, 0.0); //transparent background
 
