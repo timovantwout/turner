@@ -1,4 +1,4 @@
-﻿var maxImgDimPx = 80;
+﻿var maxImgDimPx = 120;
 
 var elementIDToLink = 
 {
