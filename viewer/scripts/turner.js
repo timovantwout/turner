@@ -1,4 +1,4 @@
-﻿var maxImgDimPx = 120;
+var maxImgDimPx = 120;
 
 var elementIDToLink = 
 {
@@ -82,7 +82,7 @@ function emitModelLoaded()
 
 var TurnerWheelFOVInput = function (camera, minFOV, maxFOV) {
     this.inertialFovOffset = 0;
-    this.scaling = 0.00005;
+    this.scaling = 0.001;
     this.camera = camera;
     this.minFOV = minFOV;
     this.maxFOV = maxFOV;
@@ -104,12 +104,12 @@ TurnerWheelFOVInput.prototype.attachControl = function (element, noPreventDefaul
         this._wheel = function (p, s) {
             if (p.type !== BABYLON.PointerEventTypes.POINTERWHEEL) { return; }
             var event = p.event;
-            var delta;
+            
             if (event.wheelDelta) {
-                delta = -event.wheelDelta * _this.scaling;
+                delta = -event.wheelDelta * 0.025 * _this.scaling;
             } else {
                 let deltaValue = event.deltaY || event.detail;
-                delta = -deltaValue * _this.scaling;
+                delta = deltaValue * _this.scaling;
             }
             _this.inertialFovOffset += delta;    
         }
@@ -251,7 +251,7 @@ function loadScene() {
             canvas.style.cursor = "grab";
         };
         
-        sceneObj.clearColor = new BABYLON.Color4(1.0, 1.0, 1.0, 0.0); //transparent background
+        sceneObj.clearColor = new BABYLON.Color4(0.66, 0.66, 0.66, 0.0); //transparent background
 
         setupMainMesh();         
 
