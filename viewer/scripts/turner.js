@@ -104,6 +104,8 @@ TurnerWheelFOVInput.prototype.attachControl = function (element, noPreventDefaul
         this._wheel = function (p, s) {
             if (p.type !== BABYLON.PointerEventTypes.POINTERWHEEL) { return; }
             var event = p.event;
+		
+	    var delta;
             
             if (event.wheelDelta) {
                 delta = -event.wheelDelta * 0.025 * _this.scaling;
