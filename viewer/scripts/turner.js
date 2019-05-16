@@ -253,9 +253,9 @@ function loadScene() {
             canvas.style.cursor = "grab";
         };
         
-        sceneObj.clearColor = new BABYLON.Color4(0.66, 0.66, 0.66, 0.0); //transparent background
+        sceneObj.clearColor = new BABYLON.Color4(0.0, 0.0, 0.0, 0.0); //transparent background
 
-        setupMainMesh();         
+        setupMainMesh();
 
         // these values will be overridden anyway when we set the position
         var alpha  = 0;
