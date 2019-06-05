@@ -21,14 +21,14 @@ var core3DScene = function()
     
     this.environments = [
                            {
+                             "name"        : "autoshop",
+                             "url"         : "environments/autoshop/autoshop.png",
+                             "displayName" : "Autoshop"
+                           },
+                           {
                             "name"        : "royal_esplanade",
                             "url"         : "environments/royal_esplanade/royal_esplanade.png",
                             "displayName" : "Royal Esplanade"
-                           },
-                           {
-                             "name"        : "studio_small",
-                             "url"         : "environments/studio_small/studio_small.png",
-                             "displayName" : "Studio Small"
                            },
                            {
                              "name"        : "cape_hill",
@@ -52,7 +52,7 @@ var core3DScene = function()
                            }
                         ];
                         
-    this.currentEnvironment = "royal_esplanade";
+    this.currentEnvironment = "autoshop";
     this.skyboxSharpness    = 0.5;
     
     //---------------------------------------------------------------------------------------------------------
