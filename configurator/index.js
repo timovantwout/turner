@@ -78,7 +78,7 @@ var turnerVEC = function()
                     type : "file"
                 },
                 {
-                    name : "turner.min.js",
+                    name : "turner.js",
                     type : "file"
                 },
                 {
@@ -862,19 +862,19 @@ var turnerVEC = function()
             }
         }
         
-        var zipReadyCallback = function(content)
-        {
-            saveAs(content, "turner-viewer.zip");    
-        };    
+        // var zipReadyCallback = function(content)
+        // {
+        //     saveAs(content, "turner-viewer.zip");    
+        // };    
         
         switch (exportChoice)
         {
             default:
             case "all":
-                getSceneAsZIP(zipReadyCallback, true);
+                getSceneAsZIP(true);
                 break;
             case "viewer":
-                getSceneAsZIP(zipReadyCallback, false);
+                getSceneAsZIP(false);
                 break;
             case "item":
                 getModelAsGLBUint8Array(function(uint8Array)
@@ -973,12 +973,12 @@ var turnerVEC = function()
     
     this.elementPointerDownCallback = function(event)
     {
-        var demoModeButtonElem  = document.getElementById('demoModeButton');        
-        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
-        if (inDemoMode)
-        {
-            return;
-        }
+        // var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        // var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        // if (inDemoMode)
+        // {
+        //     return;
+        // }
         
         that.stopDragging();
                 
@@ -1006,12 +1006,12 @@ var turnerVEC = function()
     
     this.pointerUpCallback = function(event)
     {
-        var demoModeButtonElem  = document.getElementById('demoModeButton');        
-        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
-        if (inDemoMode)
-        {
-            return;
-        }
+        // var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        // var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        // if (inDemoMode)
+        // {
+        //     return;
+        // }
         
         that.stopDragging();
     };
@@ -1020,12 +1020,12 @@ var turnerVEC = function()
     
     this.pointerLeaveCallback = function(event)
     {
-        var demoModeButtonElem  = document.getElementById('demoModeButton');        
-        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
-        if (inDemoMode)
-        {
-            return;
-        }
+        // var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        // var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        // if (inDemoMode)
+        // {
+        //     return;
+        // }
         
         // we could stop dragging here, but we don't
         //instead, we clamp the draggable range to allow "sliding" elements on an edge
@@ -1035,12 +1035,12 @@ var turnerVEC = function()
     
     this.pointerMoveCallback = function(event)
     {
-        var demoModeButtonElem  = document.getElementById('demoModeButton');        
-        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
-        if (inDemoMode)
-        {
-            return;
-        }
+        // var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        // var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        // if (inDemoMode)
+        // {
+        //     return;
+        // }
         
         if (that.dragElementID == "")
         {
@@ -1113,10 +1113,57 @@ var turnerVECMain = new turnerVEC();
 /************************************************************/
 
 /**
+ * Wrappers for turner functions
+ */
+var setModelFromS3 = function(rootUrl, fileName) {
+    turnerVECMain.viewerAPI.loadScene(rootUrl, fileName)
+  }
+  var setElementImage = function(elementID, imageURL) {
+    turnerVECMain.viewerAPI.setElementImage(elementID, imageURL)
+    console.log(imageURL)
+  }
+  var setElementLink = function(elementID, linkURL) {
+    turnerVECMain.viewerAPI.setElementLink(elementID, linkURL)
+  }
+  var setInputElemValue = function(elem, value) {
+    turnerVECMain.setInputElemValue(elem, value)
+  }
+  var getElementImageCustomURL = function(elementID) {
+    return turnerVECMain.viewerAPI.getElementImageCustomURL(elementID)
+  }
+  var getElementLink = function(elementID) {
+    return turnerVECMain.viewerAPI.getElementLink(elementID)
+  }
+  var getCustomCSS = function() {
+    var turnerCustomCSS = ''
+  
+    for (var pluginName in turnerVECMain.plugins) {
+      if (turnerVECMain.plugins.hasOwnProperty(pluginName)) {
+        turnerCustomCSS += turnerVECMain.plugins[pluginName].getCustomCSS()
+      }
+    }
+  
+    return turnerCustomCSS
+  }
+  var getCustomJS = function() {
+    var turnerCustomJS = 'addIsReadyCallback(function(){\n\n'
+  
+    for (var pluginName in turnerVECMain.plugins) {
+      if (turnerVECMain.plugins.hasOwnProperty(pluginName)) {
+        turnerCustomJS += turnerVECMain.plugins[pluginName].getCustomJS()
+      }
+    }
+  
+    turnerCustomJS += '\n});\n'
+  
+    return turnerCustomJS
+  }
+
+/**
  * Stores the current viewer as a ZIP file.
  * Optionally, the 3D model file can be included as well.
  */
- var getSceneAsZIP = function(zipReadyCallback, include3DModel)
+ var getSceneAsZIP = function(include3DModel)
  {
     var zip = new JSZip();
         
@@ -1132,25 +1179,25 @@ var turnerVECMain = new turnerVEC();
         {
             zip.generateAsync({type:"blob"}).then(function(content)
             {
-                zipReadyCallback(content);
+                saveAs(content, 'turner-viewer.zip')
             });   
         }            
     };
     
     // collect css and js customizations from all plugins
-    var turnerCustomCSS = "";
-    var turnerCustomJS  = "addIsReadyCallback(function(){\n\n";
+        var turnerCustomCSS = getCustomCSS()
+        var turnerCustomJS = getCustomJS()
     
-    for (var pluginName in turnerVECMain.plugins)
-    {
-        if (turnerVECMain.plugins.hasOwnProperty(pluginName))
-        {
-            turnerCustomCSS += turnerVECMain.plugins[pluginName].getCustomCSS();
-            turnerCustomJS  += turnerVECMain.plugins[pluginName].getCustomJS();
-        }
-    }
+    // for (var pluginName in turnerVECMain.plugins)
+    // {
+    //     if (turnerVECMain.plugins.hasOwnProperty(pluginName))
+    //     {
+    //         turnerCustomCSS += turnerVECMain.plugins[pluginName].getCustomCSS();
+    //         turnerCustomJS  += turnerVECMain.plugins[pluginName].getCustomJS();
+    //     }
+    // }
 
-    turnerCustomJS += "\n});\n";
+    // turnerCustomJS += "\n});\n";
 
     // callback that adds a file download, asynchronously,
     // and makes sure "fileAddedToZIP" is called as soon as the download is finished
