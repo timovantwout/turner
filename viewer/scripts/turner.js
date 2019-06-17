@@ -220,7 +220,7 @@ function addOSNormalMapPluginHook(bjsLoaderPlugin)
 }
 
 
-function loadScene() {
+function loadScene(rootUrl = '', fileName = 'scene.glb') {
     if (engine) {
         engine.dispose();
     }
@@ -230,8 +230,8 @@ function loadScene() {
 
     engine.loadingUIBackgroundColor = "#f8f8f8";
 
-    var rootUrl  = "";
-    var fileName = "scene.glb";
+    // var rootUrl  = "";
+    // var fileName = "scene.glb";
 
     //set the following to false in order to hide the animated loading screen
     BABYLON.SceneLoader.ShowLoadingScreen = true;
@@ -399,11 +399,11 @@ var addModelLoadedCallback = function(callback)
 /**
  * Sets the model to be shown inside the viewer.
  */
-var setModelFromFile = function(file)
+var setModelFromFile = function(rooturl = 'file:', file)
 {
     modelLoaded = false;
     
-    var bjsLoaderPlugin = BABYLON.SceneLoader.Append("file:", file, sceneObj,
+    var bjsLoaderPlugin = BABYLON.SceneLoader.Append(rooturl, file, sceneObj,
         function(scene)
         {
             var skyboxEnabled = currentSkybox != null;
