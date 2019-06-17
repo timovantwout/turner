@@ -28,7 +28,7 @@
             z-index: 2000;            
             width:  80px;
             height: 34px;
-            background: url('images/company-logo.png');
+            /* background: url('images/company-logo.png'); */
         }
 
         #product-logo
@@ -39,7 +39,7 @@
             z-index: 2000;            
             width:  80px;
             height: 42px;
-            background: url('images/product-logo.png');
+            /* background: url('images/product-logo.png'); */
             opacity:0.75;            
         }
         
@@ -51,7 +51,7 @@
             z-index: 2000;            
             width:  48px;
             height: 48px;
-            background: url('images/three-d-icon.png');
+            /* background: url('images/three-d-icon.png'); */
         }
         
         #webgl-not-supported-message
@@ -73,7 +73,7 @@
 
     <script src="scripts/pep.min.js"></script>    
     <script src="scripts/babylon.js"></script>
-    <script src="scripts/turner.min.js"></script>    
+    <script src="scripts/turner.js"></script>    
     <script src="scripts/babylon.glTF2Serializer.min.js"></script>
     
     <link rel="stylesheet" href="turner.custom.css">
@@ -87,8 +87,8 @@
     </div>
 
     <!-- position-able 2D overlays -->  
-    <a href="javascript:void(0)" target="_blank" id="company-logo" draggable="false" href="https://www.darmstadt-graphics.com/" target="_blank"></a>
-    <a href="javascript:void(0)" target="_blank" id="product-logo" draggable="false" href="https://dgg3d.github.io/turner" target="_blank"></a>
+    <a href="javascript:void(0)" target="_blank" id="company-logo" draggable="false" href="" target="_blank"></a>
+    <a href="javascript:void(0)" target="_blank" id="product-logo" draggable="false" href="" target="_blank"></a>
     <a href="javascript:void(0)" target="_blank" id="three-d-icon" draggable="false"></a>
     
     <canvas id="renderCanvas" touch-action="none"></canvas>
@@ -100,7 +100,7 @@
             var engine = null;
             var camera = null;
 
-            loadScene();
+            // loadScene();
 
             document.addEventListener("contextmenu", function() {
                 event.preventDefault();
