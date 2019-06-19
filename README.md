@@ -3,13 +3,13 @@ A responsive, easy-to-use and freely configurable 3D item viewer and for the mod
 
 This is how one can embed the Turner 3D viewer, with default settings:
 <div>
-  <iframe width="400" height="400" src="https://dgg3d.github.io/turner/viewer/"></iframe>
+  <iframe width="400" height="400" src="https://dgg3d.github.io/turner/viewer/?modelURL=scene.glb"></iframe>
 </div>
 
 
 ## Live Demos
-* Check out the viewer configurator [here](https://dgg3d.github.io/turner/configurator/)
-* Check out a plain viewer demo [here](https://dgg3d.github.io/turner/viewer/)
+* Check out the viewer configurator [here](https://dgg3d.github.io/turner/configurator/?modelURL=scene.glb)
+* Check out a plain viewer demo [here](https://dgg3d.github.io/turner/viewer/?modelURL=scene.glb)
 
 
 # What is Turner 3D?

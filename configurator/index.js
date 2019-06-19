@@ -91,6 +91,23 @@ var turnerVEC = function()
     ];
     
     //---------------------------------------------------------------------------------------------------------
+        
+    this.getURLParamValue = function(key)
+    {
+        var url    = window.location.search.substring(1);
+        var params = url.split('&');
+        for (var i = 0; i < params.length; i++) 
+        {
+            var pname = params[i].split('=');
+            if (pname[0] == key) 
+            {
+                return pname[1];
+            }
+        }
+        return "";
+    };
+    
+    //---------------------------------------------------------------------------------------------------------
     
     this.blobToUint8Array = function(blob, callback)
     {
@@ -625,7 +642,17 @@ var turnerVEC = function()
             console.error("Unable to connect to viewer.");
             return;
         }
-        console.log("Turner viewer connected.");        
+        console.log("Turner viewer connected.");      
+
+        // load scene from URL parameter, if any
+        var modelURL = this.getURLParamValue("modelURL");
+        if (modelURL != "")
+        {            
+            var splitIdx = modelURL.lastIndexOf('/') + 1;
+            var filePart = modelURL.substring(splitIdx);
+            var basePath = modelURL.substring(0, splitIdx);
+            this.viewerAPI.loadScene(basePath, filePart);
+        }        
         
         // add callbacks for dragging / clicks on 2D UI elements
         this.viewerAPI.addElementPointerDownCallback("company-logo", this.elementPointerDownCallback);

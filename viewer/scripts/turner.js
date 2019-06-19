@@ -54,6 +54,21 @@ else
     }, { passive: false });
 }
 
+function getURLParamValue(key)
+{
+    var url    = window.location.search.substring(1);
+    var params = url.split('&');
+    for (var i = 0; i < params.length; i++) 
+    {
+        var pname = params[i].split('=');
+        if (pname[0] == key) 
+        {
+            return pname[1];
+        }
+    }
+    return "";
+};
+
 var viewerIsReadyCallbacks = [];
 var viewerReady            = false;
 

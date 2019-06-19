@@ -100,8 +100,15 @@
             var engine = null;
             var camera = null;
 
-            // loadScene();
-
+            var modelURL = getURLParamValue("modelURL");
+            if (modelURL != "")
+            {
+                var splitIdx = modelURL.lastIndexOf('/') + 1;
+                var filePart = modelURL.substring(splitIdx);
+                var basePath = modelURL.substring(0, splitIdx);
+                loadScene(basePath, filePart);
+            }
+            
             document.addEventListener("contextmenu", function() {
                 event.preventDefault();
             }, true);
