@@ -653,6 +653,21 @@ var turnerVEC = function()
             var basePath = modelURL.substring(0, splitIdx);
             this.viewerAPI.loadScene(basePath, filePart);
         }        
+        else
+        {
+            // nothing to be done:
+            // in the standalone application case, the viewer automatically loads a basic empty scene            
+        }
+        
+        if (this.getURLParamValue("hideGetZIPButton") == "true")
+        {  
+            document.getElementById("getZIPButton").style.visibility = "hidden";
+        }
+                
+        if (this.getURLParamValue("hideSetModelButton") == "true")
+        {  
+            document.getElementById("setModelButton").style.visibility = "hidden";
+        }
         
         // add callbacks for dragging / clicks on 2D UI elements
         this.viewerAPI.addElementPointerDownCallback("company-logo", this.elementPointerDownCallback);
@@ -889,11 +904,6 @@ var turnerVEC = function()
             }
         }
         
-        // var zipReadyCallback = function(content)
-        // {
-        //     saveAs(content, "turner-viewer.zip");    
-        // };    
-        
         switch (exportChoice)
         {
             default:
@@ -1000,12 +1010,12 @@ var turnerVEC = function()
     
     this.elementPointerDownCallback = function(event)
     {
-        // var demoModeButtonElem  = document.getElementById('demoModeButton');        
-        // var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
-        // if (inDemoMode)
-        // {
-        //     return;
-        // }
+        var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        if (inDemoMode)
+        {
+            return;
+        }
         
         that.stopDragging();
                 
@@ -1033,12 +1043,12 @@ var turnerVEC = function()
     
     this.pointerUpCallback = function(event)
     {
-        // var demoModeButtonElem  = document.getElementById('demoModeButton');        
-        // var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
-        // if (inDemoMode)
-        // {
-        //     return;
-        // }
+        var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        if (inDemoMode)
+        {
+            return;
+        }
         
         that.stopDragging();
     };
@@ -1047,12 +1057,12 @@ var turnerVEC = function()
     
     this.pointerLeaveCallback = function(event)
     {
-        // var demoModeButtonElem  = document.getElementById('demoModeButton');        
-        // var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
-        // if (inDemoMode)
-        // {
-        //     return;
-        // }
+        var demoModeButtonElem  = document.getElementById('demoModeButton');        
+        var inDemoMode          = demoModeButtonElem.classList.contains("vecToolsButton-triggered");
+        if (inDemoMode)
+        {
+            return;
+        }
         
         // we could stop dragging here, but we don't
         //instead, we clamp the draggable range to allow "sliding" elements on an edge

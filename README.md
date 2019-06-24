@@ -39,7 +39,7 @@ Turner 3D is *not* ...
 
 * a 3D rendering framework itself (instead it relies on [BabylonJS](https://www.babylonjs.com/)).
 
-* a 3D modeling tool or a 3D model configurator tool.
+* a 3D modeling tool.
 
 * an "out-of-core" viewing tool for massive 3D models.
 
@@ -48,6 +48,19 @@ Turner 3D is *not* ...
 
 Currently, the only accepted input format for turner is *binary glTF* (.glb).
 We believe in open, royalty-free standards, and glTF - the "jpeg for 3D" - fits very well with the mission of Turner 3D: becoming a broadly used, open-source item viewer for the modern Web.
+
+
+# What URL Parameters are Supported?
+
+The *Viewer* supports the following URL parameters:
+
+* modelURL - URL of the model to be loaded (please not that cross-site restrictions may apply)
+
+The *Configurator* supports the following URL parameters:
+
+* modelURL - URL of the model to be loaded (please not that cross-site restrictions may apply)
+* hideGetZIPButton - if set to "true", this hides the "Get ZIP" button
+* hideSetModelButton - if set to "true", this hides the "Set Model" button
 
 
 # What is the Team Behind Turner 3D?

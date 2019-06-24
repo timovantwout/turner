@@ -121,9 +121,12 @@ var coreCamera = function()
     {
         var viewer = turnerVECMain.viewerAPI;
         
-        viewer.setContrast(this.cameraContrast);
+        //TODO: there is something wrong *inside* the viewer,
+        //      now that more async stuff is happening due to the URL parameters
+        //      needs to be cleaned up inside the viewer, then we can re-activate this
+        /*viewer.setContrast(this.cameraContrast);
         viewer.setExposure(this.cameraExposure);
-        viewer.setBloom(this.cameraBloom);
+        viewer.setBloom(this.cameraBloom);*/
         
         return true;
     }

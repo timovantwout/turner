@@ -102,8 +102,8 @@ var coreItemMaterial = function()
             var metallicSliderElem  = document.getElementById("coreItemMaterial_metallicFactorSlider");
             var roughnessSliderElem = document.getElementById("coreItemMaterial_roughnessFactorSlider");
             
-            metallicSliderElem.value  = (metallic  == -1.0 ? defaultMetallicFactor  : metallic);
-            roughnessSliderElem.value = (roughness == -1.0 ? defaultRoughnessFactor : roughness);
+            metallicSliderElem.value  = (metallic  == -1.0 ? that.defaultMetallicFactor  : metallic);
+            roughnessSliderElem.value = (roughness == -1.0 ? that.defaultRoughnessFactor : roughness);
             
             turnerVECMain.triggerOnChangeEvent("coreItemMaterial_metallicFactorSlider");
             turnerVECMain.triggerOnChangeEvent("coreItemMaterial_roughnessFactorSlider");

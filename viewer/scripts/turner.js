@@ -95,6 +95,18 @@ function emitModelLoaded()
     }
 };
 
+// TODO: this function should probably also do 3D initialization
+var initViewer = function()
+{
+    // default logos & links
+    setElementImage('product-logo', 'images/product-logo.png');
+    setElementImage('company-logo', 'images/company-logo.png');
+    setElementImage('three-d-icon', 'images/three-d-icon.png');
+    
+    setElementLink('product-logo', 'http://rapidcompact.cloud');
+    setElementLink('company-logo', 'https://www.dgg3d.com/');
+}
+
 var TurnerWheelFOVInput = function (camera, minFOV, maxFOV) {
     this.inertialFovOffset = 0;
     this.scaling = 0.001;
@@ -201,6 +213,13 @@ function setupMainMesh()
         }
     });
     
+    // for empty scenes, use a cubical standard volume to fit to
+    if (sceneBBMin.x == Number.MAX_VALUE)
+    {
+        sceneBBMin.x = -1; sceneBBMin.y = -1; sceneBBMin.z = -1;
+        sceneBBMax.x =  1; sceneBBMax.y =  1; sceneBBMax.z =  1;
+    }
+    
     var centerVec   = sceneBBMax.subtract(sceneBBMin);
     var bSphereRad  = centerVec.length() * 0.5;
     var bbCenter    = sceneBBMin.add(centerVec.multiplyByFloats(0.5, 0.5, 0.5));          
@@ -234,8 +253,9 @@ function addOSNormalMapPluginHook(bjsLoaderPlugin)
     };
 }
 
-
+//TODO: this function is not very clean - there should be a clear separation between init code and model loading code
 function loadScene(rootUrl = '', fileName = 'scene.glb') {
+    
     if (engine) {
         engine.dispose();
     }
@@ -245,15 +265,12 @@ function loadScene(rootUrl = '', fileName = 'scene.glb') {
 
     engine.loadingUIBackgroundColor = "#f8f8f8";
 
-    // var rootUrl  = "";
-    // var fileName = "scene.glb";
-
     //set the following to false in order to hide the animated loading screen
     BABYLON.SceneLoader.ShowLoadingScreen = true;
     
     BABYLON.SceneLoader.ForceFullSceneLoadingForIncremental = true;    
-
-    var bjsLoaderPlugin = BABYLON.SceneLoader.Load(rootUrl, fileName, engine, function (scene)
+    
+    var readyCallback = function(scene)
     {
         sceneObj = scene;
 
@@ -334,20 +351,35 @@ function loadScene(rootUrl = '', fileName = 'scene.glb') {
         postProcess = renderPipeline.imageProcessing;
         postProcess.contrast = 1.0;
         postProcess.exposure = 1.0;
-                    
-        emitViewerReady();
         
         initModelRoughness = getItemRoughnessFactor();
         initModelMetallic  = getItemMetallicFactor();
-        
-        emitModelLoaded();
-        
+                
         engine.runRenderLoop(function () {
             sceneObj.render();
         });
-    });    
-    
-    addOSNormalMapPluginHook(bjsLoaderPlugin);    
+           
+        if (fileName != "")
+        {
+            emitModelLoaded();
+        }
+        
+        if (!viewerReady)
+        {
+            emitViewerReady();
+        }
+    };
+        
+    // init without model
+    if (fileName == "" && !sceneObj)
+    {
+        readyCallback(new BABYLON.Scene(engine));
+    }
+    else
+    {
+        var bjsLoaderPlugin = BABYLON.SceneLoader.Load(rootUrl, fileName, engine, readyCallback);        
+        addOSNormalMapPluginHook(bjsLoaderPlugin);    
+    }
 }
 
 
@@ -414,11 +446,11 @@ var addModelLoadedCallback = function(callback)
 /**
  * Sets the model to be shown inside the viewer.
  */
-var setModelFromFile = function(rooturl = 'file:', file)
+var setModelFromFile = function(file, rootUrl = "file:")
 {
     modelLoaded = false;
     
-    var bjsLoaderPlugin = BABYLON.SceneLoader.Append(rooturl, file, sceneObj,
+    var bjsLoaderPlugin = BABYLON.SceneLoader.Append(rootUrl, file, sceneObj,
         function(scene)
         {
             var skyboxEnabled = currentSkybox != null;
@@ -563,7 +595,10 @@ var setPanningSensitivity = function(value)
 
 var setContrast = function(value)
 {
+    setTimeout(function()
+    {
     postProcess.contrast = value;
+    }, 100);
 };
 
 /************************************************************/
@@ -576,7 +611,7 @@ var setExposure = function(value)
 /************************************************************/
 
 var setBloom = function(value)
-{
+{ 
     if (value > 0.0)
     {
         renderPipeline.bloomEnabled = true;
