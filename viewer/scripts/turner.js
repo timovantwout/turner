@@ -42,7 +42,10 @@ if (isFirefoxOrIceweasel)
 {
     //assume we are inside an iframe
     window.addEventListener("DOMMouseScroll", function(e){
-        e.preventDefault();	
+        if (turnerInput && turnerInput.minFOV != turnerInput.maxFOV)
+        {
+            e.preventDefault();	
+        }
     });
 }
 else
@@ -50,7 +53,10 @@ else
     //assume we are inside an iframe
     window.addEventListener("mousewheel", function(e)
     {
-        e.preventDefault();	
+        if (turnerInput && turnerInput.minFOV != turnerInput.maxFOV)
+        {
+            e.preventDefault();	
+        }
     }, { passive: false });
 }
 
