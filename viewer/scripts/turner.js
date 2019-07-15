@@ -285,6 +285,8 @@ function loadScene(rootUrl = '', fileName = 'scene.glb') {
             canvas.style.cursor = "grab";
         };
         
+        sceneObj.preventDefaultOnPointerDown = false;
+        
         sceneObj.clearColor = new BABYLON.Color4(0.0, 0.0, 0.0, 0.0); //transparent background
 
         setupMainMesh();
