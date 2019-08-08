@@ -1171,6 +1171,9 @@ var setModelFromS3 = function(rootUrl, fileName) {
   var getElementLink = function(elementID) {
     return turnerVECMain.viewerAPI.getElementLink(elementID)
   }
+  var getEnvironment = function() {
+    return turnerVECMain.viewerAPI.getEnvironmentMapCustomURL()
+  }
   var getCustomCSS = function() {
     var turnerCustomCSS = ''
   

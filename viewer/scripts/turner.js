@@ -260,7 +260,7 @@ function addOSNormalMapPluginHook(bjsLoaderPlugin)
 }
 
 //TODO: this function is not very clean - there should be a clear separation between init code and model loading code
-function loadScene(rootUrl = '', fileName = 'scene.glb') {
+function loadScene(rootUrl = '', fileName = 'scene.glb', environment = 'images/environment.dds') {
     
     if (engine) {
         engine.dispose();
@@ -343,7 +343,7 @@ function loadScene(rootUrl = '', fileName = 'scene.glb') {
         camera.attachControl(canvas, true);   
         
         // setup environment
-        sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData("images/environment.dds", sceneObj);
+        sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData(environment, sceneObj);
 
         currentSkyboxScale     = 4.0 * camera.upperRadiusLimit;
         currentSkyboxBlurLevel = 0.5;
