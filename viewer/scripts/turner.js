@@ -12,7 +12,8 @@ var elementImageCustomization =
 {
     "company-logo" : "",
     "product-logo" : "",
-    "three-d-icon" : ""
+    "three-d-icon" : "",
+    "measurement-button" : ""
 };
 
 var environmentMapCustomization = "";
@@ -34,6 +35,7 @@ var initModelRoughness = 0;
 var initModelMetallic  = 0;
 
 var refScale = 3.5;
+var scaleFactor = 1;
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
@@ -108,6 +110,7 @@ var initViewer = function()
     setElementImage('product-logo', 'images/product-logo.png');
     setElementImage('company-logo', 'images/company-logo.png');
     setElementImage('three-d-icon', 'images/three-d-icon.png');
+    setElementImage('measurement-button','images/measurement-button.png');
     
     setElementLink('product-logo', 'http://rapidcompact.cloud');
     setElementLink('company-logo', 'https://www.dgg3d.com/');
@@ -229,7 +232,7 @@ function setupMainMesh()
     var centerVec   = sceneBBMax.subtract(sceneBBMin);
     var bSphereRad  = centerVec.length() * 0.5;
     var bbCenter    = sceneBBMin.add(centerVec.multiplyByFloats(0.5, 0.5, 0.5));          
-    var scaleFactor = refScale / (2.0 * bSphereRad);
+    scaleFactor = refScale / (2.0 * bSphereRad);
                 
     mainMesh.scaling = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
     mainMesh.translate(bbCenter.negate(), BABYLON.Space.WORLD);    
@@ -1134,4 +1137,253 @@ var itemIsUnchanged = function()
            initModelMetallic  == getItemMetallicFactor();
 };
 
+
+/***********************************************************/
+
+// Measurement Var
+var measurementBoolean = false;
+var resultPoints = [];
+var linePoints = [];
+var measurementObj = [];
+var resetDelay = 50000000;
+var resetTimer;
+var pinSize = 0.05;
+
+
+//Reset function
+var resetMeasurement = function(){
+    for(var i = 0; i < measurementObj.length ; i++){
+        measurementObj[i].dispose();
+        measurementObj[i] = null;
+    }
+    clearTimeout(resetTimer);
+    resultPoints.length = 0;
+    linePoints.length = 0;
+    measurementObj.length = 0;
+    measurementBoolean = false;
+    setElementImage('measurement-button', 'images/measurement-button.png');
+    //-----Resets the display-----
+    var displayA   = document.getElementById("display-A");
+    var displayB   = document.getElementById("display-B");
+    var displayResult = document.getElementById("display-Result");
+    displayA.innerHTML      = "?";
+    displayB.innerHTML      = "?";
+    displayResult.innerHTML = "?";
+    var measurementDisplay = document.getElementById("measurement-display");
+    measurementDisplay.style.display = "none";
+
+    //-----Resets the cursor-----
+    for (var i = 0; i < sceneObj.meshes.length; ++i){
+        var mesh = sceneObj.meshes[i];
+        if(mesh.actionManager != null){
+            mesh.actionManager.actions.length = 0;
+        }
+    }
+
+}
+
+//Converts a point into a String with xyz
+var pointToString = function(point){
+    var res  = "-";
+    var val1 = point.x.toFixed(5);
+    var val2 = point.y.toFixed(5);
+    var val3 = point.z.toFixed(5);
+
+    //x axis is inverted on the mesh (?)
+    val1 = -val1;
+
+    val1 = val1 > 0 ? "x:  " + val1 : "x: " + val1;
+    val2 = val2 > 0 ? "  y:  " + val2 : "  y: " + val2;
+    val3 = val3 > 0 ? "  z:  " + val3 : "  z: " + val3;
+    return val1 + val2 + val3;
+}
+
+//Adds metrics the the distance
+var distanceUnitsM = function(dist){
+    var res = "";
+    var  m = 0;
+    var cm = 0;
+    var mm = 0;
+    while(dist > 1){
+        m++;
+        dist--;
+    }
+    dist = dist * 100;
+    while(dist > 1){
+        cm++;
+        dist--;
+    }
+    dist = dist * 10;
+    while(dist > 1){
+        mm++;
+        dist--;
+    }
+    
+    if(m != 0){
+        res = res + (m < 10 ? ("0" +  m) :  m) + "m ";
+        dist = dist.toFixed(3);
+        dist = dist * 1000;
+    }
+    if(res != "" || cm != 0){
+        res = res + (cm == 0 ? "00" : (cm < 10 ? ("0" + cm) : cm)) + "cm ";
+        if(m == 0){
+            dist = dist.toFixed(5);
+            dist = dist * 100000;
+        }
+    }
+    if(m == 0 && cm ==0){
+        dist = dist.toFixed(7);
+        dist = dist * 10000000;
+    }
+
+    return (res + mm + "," + dist + "mm");
+}
+
+//Create Pin
+var CreatePin = function(pickedP){
+    var coordinate = pickedP.pickedPoint;
+    var coneLength = pinSize / 10 * 6;
+    var sphereSize = pinSize / 10 * 4;
+
+
+    //Materials or rather Color
+    var matSphere = new BABYLON.StandardMaterial('matSphere', sceneObj);
+    matSphere.emissiveColor = new BABYLON.Color3(0.75, 0, 0);
+    var matCone = new BABYLON.StandardMaterial('matCone', sceneObj);
+    matCone.emissiveColor = new BABYLON.Color3(0.75, 0.75, 0.75);
+
+    //Creation of the Pin
+    var sphere = BABYLON.MeshBuilder.CreateSphere('sphere', {diameter: sphereSize, segments: 16}, sceneObj);
+    sphere.material = matSphere;
+    measurementObj.push(sphere);
+    
+    var cone = BABYLON.MeshBuilder.CreateCylinder("cone", {diameter: sphereSize / 10, height: coneLength, tessellation: 96}, sceneObj);
+    cone.material = matCone;
+    measurementObj.push(cone);
+
+    sphere.position.y = coneLength + sphereSize / 2;
+    cone.position.y = coneLength / 2;
+    var mesh = BABYLON.Mesh.MergeMeshes([sphere, cone], true, true, undefined, false, true);
+    measurementObj.push(mesh);
+
+    //Location of the Pin
+    mesh.lookAt(BABYLON.Vector3.Zero());
+    mesh.position.x = coordinate.x;
+    mesh.position.y = coordinate.y;
+    mesh.position.z = coordinate.z;
+
+    //Rotation of the Pin
+    var axis1 = pickedP.getNormal();
+    axis1.x   = -axis1.x;		        //x Achsis has to bin inverted???					        		
+    var axis2 = BABYLON.Vector3.Zero();
+    var axis3 = BABYLON.Vector3.Zero();
+    var start = new BABYLON.Vector3(Math.PI / 2, Math.PI / 2, 0);			
+
+    BABYLON.Vector3.CrossToRef(start, axis1, axis2);
+    BABYLON.Vector3.CrossToRef(axis2, axis1, axis3);
+    var tmp = BABYLON.Vector3.RotationFromAxis(axis3.negate(), axis1, axis2);
+    var quaternion   = BABYLON.Quaternion.RotationYawPitchRoll(tmp.y, tmp.x, tmp.z);
+    mesh.rotationQuaternion = quaternion;
+}
+
+//Distance between two Points
+var displayDistance = function(){
+    
+    //Tube
+    var resultTube = BABYLON.MeshBuilder.CreateTube("resultTube",{path : [linePoints[0], linePoints[1]], radius : 0.0025, tessellation: 96},sceneObj)
+    resultTube.material = new BABYLON.StandardMaterial("resultMat", sceneObj);
+    resultTube.material.emissiveColor = new BABYLON.Color3(1,0,0);
+    measurementObj.push(resultTube);
+
+    //Display
+    var res = BABYLON.Vector3.Distance(resultPoints[0],resultPoints[1]);
+    var displayResult = document.getElementById("display-Result");
+    displayResult.innerHTML = distanceUnitsM(res);
+}
+
+
+//Basic Measurement between two points
+var measurement = function(){
+    
+    if(!measurementBoolean){
+        measurementBoolean = true;
+        
+        var measurementDis = document.getElementById("measurement-display");
+        measurementDis.style.display = "block";
+
+        //-----Changes the cursor when hovering over the object-----
+        for (var i = 0; i < sceneObj.meshes.length; ++i){
+            var mesh = sceneObj.meshes[i];
+            mesh.actionManager = new BABYLON.ActionManager(sceneObj);
+            mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function(ev){	
+                sceneObj.hoverCursor = "crosshair";
+            }, false));
+        }
+
+        setElementImage('measurement-button', 'images/measurement-button-active.png');
+        window.addEventListener("click", pickA );
+
+        //-----Pick point A------
+        function pickA(){
+            if(!measurementBoolean){
+                window.removeEventListener("click", pickA);
+                return;
+            }
+            var pointA  = sceneObj.pick(sceneObj.pointerX, sceneObj.pointerY);
+
+            if (pointA.hit) {
+                var coordinateA = pointA.pickedPoint;
+                CreatePin(pointA);
+                resultPoints.push(coordinateA.scale(1 / scaleFactor));
+                linePoints.push(coordinateA);
+
+                var displayA = document.getElementById("display-A");
+                displayA.innerHTML = pointToString(resultPoints[0]);
+
+                window.removeEventListener("click", pickA);
+                window.addEventListener("click", pickB);
+            }
+         };
+
+         //------Pick point B-----
+         function pickB(){
+            if(!measurementBoolean){
+                window.removeEventListener("click", pickB);
+                return;
+            }
+            var pointB = sceneObj.pick(sceneObj.pointerX, sceneObj.pointerY);
+
+            if (pointB.hit) {
+                var coordinateB = pointB.pickedPoint;
+                CreatePin(pointB);
+                resultPoints.push(coordinateB.scale(1 / scaleFactor));
+                linePoints.push(coordinateB);
+
+                var displayB      = document.getElementById("display-B");
+                displayB.innerHTML = pointToString(resultPoints[1]);
+
+                window.removeEventListener("click", pickB);
+
+                displayDistance();
+
+                //-----Resets the cursor after the measurement-----
+                for (var i = 0; i < sceneObj.meshes.length; ++i){
+                    var mesh = sceneObj.meshes[i];
+                    if(mesh.actionManager != null){
+                        mesh.actionManager.actions.length = 0;
+                    }
+                }
+
+                //-----Resets the viewer after the measurement-----
+                resetTimer = setTimeout(resetMeasurement, resetDelay);
+            }
+         };
+
+    }else{
+        measurementBoolean = false;
+        setElementImage('measurement-button', 'images/measurement-button.png');
+        resetMeasurement();
+    }
+
+};
 /************************************************************/

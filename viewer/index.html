@@ -71,6 +71,50 @@
             -moz-box-shadow: 6px 6px 5px 0px rgba(0,0,0,0.75);
             box-shadow: 6px 6px 5px 0px rgba(0,0,0,0.75);
         }
+
+        #measurement-button
+        {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            z-index: 2000;            
+            width:  48px;
+            height: 48px;
+        }
+
+        #measurement-display
+        {
+            position: absolute;
+            bottom: 80px;
+            left: 8px;
+            z-index: 2000;            
+            width:  auto;
+            height: 250px;
+            pointer-events: none;
+            font-size: 12pt;
+            font-family: sans-serif;
+        }
+
+        #measurement-heading
+        {
+            text-align: center;
+        }
+
+        #display-A
+        {
+            white-space: pre;
+        }
+
+        #display-B
+        {
+            white-space: pre;
+        }
+
+        #display-Result
+        {
+            font-style: italic;
+        }
+
     </style>
 
     <script src="scripts/pep.min.js"></script>    
@@ -93,11 +137,24 @@
     <a href="javascript:void(0)" target="_blank" id="product-logo" draggable="false" href="" target="_blank"></a>
     <a href="javascript:void(0)" target="_blank" id="three-d-icon" draggable="false"></a>
     
-    <canvas id="renderCanvas" touch-action="none"></canvas>
+    <!-- TODO: add measurement button here -->
+
+    <a href="javascript:void(0)" id="measurement-button" draggable="false" style="visibility: hidden;" ></a>
+    <div id="measurement-display" style="display: none;" >
+    <h3 id= "measurement-heading">Measurement</h3>
+    <strong>Point 1: </strong> <span id = "display-A"> ? </span><br><br>
+    <strong>Point 2: </strong> <span id = "display-B"> ? </span><br><br>
+    <strong>Distance: </strong><span id = "display-Result"> ? </span><br><br>
+    </div>
+
+    <canvas id="renderCanvas" touch-action="none" draggable="false"></canvas>
 
     <script>
         try
         {
+            var elem = document.getElementById("measurement-button");
+            elem.addEventListener("click", measurement);
+
             var canvas = document.getElementById("renderCanvas");
             var engine = null;
             var camera = null;

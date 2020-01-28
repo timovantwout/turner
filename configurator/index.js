@@ -61,7 +61,12 @@ var turnerVEC = function()
                 {
                     name : "environment.dds",
                     type : "file"
-                }
+                },
+                {
+                    name : "measurement-button.png",
+                    type : "file"
+                }          
+            
             ]
         },
         {
@@ -672,7 +677,9 @@ var turnerVEC = function()
         // add callbacks for dragging / clicks on 2D UI elements
         this.viewerAPI.addElementPointerDownCallback("company-logo", this.elementPointerDownCallback);
         this.viewerAPI.addElementPointerDownCallback("product-logo", this.elementPointerDownCallback);
-        this.viewerAPI.addElementPointerDownCallback("three-d-icon",      this.elementPointerDownCallback);
+        this.viewerAPI.addElementPointerDownCallback("three-d-icon", this.elementPointerDownCallback);
+        this.viewerAPI.addElementPointerDownCallback("measurement-button", this.elementPointerDownCallback);
+       
         this.viewerAPI.addPointerUpCallback(this.pointerUpCallback);
         this.viewerAPI.addPointerMoveCallback(this.pointerMoveCallback);
         
@@ -1248,7 +1255,7 @@ var setModelFromS3 = function(rootUrl, fileName) {
         // special cases
         if (filename == "three-d-icon.png" ||
             filename == "company-logo.png" ||
-            filename == "product-logo.png"   )
+            filename == "product-logo.png"  )
         {                
             var filenameWithoutExtension = filename.split(".")[0];
             var customURL                = turnerVECMain.viewerAPI.getElementImageCustomURL(filenameWithoutExtension);

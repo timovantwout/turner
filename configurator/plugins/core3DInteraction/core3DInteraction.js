@@ -112,6 +112,16 @@ var core3DInteraction = function()
         viewer.setPanningSensitivity(that.panningSensitivity);
     };
     
+     //---------------------------------------------------------------------------------------------------------
+    
+    this.measurementsToggled = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+        
+        viewer.toggleElementVisibility("measurement-button", toggled);     
+    }
+
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
     //---------------------------------------------------------------------------------------------------------
@@ -196,6 +206,22 @@ var core3DInteraction = function()
             "callback"    : this.panningSensitivitySliderToggled,
             "tooltipText" : "Specifies the camera's panning sensitivity", 
             "labelText"   : "Panning Sensitivity"
+        },
+        {
+            "type" : "heading",
+            "text" : "Measurements"
+        },
+        {
+            "type" : "text",
+            "text" : "Configure 3D measurement functionality."
+        },
+        {
+            "id"          : "core3DInteraction_measurementToggle",
+            "type"        : "toggle",
+            "initValue"   : false,
+            "callback"    : this.measurementsToggled,
+            "tooltipText" : "Toggles 3D measurement tools.", 
+            "labelText"   : "3D Measurement Tools"
         }
     ];
 
