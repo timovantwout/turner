@@ -118,8 +118,80 @@ var core3DInteraction = function()
     {
         var toggled = event.target.checked;
         var viewer  = turnerVECMain.viewerAPI;
-        
-        viewer.toggleElementVisibility("measurement-button", toggled);     
+
+        viewer.toggleDivisionVisibility("measurement-tool-box", toggled); 
+    }
+
+
+    this.simpleMeasurementToggle = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("simpleMeasurementBoolean", toggled);
+    }
+
+
+    this.simultaneousMeasuermentToggle = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("simultaneousMeasuermentBoolean", toggled);
+    }
+
+
+    this.multiPointMeasurementToggle = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("multiPointMeasurementBoolean", toggled);
+    }
+
+
+    this.geodesicMeasurementToggle = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("geodesicMeasuermentBoolean", toggled);
+    }
+
+
+    this.dimensionMeasurementToggle = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("dimensionBoolean", toggled);
+    }
+
+
+    this.boundingBoxToggle = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("boundingBoxBoolean", toggled);
+    }
+
+
+    this.optionsToggle = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("optionsBoolean", toggled);
+    }
+
+
+    this.defaultUnit = function(event)
+    {
+        var toggled = event.target.checked;
+        var viewer  = turnerVECMain.viewerAPI;
+
+        viewer.toggleBoolean("unitBoolean", toggled);
     }
 
     //---------------------------------------------------------------------------------------------------------
@@ -222,6 +294,70 @@ var core3DInteraction = function()
             "callback"    : this.measurementsToggled,
             "tooltipText" : "Toggles 3D measurement tools.", 
             "labelText"   : "3D Measurement Tools"
+        },
+        {
+            "id"          : "simpleMeasurement_Toggle",
+            "type"        : "toggle",
+            "initValue"   : true,
+            "callback"    : this.simpleMeasurementToggle,
+            "tooltipText" : "Toggles 2 Point Measuerment",
+            "labelText"   : "2 Point Measuerment"
+        },
+        {
+            "id"          : "simultaneousMeasurement_Toggle",
+            "type"        : "toggle",
+            "initValue"   : false,
+            "callback"    : this.simultaneousMeasuermentToggle,
+            "tooltipText" : "Toggles Simultaneous Measuerment",
+            "labelText"   : "Simultaneous Measuerment"
+        },
+        {
+            "id"          : "multiPointMeasurement_Toggle",
+            "type"        : "toggle",
+            "initValue"   : false,
+            "callback"    : this.multiPointMeasurementToggle,
+            "tooltipText" : "Toggles multi Point Measuerment",
+            "labelText"   : "Multi Point Measuerment"
+        },
+        {
+            "id"          : "geodesicMeasurement_Toggle",
+            "type"        : "toggle",
+            "initValue"   : false,
+            "callback"    : this.geodesicMeasurementToggle,
+            "tooltipText" : "Toggles geodesic Measuerment",
+            "labelText"   : "Geodesic Measuerment"
+        },
+        {
+            "id"          : "dimensionMeasurement_Toggle",
+            "type"        : "toggle",
+            "initValue"   : false,
+            "callback"    : this.dimensionMeasurementToggle,
+            "tooltipText" : "Toggles dimension Measuerment",
+            "labelText"   : "Dimension Measuerment"
+        },
+        {
+            "id"          : "boundingBox_Toggle",
+            "type"        : "toggle",
+            "initValue"   : false,
+            "callback"    : this.boundingBoxToggle,
+            "tooltipText" : "Toggles Bounding Box",
+            "labelText"   : "Bounding Box"
+        },
+        {
+            "id"          : "options_Toggle",
+            "type"        : "toggle",
+            "initValue"   : true,
+            "callback"    : this.optionsToggle,
+            "tooltipText" : "Toggles Options",
+            "labelText"   : "Options"
+        },
+        {
+            "id"          : "defaultUnit_Toggle",
+            "type"        : "toggle",
+            "initValue"   : true,
+            "callback"    : this.defaultUnit,
+            "tooltipText" : "Toggles Default Unit, Active = Metric, Deactive = Imperial",
+            "labelText"   : "Default Unit"
         }
     ];
 

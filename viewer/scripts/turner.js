@@ -12,8 +12,7 @@ var elementImageCustomization =
 {
     "company-logo" : "",
     "product-logo" : "",
-    "three-d-icon" : "",
-    "measurement-button" : ""
+    "three-d-icon" : ""
 };
 
 var environmentMapCustomization = "";
@@ -110,7 +109,13 @@ var initViewer = function()
     setElementImage('product-logo', 'images/product-logo.png');
     setElementImage('company-logo', 'images/company-logo.png');
     setElementImage('three-d-icon', 'images/three-d-icon.png');
-    setElementImage('measurement-button','images/measurement-button.png');
+    setElementImage('measurement-button-0','images/measurement-button-0.png');
+    setElementImage('measurement-button-1','images/measurement-button-1.png');
+    setElementImage('measurement-button-2','images/measurement-button-2.png');
+    setElementImage('measurement-button-3','images/measurement-button-3.png');
+    setElementImage('measurement-button-4','images/measurement-button-4.png');
+    setElementImage('measurement-button-5','images/measurement-button-5.png');
+    setElementImage('option-button'      , 'images/options.png');
     
     setElementLink('product-logo', 'http://rapidcompact.cloud');
     setElementLink('company-logo', 'https://www.dgg3d.com/');
@@ -736,6 +741,31 @@ var toggleElementVisibility = function(elementID, toggled)
 /************************************************************/
 
 /**
+ * Switches the display of the given element on or off
+ */
+var toggleDivisionVisibility = function(elementID, toggled)
+{
+    var elem = document.getElementById(elementID);
+    
+    if (!elem)
+    {
+        console.error("Cannot find element with ID \"" + elementID + "\".");
+        return;
+    }
+    
+    if (toggled)
+    {
+        elem.style.display = "block";
+    }
+    else
+    {
+        elem.style.display = "none";
+    }
+};
+
+/************************************************************/
+
+/**
  * Sets the image to be used for the given element.
  */
 var setElementImage = function(elementID, imageURL)
@@ -1140,49 +1170,148 @@ var itemIsUnchanged = function()
 
 /***********************************************************/
 
-// Measurement Var
-var measurementBoolean = false;
-var resultPoints = [];
-var linePoints = [];
-var measurementObj = [];
-var resetDelay = 50000000;
-var resetTimer;
-var pinSize = 0.05;
+
+/***********************************************************/
+/***********************Measurement*************************/
+/***********************************************************/
 
 
-//Reset function
-var resetMeasurement = function(){
-    for(var i = 0; i < measurementObj.length ; i++){
-        measurementObj[i].dispose();
-        measurementObj[i] = null;
+
+//Booleans
+var simpleMeasurementBoolean = true;
+var simultaneousMeasuermentBoolean;
+var multiPointMeasurementBoolean;
+var geodesicMeasuermentBoolean;
+var dimensionBoolean;
+var boundingBoxBoolean;
+var optionsBoolean = true;
+var unitBoolean = true;
+
+
+/**
+ * 
+ * @param {*} name of the Boolean that should be toggled 
+ * @param {*} toggle status the boolean shoud be set to
+ */
+var toggleBoolean = function(name, toggle){
+
+    switch(name){
+        case "simpleMeasurementBoolean":
+            simpleMeasurementBoolean = toggle;
+            break;
+        case "simultaneousMeasuermentBoolean":
+            simultaneousMeasuermentBoolean = toggle;
+            break;
+        case "multiPointMeasurementBoolean":
+            multiPointMeasurementBoolean = toggle;
+            break;
+        case "geodesicMeasuermentBoolean":
+            geodesicMeasuermentBoolean = toggle;
+            break;
+        case  "dimensionBoolean":
+            dimensionBoolean = toggle;
+            break;
+        case "boundingBoxBoolean":
+            boundingBoxBoolean = toggle;
+            break;
+        case "optionsBoolean":
+            optionsBoolean = toggle;
+            break;
+        case "unitBoolean":
+            unitBoolean = toggle;
+            break;
+        default:
+            console.log(name + "is not a defined boolean of the viewer");
     }
-    clearTimeout(resetTimer);
-    resultPoints.length = 0;
-    linePoints.length = 0;
-    measurementObj.length = 0;
-    measurementBoolean = false;
-    setElementImage('measurement-button', 'images/measurement-button.png');
-    //-----Resets the display-----
-    var displayA   = document.getElementById("display-A");
-    var displayB   = document.getElementById("display-B");
-    var displayResult = document.getElementById("display-Result");
-    displayA.innerHTML      = "?";
-    displayB.innerHTML      = "?";
-    displayResult.innerHTML = "?";
-    var measurementDisplay = document.getElementById("measurement-display");
-    measurementDisplay.style.display = "none";
+    updateViewerToolbox();
+}
 
-    //-----Resets the cursor-----
-    for (var i = 0; i < sceneObj.meshes.length; ++i){
-        var mesh = sceneObj.meshes[i];
-        if(mesh.actionManager != null){
-            mesh.actionManager.actions.length = 0;
-        }
+/**
+ * Shows or hides the tools of the measurement toolbox and adds or removes the listeners on the items
+ */
+var updateViewerToolbox = function(){
+
+    if(simpleMeasurementBoolean){
+        item = document.getElementById('measurement-button-0');
+        item.style.display = "block";
+        item.addEventListener("click", toggleSimpleMeasurement);
+    }else{
+        item = document.getElementById('measurement-button-0');
+        item.style.display = "none";
+        window.removeEventListener("click", toggleSimpleMeasurement);
+    }
+
+    if(simultaneousMeasuermentBoolean){
+        item = document.getElementById('measurement-button-1');
+        item.style.display = "block";
+        item.addEventListener("click", toggleSimultaneousMeasuerment);
+    }else{
+        item = document.getElementById('measurement-button-1');
+        item.style.display = "none";
+        window.removeEventListener("click", toggleSimultaneousMeasuerment);
+    }
+
+    if(multiPointMeasurementBoolean){
+        item = document.getElementById('measurement-button-2');
+        item.style.display = "block";
+        item.addEventListener("click", toggleMultiPointMeasurement);
+    }else{
+        item = document.getElementById('measurement-button-2');
+        item.style.display = "none";
+        window.removeEventListener("click", toggleMultiPointMeasurement);
+    }
+
+    if(geodesicMeasuermentBoolean){
+        item = document.getElementById('measurement-button-3');
+        item.style.display = "block";
+        item.addEventListener("click", toggleGeodesicMeasuerment);
+    }else{
+        item = document.getElementById('measurement-button-3');
+        item.style.display = "none";
+        window.removeEventListener("click", toggleGeodesicMeasuerment);
+    }
+
+    if(dimensionBoolean){
+        item = document.getElementById('measurement-button-4');
+        item.style.display = "block";
+        item.addEventListener("click", toggleShowDimension);
+    }else{
+        item = document.getElementById('measurement-button-4');
+        item.style.display = "none"; 
+        window.removeEventListener("click", toggleShowDimension);
+    }
+
+    if(boundingBoxBoolean){
+        item = document.getElementById('measurement-button-5');
+        item.style.display = "block";
+        item.addEventListener("click", toggleBoundingBox);
+    }else{
+        item = document.getElementById('measurement-button-5');
+        item.style.display = "none";
+        window.removeEventListener("click", toggleBoundingBox);
+    }
+
+    if(optionsBoolean){
+        item = document.getElementById('option-button');
+        item.style.display = "block";
+        item.addEventListener("click", toggleOptions);
+    }else{
+        item = document.getElementById('option-button');
+        item.style.display = "none";
+        window.removeEventListener("click", toggleOptions);
     }
 
 }
 
-//Converts a point into a String with xyz
+
+//----------General Measurement----------
+
+var measurementObj = [];
+
+/**
+ * Converts a point into a String with xyz
+ * @param {*} point with xyz value, care x-Axis will be inverted
+ */
 var pointToString = function(point){
     var res  = "-";
     var val1 = point.x.toFixed(5);
@@ -1198,57 +1327,25 @@ var pointToString = function(point){
     return val1 + val2 + val3;
 }
 
-//Adds metrics the the distance
-var distanceUnitsM = function(dist){
-    var res = "";
-    var  m = 0;
-    var cm = 0;
-    var mm = 0;
-    while(dist > 1){
-        m++;
-        dist--;
-    }
-    dist = dist * 100;
-    while(dist > 1){
-        cm++;
-        dist--;
-    }
-    dist = dist * 10;
-    while(dist > 1){
-        mm++;
-        dist--;
-    }
-    
-    if(m != 0){
-        res = res + (m < 10 ? ("0" +  m) :  m) + "m ";
-        dist = dist.toFixed(3);
-        dist = dist * 1000;
-    }
-    if(res != "" || cm != 0){
-        res = res + (cm == 0 ? "00" : (cm < 10 ? ("0" + cm) : cm)) + "cm ";
-        if(m == 0){
-            dist = dist.toFixed(5);
-            dist = dist * 100000;
-        }
-    }
-    if(m == 0 && cm ==0){
-        dist = dist.toFixed(7);
-        dist = dist * 10000000;
-    }
-
-    return (res + mm + "," + dist + "mm");
+// https://www.paulirish.com/2009/random-hex-color-code-snippets/
+var getRandomColor = function(){
+    return '#'+Math.floor(Math.random()*16777215).toString(16);
 }
 
-//Create Pin
-var CreatePin = function(pickedP){
+var pinSize = 0.05;
+/**
+ * 
+ * @param {*} pickedP Point on sceneObj
+ * @param {*} headColor Babylon.Color3
+ */
+var createPin = function(pickedP, headColor){
     var coordinate = pickedP.pickedPoint;
     var coneLength = pinSize / 10 * 6;
     var sphereSize = pinSize / 10 * 4;
 
-
     //Materials or rather Color
     var matSphere = new BABYLON.StandardMaterial('matSphere', sceneObj);
-    matSphere.emissiveColor = new BABYLON.Color3(0.75, 0, 0);
+    matSphere.emissiveColor = headColor;
     var matCone = new BABYLON.StandardMaterial('matCone', sceneObj);
     matCone.emissiveColor = new BABYLON.Color3(0.75, 0.75, 0.75);
 
@@ -1286,104 +1383,381 @@ var CreatePin = function(pickedP){
     mesh.rotationQuaternion = quaternion;
 }
 
-//Distance between two Points
-var displayDistance = function(){
-    
-    //Tube
-    var resultTube = BABYLON.MeshBuilder.CreateTube("resultTube",{path : [linePoints[0], linePoints[1]], radius : 0.0025, tessellation: 96},sceneObj)
-    resultTube.material = new BABYLON.StandardMaterial("resultMat", sceneObj);
-    resultTube.material.emissiveColor = new BABYLON.Color3(1,0,0);
-    measurementObj.push(resultTube);
 
-    //Display
-    var res = BABYLON.Vector3.Distance(resultPoints[0],resultPoints[1]);
-    var displayResult = document.getElementById("display-Result");
-    displayResult.innerHTML = distanceUnitsM(res);
+/**
+ * 
+ * @param {*} cursorType sets the cursor type as the hover cursor of every mesh
+ */
+var setCursorOverObject = function(cursorType){
+    for (var i = 0; i < sceneObj.meshes.length; ++i){
+        var mesh = sceneObj.meshes[i];
+        mesh.actionManager = new BABYLON.ActionManager(sceneObj);
+        mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function(ev){	
+            sceneObj.hoverCursor = cursorType;
+            }, false));
+    }
+}
+
+/**
+ * removes all actionManagers on the Object
+ */
+var resetCursor = function(){
+    for (var i = 0; i < sceneObj.meshes.length; ++i){
+        var mesh = sceneObj.meshes[i];
+        if(mesh.actionManager != null){
+            mesh.actionManager.actions.length = 0;
+        }
+    }
+}
+
+//Adds metrics the the distance
+var distanceUnit = function(dist){
+    if (unitBoolean) {
+        var res = "";
+        var m = 0;
+        var cm = 0;
+        var mm = 0;
+        while (dist > 1) {
+            m++;
+            dist--;
+        }
+        dist = dist * 100;
+        while (dist > 1) {
+            cm++;
+            dist--;
+        }
+        dist = dist * 10;
+        while (dist > 1) {
+            mm++;
+            dist--;
+        }
+
+        if (m != 0) {
+            res = res + (m < 10 ? ("0" + m) : m) + "m ";
+            dist = dist.toFixed(3);
+            dist = dist * 1000;
+        }
+        if (res != "" || cm != 0) {
+            res = res + (cm == 0 ? "00" : (cm < 10 ? ("0" + cm) : cm)) + "cm ";
+            if (m == 0) {
+                dist = dist.toFixed(5);
+                dist = dist * 100000;
+            }
+        }
+        if (m == 0 && cm == 0) {
+            dist = dist.toFixed(7);
+            dist = dist * 10000000;
+        }
+
+        return (res + mm + "," + dist + "mm");
+    } else {
+        dist = dist * 39.3701;
+
+        var res = dist;
+        return(res);
+
+}
+}
+
+/**
+ * Resets general objects
+ */
+var resetGeneral = function(){
+    for(var i = 0; i < measurementObj.length ; i++){
+        measurementObj[i].dispose();
+        measurementObj[i] = null;
+    }
+    measurementObj.length = 0;
+    
+    var resultDisplayElement = document.getElementById("measurement-display");
+    while(resultDisplayElement.firstChild){
+        resultDisplayElement.removeChild(resultDisplayElement.firstChild);
+    }
+    resultDisplayElement.style.display = "none";
+
+
+    //-----ToDo-----
+    //Reset the Buttons so no 2 Measurements are active at the same time 
+
+}
+
+//----------Simple Measurement----------
+var simpleMeasurementState = false;
+var toggleSimpleMeasurement = function(){
+    simpleMeasurementState = !simpleMeasurementState;
+    simpleMeasurementState ? simpleMeasurement() : resetSimpleMeasurement();
+}
+
+var simpleMeasurement = function(){
+    document.getElementById('measurement-button-0').style.outlineColor = "black";
+    window.addEventListener("click", simpleMeasurementPickPoints);    
+}
+
+var resetSimpleMeasurement = function(){
+    document.getElementById('measurement-button-0').style.outlineColor = "transparent";
+    window.removeEventListener("click", simpleMeasurementPickPoints);
+    pointOne = null;
+    pointTwo = null;
+    resetGeneral();
+    resetCursor();
+}
+
+var pointOne;
+var pointTwo;
+var simpleMeasurementPickPoints = function () {
+
+    setCursorOverObject("crosshair");
+
+    var colorOne = new BABYLON.Color3(0.75, 0, 0);
+    var colorTwo = new BABYLON.Color3(0.75, 0.75, 0);
+
+    if (!pointOne) {
+
+        var point = sceneObj.pick(sceneObj.pointerX, sceneObj.pointerY);
+
+        if (point.hit) {
+
+            pointOne = point;
+            createPin(pointOne, colorOne);
+
+            var resultDisplayElement = document.getElementById("measurement-display");
+            resultDisplayElement.style.display = "block";
+
+            var close = document.createElement("img");
+            close.setAttribute("src", "images/red-x.png");
+            close.style.cssText = "width: 15px; height: 15px; pointer-events: auto; float: right; z: 2000;";
+            resultDisplayElement.appendChild(close);
+            close.addEventListener("click", toggleSimpleMeasurement);
+
+            var heading = document.createElement("h3");
+            heading.innerText = "Two Point Measurement";
+            heading.style.textAlign = "center";
+            resultDisplayElement.appendChild(heading);
+
+            var displayOne = document.createElement("strong");
+            displayOne.style.color = "#bf0000";
+            displayOne.innerText = "Point 1: "
+            resultDisplayElement.appendChild(displayOne);
+
+            var resultOne = document.createElement("span");
+            resultOne.innerText = pointToString(pointOne.pickedPoint.scale(1 / scaleFactor));
+            resultDisplayElement.appendChild(resultOne);
+
+        }
+    } else {
+
+        var point = sceneObj.pick(sceneObj.pointerX, sceneObj.pointerY);
+
+        if (point.hit) {
+            pointTwo = point;
+            createPin(pointTwo, colorTwo);
+
+            var resultDisplayElement = document.getElementById("measurement-display");
+            resultDisplayElement.appendChild(document.createElement("br"));
+            resultDisplayElement.appendChild(document.createElement("br"));
+
+            var displayTwo = document.createElement("strong");
+            displayTwo.style.color = "#bfbf00"
+            displayTwo.innerText = "Point 2: "
+            resultDisplayElement.appendChild(displayTwo);
+
+            var resultTwo = document.createElement("span");
+            resultTwo.innerText = pointToString(pointTwo.pickedPoint.scale(1 / scaleFactor));
+            resultDisplayElement.appendChild(resultTwo);
+
+            resultDisplayElement.appendChild(document.createElement("br"));
+            resultDisplayElement.appendChild(document.createElement("br"));
+
+            var displayDis = document.createElement("strong");
+            displayDis.innerText = "Distance: "
+            resultDisplayElement.appendChild(displayDis);
+
+            var resultDis = document.createElement("span");
+            resultDis.innerText = distanceUnit(BABYLON.Vector3.Distance(pointOne.pickedPoint.scale(1/scaleFactor), pointTwo.pickedPoint.scale(1/scaleFactor)));
+            resultDisplayElement.appendChild(resultDis);
+
+            //Tube
+            var resultTube = BABYLON.MeshBuilder.CreateTube("resultTube",{path : [pointOne.pickedPoint, pointTwo.pickedPoint], radius : 0.0025, tessellation: 96},sceneObj);
+            resultTube.material = new BABYLON.StandardMaterial("resultMat", sceneObj);
+            resultTube.material.emissiveColor = new BABYLON.Color3(1,0,0);
+            measurementObj.push(resultTube);
+
+            window.removeEventListener("click", simpleMeasurementPickPoints);
+            resetCursor();
+        }
+    }
 }
 
 
-//Basic Measurement between two points
-var measurement = function(){
-    
-    if(!measurementBoolean){
-        measurementBoolean = true;
-        
-        var measurementDis = document.getElementById("measurement-display");
-        measurementDis.style.display = "block";
+var toggleSimultaneousMeasuerment = function(){}
 
-        //-----Changes the cursor when hovering over the object-----
-        for (var i = 0; i < sceneObj.meshes.length; ++i){
-            var mesh = sceneObj.meshes[i];
-            mesh.actionManager = new BABYLON.ActionManager(sceneObj);
-            mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function(ev){	
-                sceneObj.hoverCursor = "crosshair";
-            }, false));
-        }
 
-        setElementImage('measurement-button', 'images/measurement-button-active.png');
-        window.addEventListener("click", pickA );
+//-----Multioint------
+var showPin = function(){
+    //https://doc.babylonjs.com/how_to/camera_behaviors
+    //Look at function
+}
 
-        //-----Pick point A------
-        function pickA(){
-            if(!measurementBoolean){
-                window.removeEventListener("click", pickA);
-                return;
+var multiPointMeasurementState = false;
+var toggleMultiPointMeasurement = function(){
+    multiPointMeasurementState = !multiPointMeasurementState;
+    multiPointMeasurementState ? multiPointMeasurement() : resetMultiPointMeasurement();
+}
+
+var multiPointMeasurement = function () {
+    document.getElementById('measurement-button-2').style.outlineColor = "black";
+    window.addEventListener("click", multiPointMeasurementPickPoints);
+
+    var resultDisplayElement = document.getElementById("measurement-display");
+    resultDisplayElement.style.display = "block";
+
+    var table = document.createElement("table");
+    table.id = "table"
+
+    var row = document.createElement("tr")
+
+    var col1 = document.createElement("th");
+    col1.innerText = "Name";
+    row.appendChild(col1);
+
+    var col2 = document.createElement("th");
+    col2.innerText = "X";
+    row.appendChild(col2);
+
+    var col3 = document.createElement("th");
+    col3.innerText = "Y";
+    row.appendChild(col3);
+
+    var col4 = document.createElement("th");
+    col4.innerText = "Z";
+    row.appendChild(col4);
+
+    var col5 = document.createElement("th");
+    search = document.createElement("img");
+    search.setAttribute("src", "images/lupe.png");
+    search.style.cssText = "width: 15px; height: 15px; pointer-events: auto; float: right; z: 2000;";
+    col5.appendChild(search);
+    row.appendChild(col5);
+
+    table.appendChild(row);
+    resultDisplayElement.appendChild(table);
+}
+
+var resetMultiPointMeasurement = function () {
+    document.getElementById('measurement-button-2').style.outlineColor = "transparent";
+    window.removeEventListener("click", multiPointMeasurementPickPoints);
+    resetGeneral();
+    resetCursor();
+}
+
+var multiPointMeasurementPickPoints = function () {
+    setCursorOverObject("crosshair");
+
+    var point = sceneObj.pick(sceneObj.pointerX, sceneObj.pointerY);
+
+    if (point.hit) {
+
+
+        var hex = getRandomColor();
+        var color = new BABYLON.Color3.FromHexString(hex);
+        createPin(point, color);
+        var pointName = "N.N."
+
+        var table = document.getElementById("table");
+
+        var row = document.createElement("tr")
+
+        var col1 = document.createElement("td");
+        col1.innerText = pointName;
+        row.appendChild(col1);
+        col1.style.cssText = "pointer-events: auto; z-index: 12;";
+        col1.addEventListener("click", function () {
+            changeTableContent(col1);
+        });
+
+        var col2 = document.createElement("td");
+        col2.innerText = -point.pickedPoint.scale(1 / scaleFactor).x.toFixed(5);
+        row.appendChild(col2);
+
+        var col3 = document.createElement("td");
+        col3.innerText = point.pickedPoint.scale(1 / scaleFactor).y.toFixed(5);
+        row.appendChild(col3);
+
+        var col4 = document.createElement("td");
+        col4.innerText = point.pickedPoint.scale(1 / scaleFactor).z.toFixed(5);
+        row.appendChild(col4);
+
+        var col5 = document.createElement("td");
+        col5.bgColor = hex;
+        col5.style.cssText = "border-radius: 50px; pointer-events: auto; z-index: 12;";
+        col5.addEventListener("click", showPin())
+        row.appendChild(col5);
+
+        table.appendChild(row);
+
+        var input = document.createElement("input");
+        input.id = "this-input"
+        input.type = "text";
+        input.value = pointName;
+
+
+        var x = event.clientX;
+        var y = event.clientY;
+
+        input.style.cssText = "position: fixed; pointer-events: auto; z-index: 12;";
+        input.style.top = y + "px";
+        input.style.left = x + "px";
+
+        table.appendChild(input);
+        input.focus();
+
+        input.addEventListener("focusout", function () {
+                col1.innerText = input.value;
+                input.parentNode.removeChild(input);
+        }, {once: true});
+
+        input.addEventListener("keyup", function(event){
+            event.preventDefault();
+            if(event.keyCode ===13){
+                    col1.innerText = input.value;
+                    input.parentNode.removeChild(input);
             }
-            var pointA  = sceneObj.pick(sceneObj.pointerX, sceneObj.pointerY);
-
-            if (pointA.hit) {
-                var coordinateA = pointA.pickedPoint;
-                CreatePin(pointA);
-                resultPoints.push(coordinateA.scale(1 / scaleFactor));
-                linePoints.push(coordinateA);
-
-                var displayA = document.getElementById("display-A");
-                displayA.innerHTML = pointToString(resultPoints[0]);
-
-                window.removeEventListener("click", pickA);
-                window.addEventListener("click", pickB);
-            }
-         };
-
-         //------Pick point B-----
-         function pickB(){
-            if(!measurementBoolean){
-                window.removeEventListener("click", pickB);
-                return;
-            }
-            var pointB = sceneObj.pick(sceneObj.pointerX, sceneObj.pointerY);
-
-            if (pointB.hit) {
-                var coordinateB = pointB.pickedPoint;
-                CreatePin(pointB);
-                resultPoints.push(coordinateB.scale(1 / scaleFactor));
-                linePoints.push(coordinateB);
-
-                var displayB      = document.getElementById("display-B");
-                displayB.innerHTML = pointToString(resultPoints[1]);
-
-                window.removeEventListener("click", pickB);
-
-                displayDistance();
-
-                //-----Resets the cursor after the measurement-----
-                for (var i = 0; i < sceneObj.meshes.length; ++i){
-                    var mesh = sceneObj.meshes[i];
-                    if(mesh.actionManager != null){
-                        mesh.actionManager.actions.length = 0;
-                    }
-                }
-
-                //-----Resets the viewer after the measurement-----
-                resetTimer = setTimeout(resetMeasurement, resetDelay);
-            }
-         };
-
-    }else{
-        measurementBoolean = false;
-        setElementImage('measurement-button', 'images/measurement-button.png');
-        resetMeasurement();
+        });
     }
 
-};
+}
+
+var changeTableContent = function(elem){
+    var resultDisplayElement = document.getElementById("measurement-display");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.value = elem.innerText;
+    input.style.cssText = "pointer-events: auto";
+    resultDisplayElement.appendChild(input);
+    input.focus();
+    input.addEventListener("focusout", function(){
+        if(resultDisplayElement.contains(input)){
+            elem.innerText = input.value;
+            resultDisplayElement.removeChild(input);
+        }
+    }, {once: true});
+    input.addEventListener("keyup", function(event){
+        event.preventDefault();
+        if(event.keyCode ===13){
+            if(resultDisplayElement.contains(input)){
+                elem.innerText = input.value;
+                resultDisplayElement.removeChild(input);
+            }
+            
+        }
+    });
+}
+
+var toggleGeodesicMeasuerment = function(){}
+var toggleShowDimension = function(){}
+var toggleBoundingBox = function(){}
+var toggleOptions = function(){
+    console.log(Math.random().toFixed(2))
+}
+
 /************************************************************/

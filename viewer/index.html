@@ -72,48 +72,85 @@
             box-shadow: 6px 6px 5px 0px rgba(0,0,0,0.75);
         }
 
-        #measurement-button
+
+
+        #measurement-tool-box
         {
             position: absolute;
-            bottom: 8px;
+            bottom: 64px;
             left: 8px;
-            z-index: 2000;            
-            width:  48px;
-            height: 48px;
+            z-index: 2000;
+        }
+
+        #measurement-button-0
+        {
+            position:relative;
+            float:left;
+            margin: 0 4px 0 4px;
+            outline: dashed transparent 4px;
+        }
+
+        #measurement-button-1
+        {
+            position:relative;
+            float:left;
+            margin: 0 4px 0 4px;
+            outline: dashed transparent 4px;
+        }
+
+        #measurement-button-2
+        {
+            position:relative;
+            float:left;
+            margin: 0 4px 0 4px;
+            outline: dashed transparent 4px;
+        }
+
+        #measurement-button-3
+        {
+            position:relative;
+            float:left;
+            margin: 0 4px 0 4px;
+            outline: dashed transparent 4px;
+        }
+
+        #measurement-button-4
+        {
+            position:relative;
+            float:left;
+            margin: 0 4px 0 4px;
+            outline: dashed transparent 4px;
+        }
+
+        #measurement-button-5
+        {
+            position:relative;
+            float:left;
+            margin: 0 4px 0 4px;
+            outline: dashed transparent 4px;
+        }
+
+        #option-button
+        {
+            position:relative;
+            float:left;
+            margin: 0 4px 0 4px;
+            outline: dashed transparent 4px;
         }
 
         #measurement-display
         {
             position: absolute;
-            bottom: 80px;
+            top: 50%;
             left: 8px;
             z-index: 2000;            
             width:  auto;
-            height: 250px;
+            height: auto;
             pointer-events: none;
             font-size: 12pt;
             font-family: sans-serif;
         }
 
-        #measurement-heading
-        {
-            text-align: center;
-        }
-
-        #display-A
-        {
-            white-space: pre;
-        }
-
-        #display-B
-        {
-            white-space: pre;
-        }
-
-        #display-Result
-        {
-            font-style: italic;
-        }
 
     </style>
 
@@ -139,21 +176,24 @@
     
     <!-- TODO: add measurement button here -->
 
-    <a href="javascript:void(0)" id="measurement-button" draggable="false" style="visibility: hidden;" ></a>
-    <div id="measurement-display" style="display: none;" >
-    <h3 id= "measurement-heading">Measurement</h3>
-    <strong>Point 1: </strong> <span id = "display-A"> ? </span><br><br>
-    <strong>Point 2: </strong> <span id = "display-B"> ? </span><br><br>
-    <strong>Distance: </strong><span id = "display-Result"> ? </span><br><br>
+    <div id="measurement-tool-box" draggable ="false" style= "display: none" class="tool-box">
+        <a href="javascript:void(0)" id="measurement-button-0" draggable="false" ></a>
+        <a href="javascript:void(0)" id="measurement-button-1" draggable="false" ></a>
+        <a href="javascript:void(0)" id="measurement-button-2" draggable="false" ></a>
+        <a href="javascript:void(0)" id="measurement-button-3" draggable="false" ></a>
+        <a href="javascript:void(0)" id="measurement-button-4" draggable="false" ></a>
+        <a href="javascript:void(0)" id="measurement-button-5" draggable="false" ></a>
+        <a href="javascript:void(0)" id="option-button"        draggable="false" ></a>
     </div>
+
+    <div id="measurement-display" style="display: none;" ></div>
 
     <canvas id="renderCanvas" touch-action="none" draggable="false"></canvas>
 
     <script>
         try
         {
-            var elem = document.getElementById("measurement-button");
-            elem.addEventListener("click", measurement);
+            updateViewerToolbox();
 
             var canvas = document.getElementById("renderCanvas");
             var engine = null;
