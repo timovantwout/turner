@@ -35,6 +35,9 @@ var initModelMetallic  = 0;
 
 var refScale = 3.5;
 
+var isTextureDisabled = false;
+var originalMaterials = [];
+
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
 
@@ -362,7 +365,14 @@ function loadScene(rootUrl = '', fileName = 'scene.glb', environment = 'images/e
         
         initModelRoughness = getItemRoughnessFactor();
         initModelMetallic  = getItemMetallicFactor();
-                
+           
+        // textures should be disabled
+        if (isTextureDisabled) {
+            // reset the state, initially the textures would be enabled
+            isTextureDisabled = false;
+            hideTexture(true);
+        }
+
         engine.runRenderLoop(function () {
             sceneObj.render();
         });
@@ -1136,16 +1146,23 @@ var itemIsUnchanged = function()
 
 /************************************************************/
 
-
-var originalMaterials = [];
 /**
  * 
- * @param {*} hidden If hidde equals true, the textures will be hidden, if false, the textures will be shown
+ * @param {*} hidden If hidden equals true, the textures will be hidden, if false, the textures will be shown
  */
-var hideTexture = function (hidden) {
+var hideTexture = function (hidden)
+{
+    if (hidden == isTextureDisabled)
+        return;
 
-    // saves the original Textures
-    if (originalMaterials.length != mainMesh._children.length)
+    if (!mainMesh._children)
+    {
+        isTextureDisabled = hidden;
+        return;
+    }
+
+    // save the original materials
+    if (mainMesh._children.length != originalMaterials.length)
     {
         for (var i = 0; i < mainMesh._children.length; i++)
         {
@@ -1159,14 +1176,14 @@ var hideTexture = function (hidden) {
     if (!hidden) {
         for (var i = 0; i < mainMesh._children.length; i++) 
         {
-            if (mainMesh._children[i]._material) 
+            if (mainMesh._children[i].material) 
             {
                 mainMesh._children[i].material = originalMaterials[i];
             }
         }
-    }else 
+    }
+    else
     {
-        var materials = [];
         for (var i = 0; i < mainMesh._children.length; i++)
         {
             if (mainMesh._children[i]._material)
@@ -1174,15 +1191,13 @@ var hideTexture = function (hidden) {
                 var mat = new BABYLON.PBRMetallicRoughnessMaterial('mat', sceneObj);
                 mat.baseColor = new BABYLON.Color3(0.75, 0.75, 0.75);
                 mat.backFaceCulling = false;
-                mat.normalTexture = mainMesh._children[i].material.bumpTexture;
-                materials[i] = mat;
-                mainMesh._children[i].material = materials[i];
+                mat.normalTexture = mainMesh._children[i].material.bumpTexture || mainMesh._children[i].material.normalTexture;
+                mainMesh._children[i].material = mat;
             }
-
         }
     }
-
-}
+    isTextureDisabled = hidden;
+};
 
 
 /**
