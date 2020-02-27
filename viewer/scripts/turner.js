@@ -1184,71 +1184,50 @@ var hideTexture = function (hidden) {
 
 }
 
-
 /**
+ * texture sets a Default texture, current only "gold". If not defined it will set the default Material
  * 
-var originalTexture = [];
-var setDefaultMaterial = function (filePath) {
-    
+var setDefaultMaterial = function (texture) {
 
-    if (originalTexture.length == 0) {
-        for (var i = 0; i < sceneObj.meshes.length; ++i) {
-            var mesh = sceneObj.meshes[i];
-            originalTexture[i] = mesh.material;
-        }
-    }
-
-    for (var i = 0; i < sceneObj.meshes.length; ++i) {
-        var mesh = sceneObj.meshes[i];
-        if (mesh.material) {
-            if (mesh.material.albedoTexture)
-                mesh.material.albedoTexture.dispose();
-            if (mesh.material.opacityTexture)
-                mesh.material.opacityTexture.dispose();
-            if (mesh.material.emissiveTexture)
-                mesh.material.emissiveTexture.dispose();
-            if (mesh.material.refelctionTexture)
-                mesh.material.refelctionTexture.dispose();
-            if (mesh.material.metalicTexture)
-                mesh.material.metalicTexture.dispose();
-            if (mesh.material.bumpTexture)
-                mesh.material.bumpTexture.dispose();
-            if (mesh.material.diffuseTexture)
-                mesh.material.diffuseTexture.dispose()
-
-            
-        }
-    }
-
-    if (filePath == '') {
-        if (originalTexture.length == sceneObj.meshes.length) {
-            for (var i = 0; i < sceneObj.meshes.length; ++i) {
-                var mesh = sceneObj.meshes[i];
-                mesh.material = originalTexture[i];
+    // saves the original Textures
+    if (originalMaterials.length != mainMesh._children.length)
+    {
+        for (var i = 0; i < mainMesh._children.length; i++)
+        {
+            if (mainMesh._children[i]._material)
+            {
+                originalMaterials[i] = mainMesh._children[i].material;
             }
-        }else{
-            //reload model
-        }
-        return;
-    }
-
-
-    var textureMaterial =new BABYLON.Texture(filePath, sceneObj);
-    for (var i = 0; i < sceneObj.meshes.length; ++i) {
-        var mesh = sceneObj.meshes[i];
-        if (mesh.material) {
-            mesh.material.albedoTexture     = textureMaterial;
-            //mesh.material.opacityTexture    = textureMaterial;
-            mesh.material.emissiveTexture   = textureMaterial;
-            mesh.material.refelctionTexture = textureMaterial;
-            mesh.material.metalicTexture    = textureMaterial;
-            mesh.material.bumpTexture       = textureMaterial;
-            mesh.material.diffuseTexture    = textureMaterial;
-
         }
     }
+    switch (texture){
+        case "gold":
+            var materials = [];
+            for (var i = 0; i < mainMesh._children.length; i++)
+            {
+                if (mainMesh._children[i]._material)
+                {
+                    var mat = new BABYLON.PBRMetallicRoughnessMaterial('mat', sceneObj);
+                    mat.baseColor = new BABYLON.Color3(1.0, 0.766, 0.336);
+                    mat.backFaceCulling = false;
+                    mat.metallic = 0.8;
+                    mat.roughness = 0;
+                    mat.normalTexture = mainMesh._children[i].material.bumpTexture;
+                    materials[i] = mat;
+                    mainMesh._children[i].material = materials[i];
+                }
+            }
+            break;
+        default:
+            for (var i = 0; i < mainMesh._children.length; i++) 
+            {
+                if (mainMesh._children[i]._material) 
+                {
+                    mainMesh._children[i].material = originalMaterials[i];
+                }
+            }
 
+    }
 
 }
-
- */
+*/
