@@ -1206,7 +1206,7 @@ var originalTexture = [];
 var setDefaultMaterial = function (filePath) {
     
 
-    if (originalTexture.length == 0) {
+    if (originalTexture.length == 0) {----
         for (var i = 0; i < sceneObj.meshes.length; ++i) {
             var mesh = sceneObj.meshes[i];
             originalTexture[i] = mesh.material;
