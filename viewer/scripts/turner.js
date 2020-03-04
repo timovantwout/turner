@@ -34,6 +34,7 @@ var initModelRoughness = 0;
 var initModelMetallic  = 0;
 
 var refScale = 3.5;
+var scaleFactor = 1;
 
 var isTextureDisabled = false;
 var originalMaterials = [];
@@ -232,7 +233,7 @@ function setupMainMesh()
     var centerVec   = sceneBBMax.subtract(sceneBBMin);
     var bSphereRad  = centerVec.length() * 0.5;
     var bbCenter    = sceneBBMin.add(centerVec.multiplyByFloats(0.5, 0.5, 0.5));          
-    var scaleFactor = refScale / (2.0 * bSphereRad);
+    scaleFactor = refScale / (2.0 * bSphereRad);
                 
     mainMesh.scaling = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
     mainMesh.translate(bbCenter.negate(), BABYLON.Space.WORLD);    
@@ -1143,5 +1144,33 @@ var itemIsUnchanged = function()
     return initModelRoughness == getItemRoughnessFactor() &&
            initModelMetallic  == getItemMetallicFactor();
 };
+
+/************************************************************/
+
+var toggleShadow = function(toggle){
+
+
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 3, width:2}, sceneObj);
+    ground.position.y = -scaleFactor - 0.2;
+    ground.receiveShadows = true;
+
+    var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -toggle, 0), sceneObj);
+    light.intensity = 0.5;
+
+    var shadowLight = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -1, 0), sceneObj);
+    shadowLight.intensity = 1;
+    
+    var shadowGenerator = new BABYLON.ShadowGenerator(1024, shadowLight);
+    shadowGenerator.useExponentialShadowMap = true;
+    shadowGenerator.usePoissonSampling = true;
+    shadowGenerator.useBlurExponentialShadowMap = true;
+
+
+    for ( var i = 0; i < mainMesh._children.length ; i++){
+        shadowGenerator.addShadowCaster(mainMesh._children[i]);
+    }
+    
+    
+}
 
 /************************************************************/
