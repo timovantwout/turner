@@ -74,6 +74,16 @@ var core3DScene = function()
         var viewer = turnerVECMain.viewerAPI;
         viewer.setSkyboxSharpness(that.skyboxSharpness);
     };
+
+    //---------------------------------------------------------------------------------------------------------
+
+    this.shadowSliderToggled = function(event)
+    {
+        var shadowValue = event.srcElement.value;
+
+        var viewer = turnerVECMain.viewerAPI;
+        viewer.toggleShadow(shadowValue);
+    }
     
     //---------------------------------------------------------------------------------------------------------
     //                                      plugin UI elements
@@ -119,7 +129,18 @@ var core3DScene = function()
         {
             "type"      : "text",
             "text"      : "Choose if a shadow plane should be used, and how to display it."
-        }
+        },
+        {
+            "id"            : "core3DScene_shadowSlider",
+            "type"          : "slider",
+            "minValue"      : 0,
+            "maxValue"      : 10,
+            "step"          : 0.1,
+            "initValue"     : 0,
+            "callback"      : this.shadowSliderToggled,
+            "tooltipText"   : "Sets the Shadow under the model",
+            "labelText"     : "Model Shadow"
+        }   
     ];
         
     //---------------------------------------------------------------------------------------------------------

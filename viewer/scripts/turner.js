@@ -1147,30 +1147,91 @@ var itemIsUnchanged = function()
 
 /************************************************************/
 
-var toggleShadow = function(toggle){
+var initShadow = function(){
 
+    var posY = 0;
+    for (var i = 0; i < mainMesh._children.length ; i++)
+    {
+        curY = mainMesh._children[i].getBoundingInfo().minimum.y;
+        if(posY > curY){
+            posY = curY;
+        }
+    }
 
-    var ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 3, width:2}, sceneObj);
-    ground.position.y = -scaleFactor - 0.2;
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 3.5, width:2}, sceneObj);
+    ground.position.y = posY * 0.5;
+    ground.material = new BABYLON.ShadowOnlyMaterial('shadowOnly', sceneObj);
     ground.receiveShadows = true;
+    shadowElements.push(ground);  
 
-    var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -toggle, 0), sceneObj);
+    var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -1, 0), sceneObj);
     light.intensity = 0.5;
+    shadowElements.push(light);
 
-    var shadowLight = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -1, 0), sceneObj);
+    var shadowLight = new BABYLON.DirectionalLight("dir02", new BABYLON.Vector3(0, -1, 0), sceneObj);
     shadowLight.intensity = 1;
+    shadowElements.push(shadowLight);
     
     var shadowGenerator = new BABYLON.ShadowGenerator(1024, shadowLight);
     shadowGenerator.useExponentialShadowMap = true;
     shadowGenerator.usePoissonSampling = true;
     shadowGenerator.useBlurExponentialShadowMap = true;
+    shadowGenerator.blurScale = 5;
+    shadowElements.push(shadowGenerator);
+
+    
 
 
-    for ( var i = 0; i < mainMesh._children.length ; i++){
+    var light = new BABYLON.DirectionalLight('light', new BABYLON.Vector3(0, -1, 1), scene)
+    light.intensity = 0.5
+    
+    var ground = BABYLON.Mesh.CreatePlane('ground', 1000, scene)
+    ground.rotation.x = Math.PI / 2
+    ground.material = new BABYLON.ShadowOnlyMaterial('mat', scene)
+    ground.receiveShadows = true
+
+    ground.position.y = -50;
+
+    var shadowGenerator = new BABYLON.ShadowGenerator(512, light)
+    shadowGenerator.useBlurExponentialShadowMap = true;
+    shadowGenerator.blurScale = 2;
+    shadowGenerator.setDarkness(0.2);
+
+
+
+
+
+    //shadowGenerator.addShadowCaster(mainMesh);   
+ 
+    for (var i = 0; i < mainMesh._children.length ; i++){
         shadowGenerator.addShadowCaster(mainMesh._children[i]);
     }
     
-    
+
+}
+
+
+
+var shadowElements = [];
+
+var delShadow = function(){
+    for(var i = 0; i < shadowElements.length; i++)
+    shadowElements[i].dispose();
+    shadowElements.length = 0;
+}
+
+var toggleShadow = function(value){
+
+    if(value == 0){
+        delShadow();
+        return;
+    }
+
+    if(value != 0 && shadowElements.length == 0){
+        initShadow();
+    }
+
+    shadowElements[2].intensity = value / 10;     
 }
 
 /************************************************************/
