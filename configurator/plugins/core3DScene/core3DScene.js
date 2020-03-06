@@ -77,12 +77,32 @@ var core3DScene = function()
 
     //---------------------------------------------------------------------------------------------------------
 
-    this.shadowSliderToggled = function(event)
+    this.shadowToggled = function(event)
     {
-        var shadowValue = event.srcElement.value;
+        toggled = event.target.checked;
+        var viewer = turnerVECMain.viewerAPI;
+
+        viewer.toggleShadow(toggled);
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+
+    this.shadowOpacitySlider = function(event)
+    {
+        var opacityValue = event.srcElement.value;
 
         var viewer = turnerVECMain.viewerAPI;
-        viewer.toggleShadow(shadowValue);
+        viewer.setShadowOpacity(opacityValue);
+    }
+
+    //---------------------------------------------------------------------------------------------------------
+
+    this.shadowBlurSlider = function(event)
+    {
+        var blurValue = event.srcElement.value;
+
+        var viewer = turnerVECMain.viewerAPI;
+        viewer.setShadowBlur(blurValue);
     }
     
     //---------------------------------------------------------------------------------------------------------
@@ -131,15 +151,34 @@ var core3DScene = function()
             "text"      : "Choose if a shadow plane should be used, and how to display it."
         },
         {
-            "id"            : "core3DScene_shadowSlider",
+            "id"            : "core3DScene_shadowToggle",
+            "type"          : "toggle",
+            "initValue"     : false,
+            "callback"      : this.shadowToggled,
+            "tooltipText"   : "Toggles the visibility of the shadow", 
+            "labelText"     : "Show Shadow"
+        },
+        {
+            "id"            : "core3DScene_shadowOpacitySlider",
             "type"          : "slider",
             "minValue"      : 0,
+            "maxValue"      : 1,
+            "step"          : 0.01,
+            "initValue"     : 0.5,
+            "callback"      : this.shadowOpacitySlider,
+            "tooltipText"   : "Changes the Opacity of the Shadow",
+            "labelText"     : "Shadow Opacity"
+        },
+        {
+            "id"            : "core3DScene_shadowBlurSlider",
+            "type"          : "slider",
+            "minValue"      : 0.1,
             "maxValue"      : 10,
             "step"          : 0.1,
-            "initValue"     : 0,
-            "callback"      : this.shadowSliderToggled,
-            "tooltipText"   : "Sets the Shadow under the model",
-            "labelText"     : "Model Shadow"
+            "initValue"     : 0.1,
+            "callback"      : this.shadowBlurSlider,
+            "tooltipText"   : "Changes the blur of the shadow",
+            "labelText"     : "Shadow Blur"
         }   
     ];
         

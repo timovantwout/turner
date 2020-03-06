@@ -35,6 +35,7 @@ var initModelMetallic  = 0;
 
 var refScale = 3.5;
 var scaleFactor = 1;
+var bbCenter;
 
 var isTextureDisabled = false;
 var originalMaterials = [];
@@ -232,7 +233,7 @@ function setupMainMesh()
     
     var centerVec   = sceneBBMax.subtract(sceneBBMin);
     var bSphereRad  = centerVec.length() * 0.5;
-    var bbCenter    = sceneBBMin.add(centerVec.multiplyByFloats(0.5, 0.5, 0.5));          
+    bbCenter    = sceneBBMin.add(centerVec.multiplyByFloats(0.5, 0.5, 0.5));          
     scaleFactor = refScale / (2.0 * bSphereRad);
                 
     mainMesh.scaling = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
@@ -1147,91 +1148,92 @@ var itemIsUnchanged = function()
 
 /************************************************************/
 
-var initShadow = function(){
-
-    var posY = 0;
-    for (var i = 0; i < mainMesh._children.length ; i++)
+var shadowGenerator = null;
+/**
+ * 
+ * @param {*} toggled if true a shadow will be displayed, if false the shadow will be hidden
+ */
+var toggleShadow = function(toggled)
+{
+    if (toggled)
     {
-        curY = mainMesh._children[i].getBoundingInfo().minimum.y;
-        if(posY > curY){
-            posY = curY;
+        var maxX = Number.MIN_VALUE;
+        var minX = Number.MAX_VALUE;
+        var minY = Number.MAX_VALUE;
+        var maxZ = Number.MIN_VALUE;
+        var minZ = Number.MAX_VALUE;
+
+        for (var i = 0; i < mainMesh._children.length; i++)
+        {
+            var curXMax = mainMesh._children[i].getBoundingInfo().maximum.x;
+            maxX = maxX < curXMax ? curXMax : maxX;
+            var curXMin = mainMesh._children[i].getBoundingInfo().minimum.x;
+            minX = minX < curXMin ? minX : curXMin;
+
+            var curY = mainMesh._children[i].getBoundingInfo().minimum.y;
+            minY = minY > curY ? curY : minY;
+
+            var curZMax = mainMesh._children[i].getBoundingInfo().maximum.z;
+            maxZ = maxZ < curZMax ? curZMax : maxZ;
+            var curZMin = mainMesh._children[i].getBoundingInfo().minimum.z;
+            minZ = minZ < curZMin ? minZ : curZMin;
         }
+
+        posY = (-bbCenter.y * scaleFactor) + (minY * scaleFactor);
+
+        dummyLight = new BABYLON.DirectionalLight('light', new BABYLON.Vector3(0, -1, 0), sceneObj);
+        dummyLight.intensity = 0;
+
+        ground = BABYLON.MeshBuilder.CreateGround("ground", {height: maxZ * scaleFactor - minZ * scaleFactor, width: maxX * scaleFactor - minX * scaleFactor}, sceneObj);
+        ground.position.y = posY;
+        ground.material = new BABYLON.ShadowOnlyMaterial('shadowMat', sceneObj);
+        ground.receiveShadows = true;
+
+        shadowGenerator = new BABYLON.ShadowGenerator(512, dummyLight)
+        shadowGenerator.useBlurExponentialShadowMap = true;
+        shadowGenerator.setDarkness(0.5);
+        shadowGenerator.blurScale = 0.1;
+        
+
+        for (var i = 0; i < mainMesh._children.length; i++)
+        {
+            shadowGenerator.addShadowCaster(mainMesh._children[i]);
+        }
+
+    }else{
+
+        ground.dispose();
+        dummyLight.dispose();
+        shadowGenerator.dispose();
+
     }
-
-    var ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 3.5, width:2}, sceneObj);
-    ground.position.y = posY * 0.5;
-    ground.material = new BABYLON.ShadowOnlyMaterial('shadowOnly', sceneObj);
-    ground.receiveShadows = true;
-    shadowElements.push(ground);  
-
-    var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -1, 0), sceneObj);
-    light.intensity = 0.5;
-    shadowElements.push(light);
-
-    var shadowLight = new BABYLON.DirectionalLight("dir02", new BABYLON.Vector3(0, -1, 0), sceneObj);
-    shadowLight.intensity = 1;
-    shadowElements.push(shadowLight);
-    
-    var shadowGenerator = new BABYLON.ShadowGenerator(1024, shadowLight);
-    shadowGenerator.useExponentialShadowMap = true;
-    shadowGenerator.usePoissonSampling = true;
-    shadowGenerator.useBlurExponentialShadowMap = true;
-    shadowGenerator.blurScale = 5;
-    shadowElements.push(shadowGenerator);
-
-    
-
-
-    var light = new BABYLON.DirectionalLight('light', new BABYLON.Vector3(0, -1, 1), scene)
-    light.intensity = 0.5
-    
-    var ground = BABYLON.Mesh.CreatePlane('ground', 1000, scene)
-    ground.rotation.x = Math.PI / 2
-    ground.material = new BABYLON.ShadowOnlyMaterial('mat', scene)
-    ground.receiveShadows = true
-
-    ground.position.y = -50;
-
-    var shadowGenerator = new BABYLON.ShadowGenerator(512, light)
-    shadowGenerator.useBlurExponentialShadowMap = true;
-    shadowGenerator.blurScale = 2;
-    shadowGenerator.setDarkness(0.2);
-
-
-
-
-
-    //shadowGenerator.addShadowCaster(mainMesh);   
- 
-    for (var i = 0; i < mainMesh._children.length ; i++){
-        shadowGenerator.addShadowCaster(mainMesh._children[i]);
-    }
-    
 
 }
 
+/************************************************************/
 
-
-var shadowElements = [];
-
-var delShadow = function(){
-    for(var i = 0; i < shadowElements.length; i++)
-    shadowElements[i].dispose();
-    shadowElements.length = 0;
+/**
+ * 
+ * @param {*} value sets the shadow opacity to a give value
+ */
+var setShadowOpacity = function(value)
+{
+    if(shadowGenerator){
+        shadowGenerator.setDarkness(value);
+    }
 }
 
-var toggleShadow = function(value){
+/************************************************************/
 
-    if(value == 0){
-        delShadow();
-        return;
+/**
+ * 
+ * @param {*} value sets the shadow blur to a given value
+ */
+var setShadowBlur = function(value)
+{
+    if(shadowGenerator){
+        shadowGenerator.blurScale = value;
     }
-
-    if(value != 0 && shadowElements.length == 0){
-        initShadow();
-    }
-
-    shadowElements[2].intensity = value / 10;     
 }
 
 /************************************************************/
