@@ -37,6 +37,8 @@ var refScale = 3.5;
 
 var isTextureDisabled = false;
 var originalMaterials = [];
+var isNormalMapDisabled = false;
+var normalMaps = [];
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
@@ -1186,7 +1188,7 @@ var hideTexture = function (hidden)
     {
         for (var i = 0; i < mainMesh._children.length; i++)
         {
-            if (mainMesh._children[i]._material)
+            if (mainMesh._children[i].material)
             {
                 var mat = new BABYLON.PBRMetallicRoughnessMaterial('mat', sceneObj);
                 mat.baseColor = new BABYLON.Color3(0.75, 0.75, 0.75);
@@ -1198,6 +1200,114 @@ var hideTexture = function (hidden)
     }
     isTextureDisabled = hidden;
 };
+
+/**
+ * 
+ * @param {*} toggle If toggle equals true the normal Map is shown, if false the normal map is hidden
+ */
+var toggleNormalMap = function(toggle){
+
+    if(toggle == isNormalMapDisabled){
+        return;
+    }
+
+    if(!mainMesh._children){
+        isNormalMapDisabled = toggle;
+        return;
+    }
+
+    //save the original normal map;
+    if (mainMesh._children.length != normalMaps.length)
+    {
+        for (var i = 0; i < mainMesh._children.length; i++)
+        {
+            if (mainMesh._children[i]._material)
+            {
+                normalMaps[i] = mainMesh._children[i].material.bumpTexture || mainMesh._children[i].material.normalTexture;
+            }
+        }
+    }
+
+    if(toggle) {
+        for (var i = 0; i < mainMesh._children.length; i++) 
+        {
+            if (mainMesh._children[i].material) 
+            {
+                mainMesh._children[i].material.normalTexture = normalMaps[i];
+                mainMesh._children[i].material.bumpTexture   = normalMaps[i];
+            }
+        }
+    }
+    else
+    {
+        for (var i = 0; i < mainMesh._children.length; i++)
+        {
+            if (mainMesh._children[i].material)
+            {
+                mainMesh._children[i].material.bumpTexture   = null;
+                mainMesh._children[i].material.normalTexture = null;
+            }
+        }
+    }
+
+    isNormalMapDisabled = toggle;
+}
+
+var isBoundingBoxDisabled = false;
+var path = [];
+var boundingBox = null;
+var bBoxColor = "#000000";
+
+/**
+ * 
+ * @param {*} toggle if toggle equals 
+ */
+var toggleBoundingBox = function(toggle)
+{
+    if(toggle = isBoundingBoxDisabled){
+        return;
+    }
+    if(!mainMesh._children){
+        isBoundingBoxDisabled = toggle;
+        return;
+    }
+    if(path[0] == null){
+        path = mainMesh._children[1].getBoundingInfo().boundingBox.vectors;
+    }
+    if(true){
+        console.log(path);
+        boundingBox = BABYLON.MeshBuilder.CreateBox("bBox", {path : path , radius : 0.005, tessellation: 96}, sceneObj);
+        boundingBox.material = new BABYLON.StandardMaterial("mat", sceneObj);
+        boundingBox.material.emisiveColor = new BABYLON.Color3.FromHexString(bBoxColor);
+    }else{
+        boundingBox = null;
+    }
+
+    isBoundingBoxDisabled = toggle;
+}
+
+var updateBBox = function(color){
+    if(bBoxColor === color){
+        return;
+    }
+
+    bBoxColor = color;
+    if(!boundingBox){
+        boundingBox.material.emisiveColor = new BABYLON.Color3.FromHexString(bBoxColor);
+    }
+
+}
+
+var createBounding 
+
+var testBB = function(){
+
+    for (var i = 0; i < mainMesh._children.length; i++)
+        {
+            mainMesh._children[i].showBoundingBox = true;
+        }
+
+}
 
 
 /**
