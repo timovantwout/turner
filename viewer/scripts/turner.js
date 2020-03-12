@@ -1184,7 +1184,7 @@ var toggleShadow = function(toggled)
         dummyLight = new BABYLON.DirectionalLight('light', new BABYLON.Vector3(0, -1, 0), sceneObj);
         dummyLight.intensity = 0;
 
-        ground = BABYLON.MeshBuilder.CreateGround("ground", {height: maxZ * scaleFactor - minZ * scaleFactor, width: maxX * scaleFactor - minX * scaleFactor}, sceneObj);
+        ground = BABYLON.MeshBuilder.CreateGround("ground", {height: (maxZ * scaleFactor - minZ * scaleFactor) * 1.1, width: (maxX * scaleFactor - minX * scaleFactor) * 1.1}, sceneObj);
         ground.position.y = posY;
         ground.material = new BABYLON.ShadowOnlyMaterial('shadowMat', sceneObj);
         ground.receiveShadows = true;
