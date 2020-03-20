@@ -1309,6 +1309,17 @@ var testBB = function(){
 
 }
 
+var getFaces = function(){
+
+    amount = 0;
+
+    for (var i = 0; i < mainMesh._children.length; i++)
+    {
+        amount =+ mainMesh.getChildMeshes().mesh.getTotalVertices();
+    }
+    return amount;
+}
+
 
 /**
  * 
