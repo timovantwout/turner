@@ -6,7 +6,7 @@ var elementIDToLink =
     "product-logo" : "https://dgg3d.github.io/turner"
 };
 
-var buttonsEnabled = true;
+var buttonsEnabled = false;
 
 var elementImageCustomization = 
 {
@@ -701,10 +701,12 @@ var toggleButtons = function(val)
                 if (buttonsEnabled && elementIDToLink[p] != "")
                 {           
                     elem.setAttribute("href", elementIDToLink[p]);
+                    elem.setAttribute("target", "_blanc");
                 }
                 else
                 {
-                    elem.setAttribute("href", "javascript:void(0)");
+                    elem.removeAttribute("target");
+                    elem.removeAttribute("href");
                 }
             }
         }
