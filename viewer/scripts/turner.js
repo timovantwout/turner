@@ -39,6 +39,7 @@ var isTextureDisabled = false;
 var originalMaterials = [];
 var isNormalMapDisabled = false;
 var normalMaps = [];
+var isBoundingBoxEnabled = false;
 
 var isFirefoxOrIceweasel = navigator.userAgent.indexOf("Firefox")   >= 0 ||
 						   navigator.userAgent.indexOf("Iceweasel") >= 0;
@@ -1201,6 +1202,8 @@ var hideTexture = function (hidden)
     isTextureDisabled = hidden;
 };
 
+/************************************************************/
+
 /**
  * 
  * @param {*} toggle If toggle equals true the normal Map is shown, if false the normal map is hidden
@@ -1251,69 +1254,70 @@ var toggleNormalMap = function(toggle){
     }
 
     isNormalMapDisabled = toggle;
-}
+};
 
-var isBoundingBoxDisabled = false;
-var path = [];
-var boundingBox = null;
-var bBoxColor = "#000000";
+/************************************************************/
 
 /**
  * 
- * @param {*} toggle if toggle equals 
+ * @param {*} toggle toggles the bounding box
  */
 var toggleBoundingBox = function(toggle)
 {
-    if(toggle = isBoundingBoxDisabled){
+    if(toggle === isBoundingBoxEnabled){
         return;
     }
     if(!mainMesh._children){
-        isBoundingBoxDisabled = toggle;
-        return;
-    }
-    if(path[0] == null){
-        path = mainMesh._children[1].getBoundingInfo().boundingBox.vectors;
-    }
-    if(true){
-        console.log(path);
-        boundingBox = BABYLON.MeshBuilder.CreateBox("bBox", {path : path , radius : 0.005, tessellation: 96}, sceneObj);
-        boundingBox.material = new BABYLON.StandardMaterial("mat", sceneObj);
-        boundingBox.material.emisiveColor = new BABYLON.Color3.FromHexString(bBoxColor);
-    }else{
-        boundingBox = null;
-    }
-
-    isBoundingBoxDisabled = toggle;
-}
-
-var updateBBox = function(color){
-    if(bBoxColor === color){
+        isBoundingBoxEnabled = toggle;
         return;
     }
 
-    bBoxColor = color;
-    if(!boundingBox){
-        boundingBox.material.emisiveColor = new BABYLON.Color3.FromHexString(bBoxColor);
-    }
-
-}
-
-var createBounding 
-
-var testBB = function(){
-
-    for (var i = 0; i < mainMesh._children.length; i++)
+    if(toggle){
+        for(i = 0; i < mainMesh._children.length ; i++)
         {
-            mainMesh._children[i].showBoundingBox = true;
+            mainMesh._children[i].showBoundingBox = true; 
         }
+    }else{
+        for(i = 0; i < mainMesh._children.length ; i++)
+        {
+            mainMesh._children[i].showBoundingBox = false; 
+        }
+    }
 
-}
+    isBoundingBoxEnabled = toggle;
+};
+
+/************************************************************/
+
+/**
+ * 
+ * @param {*} color set front color of the scene bounding boxes
+ */
+var setBBFrontColor = function(color){
+
+    sceneObj.getBoundingBoxRenderer().frontColor = new BABYLON.Color3.FromHexString(color);
+
+};
+
+/************************************************************/
+
+/**
+ * 
+ * @param {*} color set back color of scene bounding boxes
+ */
+var setBBBackColor = function(color){
+
+    sceneObj.getBoundingBoxRenderer().backColor = new BABYLON.Color3.FromHexString(color);
+
+};
+
+/************************************************************/
 
 var getFaces = function(){
 
     amount = 0;
 
-    for (var i = 0; i < mainMesh._children.length; i++)
+    for (var i = 0; i < mainMesh._children.length; i++) 
     {
         amount =+ mainMesh.getChildMeshes().mesh.getTotalVertices();
     }
