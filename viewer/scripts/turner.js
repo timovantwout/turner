@@ -1313,13 +1313,76 @@ var setBBBackColor = function(color){
 
 /************************************************************/
 
+var isWireFrameEnabled = false;
+
+/**
+ * 
+ * @param {*} toggle toggles the wireframe of the mesh, color is color of the underlying mesh
+ */
+var toggleWireFrame = function(toggle)
+{
+    if(toggle === isWireFrameEnabled){
+        return;
+    }
+    if(!mainMesh._children){
+        isWireFrameEnabled = toggle;
+        return;
+    }
+
+    if(toggle){
+        for(i = 0; i < mainMesh._children.length ; i++)
+        {
+            if (mainMesh._children[i].material) 
+            {
+                mainMesh._children[i].material.wireframe = true;
+            }
+        }
+    }else{
+        for(i = 0; i < mainMesh._children.length ; i++)
+        {
+            if (mainMesh._children[i].material) 
+            {
+                mainMesh._children[i].material.wireframe = false;
+            }
+        }
+    }
+
+    isWireFrameEnabled = toggle;
+};
+
+/************************************************************/
+
+/**
+ *  returns number of faces of meshes
+ */
+// TODO: Test with Blender
 var getFaces = function(){
 
     amount = 0;
 
     for (var i = 0; i < mainMesh._children.length; i++) 
     {
-        amount =+ mainMesh.getChildMeshes().mesh.getTotalVertices();
+        if (mainMesh._children[i].material) 
+        {
+            amount =+ mainMesh._children[i].getTotalIndices();
+        }
+    }
+    return amount / 3;
+}
+/**
+ * return number of Vertices
+ */
+// TODO: Test with Blender
+var getVertices = function(){
+
+    amount = 0;
+
+    for (var i = 0; i < mainMesh._children.length; i++) 
+    {
+        if (mainMesh._children[i].material) 
+        {
+            amount =+ mainMesh._children[i].getTotalVertices();
+        }
     }
     return amount;
 }
