@@ -344,14 +344,7 @@ function loadScene(rootUrl = '', fileName = 'scene.glb', environment = 'images/e
         camera.pinchPrecision *= 20;
                     
         camera.attachControl(canvas, true);
-        
-        
-        camera.useAutoRotationBehavior = true;
-        camera.autoRotationBehavior.idleRotationSpeed = 2;
-    
-        setTimeout(function(){
-            camera.useAutoRotationBehavior = false
-        },5000)
+        //wiggle(100);
         
         // setup environment
         sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData(environment, sceneObj);
@@ -1206,6 +1199,30 @@ var hideTexture = function (hidden)
     }
     isTextureDisabled = hidden;
 };
+
+//animateCameratTo(x,y,z,r)
+//https://doc.babylonjs.com/api/classes/babylon.autorotationbehavior#idlerotationspeed
+var wiggle = function(osc){
+
+    camera.useAutoRotationBehavior = true;
+
+    var speed = 0;
+
+    var dummy = function(speed){
+        console.log(speed);
+        camera.autoRotationBehavior.idleRotationSpeed = Math.sin((Math.PI * speed) * 3);
+        if(speed < osc){
+            function plus() {speed = speed + 0.1;}
+            plus();
+            dummy(speed);
+        }
+    }
+
+    dummy(speed);
+
+    camera.useAutoRotationBehavior = false;
+}
+
 
 
 
