@@ -1200,6 +1200,40 @@ var hideTexture = function (hidden)
 };
 
 
+var test = function () {
+    for (var i = 0; i < mainMesh._children.length; i++) {
+        if (mainMesh._children[i].material) {
+            for (y = 0; y < 500; y++)
+            {
+                sceneObj.registerAfterRender(function ()
+                {
+                    mainMesh._children[i].addRotation(0, Math.sin(y / 10), 0);
+                });
+            }
+        }
+    }
+}
+
+var wiggle = function(){
+
+    sceneObj.registerAfterRender(function(){
+        if(stop){
+        return;
+        }
+        var val = 0;
+
+        for (var i = 0; i < mainMesh._children.length; i++) 
+        {
+            if (mainMesh._children[i].material) 
+            {
+                mainMesh._children[i].addRotation(0,0.01,val/10);
+            }
+        }
+        val++;
+    });
+}
+
+
 /**
  * 
 var originalTexture = [];
