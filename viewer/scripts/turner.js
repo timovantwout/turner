@@ -343,7 +343,15 @@ function loadScene(rootUrl = '', fileName = 'scene.glb', environment = 'images/e
         camera.wheelPrecision *= 20;
         camera.pinchPrecision *= 20;
                     
-        camera.attachControl(canvas, true);   
+        camera.attachControl(canvas, true);
+        
+        
+        camera.useAutoRotationBehavior = true;
+        camera.autoRotationBehavior.idleRotationSpeed = 2;
+    
+        setTimeout(function(){
+            camera.useAutoRotationBehavior = false
+        },5000)
         
         // setup environment
         sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData(environment, sceneObj);
@@ -1199,39 +1207,6 @@ var hideTexture = function (hidden)
     isTextureDisabled = hidden;
 };
 
-
-var test = function () {
-    for (var i = 0; i < mainMesh._children.length; i++) {
-        if (mainMesh._children[i].material) {
-            for (y = 0; y < 500; y++)
-            {
-                sceneObj.registerAfterRender(function ()
-                {
-                    mainMesh._children[i].addRotation(0, Math.sin(y / 10), 0);
-                });
-            }
-        }
-    }
-}
-
-var wiggle = function(){
-
-    sceneObj.registerAfterRender(function(){
-        if(stop){
-        return;
-        }
-        var val = 0;
-
-        for (var i = 0; i < mainMesh._children.length; i++) 
-        {
-            if (mainMesh._children[i].material) 
-            {
-                mainMesh._children[i].addRotation(0,0.01,val/10);
-            }
-        }
-        val++;
-    });
-}
 
 
 /**
