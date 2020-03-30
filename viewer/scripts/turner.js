@@ -344,7 +344,6 @@ function loadScene(rootUrl = '', fileName = 'scene.glb', environment = 'images/e
         camera.pinchPrecision *= 20;
                     
         camera.attachControl(canvas, true);
-        //wiggle(100);
         
         // setup environment
         sceneObj.environmentTexture = new BABYLON.CubeTexture.CreateFromPrefilteredData(environment, sceneObj);
@@ -1200,28 +1199,59 @@ var hideTexture = function (hidden)
     isTextureDisabled = hidden;
 };
 
-//animateCameratTo(x,y,z,r)
-//https://doc.babylonjs.com/api/classes/babylon.autorotationbehavior#idlerotationspeed
-var wiggle = function(osc){
+/************************************************************/
 
-    camera.useAutoRotationBehavior = true;
+/**
+ * 
+ * @param {*} frames duration of animation (for loop the frames should be a multiple of 40 + 5)
+ */
+var wiggle = function(frames){
 
-    var speed = 0;
-
-    var dummy = function(speed){
-        console.log(speed);
-        camera.autoRotationBehavior.idleRotationSpeed = Math.sin((Math.PI * speed) * 3);
-        if(speed < osc){
-            function plus() {speed = speed + 0.1;}
-            plus();
-            dummy(speed);
+    var animObj;
+    for (var i = 0; i < mainMesh._children.length; i++)
+    {
+        if (mainMesh._children[i]._material)
+        {
+            animObj=mainMesh._children[i];
         }
     }
 
-    dummy(speed);
+    var animation = new BABYLON.Animation("anim", "rotationQuaternion", 60, 
+                                            BABYLON.Animation.ANIMATIONTYPE_QUATERNION, 
+                                            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
-    camera.useAutoRotationBehavior = false;
+    var keys = [];
+
+    for(f = 0; f < frames / 5; f++){
+
+        yVal = Math.sin(f / 4 * Math.PI);
+
+        if(Math.abs(yVal) < 0.00001){
+            yVal = 0;
+        }
+        yVal = yVal / 20;
+        yVal = +yVal.toFixed(2);
+
+        val = new BABYLON.Quaternion (yVal,-yVal,1,yVal);
+
+        keys.push({
+            frame: f * 5,
+            value : val
+        })
+    }
+
+    animation.setKeys(keys);
+    animObj.animations.push(animation);
+    
+    var anim = sceneObj.beginAnimation(animObj, 0, frames, false);
+
+    //If the animation ends when tho obj is not centered again this will reset it
+    anim.onAnimationEnd = function () {
+        anim.reset();
+	};
 }
+
+/************************************************************/
 
 /**
  * 
