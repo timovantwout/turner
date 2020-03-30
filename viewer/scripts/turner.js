@@ -1223,6 +1223,35 @@ var wiggle = function(osc){
     camera.useAutoRotationBehavior = false;
 }
 
+/**
+ * 
+ * @param {*} val rotates the camera around the obj when idle
+ */
+var turntable = function(val){
+    if(val == 0){
+        camera.useAutoRotationBehavior = false;
+
+        //resets camera pos
+        var sceneCenter = new BABYLON.Vector3(0,0,0);
+        camera.fov = 0.66;
+        var refDist       = (0.5 * refScale) / Math.tan(0.5 * camera.fov);
+        var cameraInitPos = sceneCenter.add(new BABYLON.Vector3(0,0, refDist));         
+        camera.setPosition(cameraInitPos);
+        camera.setTarget(sceneCenter);
+
+        return;
+    }else{
+        if(camera.useAutoRotationBehavior == false){
+            camera.useAutoRotationBehavior = true;
+            camera.autoRotationBehavior.idleRotationWaitTime = (3000);
+            camera.autoRotationBehavior.idleRotationSpinupTime = (3000);
+        }
+        
+        camera.autoRotationBehavior.idleRotationSpeed = val;
+        return;
+    }
+}
+
 
 
 
